@@ -16,6 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainweb"
+    android:layout_below="@+id/mainappbar"
     android:layout_centerInParent="true">
 
 </WebView>

@@ -3,6 +3,7 @@ package com.alliancesgallore.alliancesgallore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,24 +37,23 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Button mLoginBtn;
     private String email, password;
-    private ProgressDialog mLoginProgress;
     private Button mForgotPasswordbtn;
     private Toolbar mLoginToolbar;
+    private ProgressBar mprogressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mprogressBar = findViewById(R.id.login_progress);
         mAuth = FirebaseAuth.getInstance();
         mLoginEmail = findViewById(R.id.login_email);
         mLoginPassword = findViewById(R.id.login_password);
         mLoginBtn = findViewById(R.id.login_login_btn);
-        mLoginProgress = new ProgressDialog(this);
         mLoginToolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(mLoginToolbar);
         getSupportActionBar().setTitle("Login");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mForgotPasswordbtn = findViewById(R.id.forgotpasswordbtn);
 
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,10 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                     Toast.makeText(LoginActivity.this, "Email or Password cannot be left blank", Toast.LENGTH_SHORT).show();
                 } else {
-                    mLoginProgress.setTitle("Logging in");
-                    mLoginProgress.setMessage("Please wait while we check your credentials");
-                    mLoginProgress.setCanceledOnTouchOutside(false);
-                    mLoginProgress.show();
+                  mprogressBar.setVisibility(View.VISIBLE);
 
                     LogIn(email, password);
                 }
@@ -89,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            mLoginProgress.dismiss();
+
 
                             FirebaseInstanceId.getInstance().getInstanceId()
                                     .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -117,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
                         } else {
-                            mLoginProgress.hide();
+                            mprogressBar.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.
                             //Log.w(, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
