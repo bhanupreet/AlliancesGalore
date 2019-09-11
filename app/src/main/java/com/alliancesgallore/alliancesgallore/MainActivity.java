@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar appbar;
     private FirebaseAuth mAuth;
     private RelativeLayout layout;
-    private String url = "http://we-dpms.com/AGCRM/", email, password;
+    private String url = "http://we-dpms.com/AGCRM/", email, password,decrypted;
     private ProgressBar progressBar;
     private DatabaseReference mUserRef;
     private Toolbar mToolbar;
@@ -72,16 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         mainview.setWebChromeClient(new WebChromeClient() {
-            //            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(mainview, url);
-//                mainview.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
-//                        + email
-//                        + "';document.getElementsByName('password')[0].value='"
-//                        + password
-//                        + "';document.getElementsByTagName('form')[0].submit();})()");
-//                progressBar.setVisibility(View.INVISIBLE);
-//            }
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 progressBar.setProgress(progress);
@@ -104,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     mainview.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
                             + email
                             + "';document.getElementsByName('password')[0].value='"
-                            + password
+                            + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
                 }
             }
@@ -141,13 +132,21 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     email = dataSnapshot.child("email").getValue().toString();
                     password = dataSnapshot.child("password").getValue().toString();
+                    String encrypted = password;
+                     decrypted = "";
+                    try {
+                        decrypted = AESUtils.decrypt(encrypted);
+                        Log.d("TEST", "decrypted:" + decrypted);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     WebStorage.getInstance().deleteAllData();
                     mainview.loadUrl("javascript:(" +
                             "function(){" +
                             "document.getElementsByName('email')[0].value='"
                             + email
                             + "';document.getElementsByName('password')[0].value='"
-                            + password
+                            + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
                 }
 
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendToStart() {
-        Intent startIntent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();
     }

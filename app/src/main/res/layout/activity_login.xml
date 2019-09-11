@@ -92,7 +92,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:background="#00ffffff"
-        android:text="forgot password"
+        android:text="forgot password?"
         android:textColor="@color/colorAccent"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
