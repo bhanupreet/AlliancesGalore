@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -116,8 +117,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        mainview.loadUrl("http://we-dpms.com/AGCRM");
+
+        if(mainview.canGoBack()){
+        mainview.goBack();}
+        else{
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -148,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
                             + "';document.getElementsByName('password')[0].value='"
                             + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
+                    mainview.getSettings().setBuiltInZoomControls(true);
+                    mainview.getSettings().setDisplayZoomControls(false);
+                    mainview.getSettings().supportZoom();
                 }
 
                 @Override
@@ -225,4 +233,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDown Called");
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }
