@@ -3,6 +3,7 @@ package com.alliancesgalore.alliancesgalore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,11 +32,12 @@ public class MainActivity extends AppCompatActivity {
     private WebView mainview;
     private Toolbar appbar;
     private FirebaseAuth mAuth;
-    private RelativeLayout layout;
-    private String url = "http://we-dpms.com/AGCRM/", email, password, decrypted;
+    private CoordinatorLayout layout;
+    private String url = "http://we-dpms.com/AGCRM/", email, password,decrypted;
     private ProgressBar progressBar;
     private DatabaseReference mUserRef;
     private Toolbar mToolbar;
+    private NestedScrollWebView mainwebview;
 
 
     @Override
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
 
         password = getIntent().getStringExtra("password");
-       // layout = findViewById(R.id.mainlayout);
+        layout = findViewById(R.id.mainlayout);
         mToolbar = findViewById(R.id.mainappbar);
 
         setSupportActionBar(mToolbar);
@@ -54,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+
         progressBar = findViewById(R.id.mainprogress);
+
         progressBar.setVisibility(View.VISIBLE);
 
         mainview = findViewById(R.id.mainweb);
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             + "';document.getElementsByName('password')[0].value='"
                             + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
-                    if (mainview.getUrl().equals("http://we-dpms.com/AGCRM/admin_login")) {
+                    if(mainview.getUrl().equals("http://we-dpms.com/AGCRM/admin_login")){
                         mainview.stopLoading();
                     }
                 }
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 //        mainview.loadUrl("javascript:document.forms['Login'].submit()");
         appbar = findViewById(R.id.mainappbar);
         setSupportActionBar(appbar);
-        getSupportActionBar().setTitle("Alliances Galore");
+        getSupportActionBar().setTitle("Alliances Gallore");
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             mainview.loadUrl("http://we-dpms.com/AGCRM/admin_login");
@@ -112,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (mainview.canGoBack()) {
-            mainview.goBack();
-        } else {
+        if(mainview.canGoBack()){
+        mainview.goBack();}
+        else{
             super.onBackPressed();
         }
     }
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     email = dataSnapshot.child("email").getValue().toString();
                     password = dataSnapshot.child("password").getValue().toString();
                     String encrypted = password;
-                    decrypted = "";
+                     decrypted = "";
                     try {
                         decrypted = AESUtils.decrypt(encrypted);
                         Log.d("TEST", "decrypted:" + decrypted);
@@ -192,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
                         "document.getElementById('logout-form').submit();");
 
 
+
                 mainview.setWebChromeClient(new WebChromeClient() {
                     @Override
                     public void onProgressChanged(WebView view, int progress) {
@@ -211,7 +216,8 @@ public class MainActivity extends AppCompatActivity {
                             WebStorage.getInstance().deleteAllData();
                             startActivity(StartIntent);
 
-                        } else {
+                        }
+                        else{
                             progressBar.setVisibility(View.VISIBLE);
                         }
 
@@ -228,9 +234,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
