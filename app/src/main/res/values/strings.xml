@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">Alliances Gallore</string>
+    <string name="app_name">Alliances Galore</string>
     <string name="msg_token_fmt">msg token</string>
+    <string name="need_a_new_account">need a new Account?</string>
+    <string name="already_have_a_account">Already have a account?</string>
 </resources>

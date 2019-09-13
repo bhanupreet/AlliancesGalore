@@ -1,11 +1,9 @@
-package com.alliancesgallore.alliancesgallore;
+package com.alliancesgalore.alliancesgalore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,14 +11,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.Credentials;
+import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,8 +53,15 @@ public class LoginActivity extends AppCompatActivity {
         mLoginToolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(mLoginToolbar);
         getSupportActionBar().setTitle("Login");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mForgotPasswordbtn = findViewById(R.id.forgotpasswordbtn);
 
+
+        final CredentialsClient mCredentialsClient;
+
+// ...
+
+        mCredentialsClient = Credentials.getClient(this);
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +72,10 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                   mprogressBar.setVisibility(View.VISIBLE);
 
+                    Credential credential = new Credential.Builder(email)
+                            .setPassword(password).build();
                     LogIn(email, password);
+                    mCredentialsClient.save(credential);
                 }
             }
         });
@@ -78,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 //                startActivity(PasswordIntent);
             }
         });
+
 
     }
 

@@ -1,4 +1,4 @@
-package com.alliancesgallore.alliancesgallore;
+package com.alliancesgalore.alliancesgalore;
 
 import android.app.Application;
 

@@ -12,7 +12,7 @@
         android:id="@+id/logoimage"
         android:layout_margin="10dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/logo1v"/>
+        android:src="@drawable/web_hi_res_512"/>
     <Button
         android:id="@+id/start_reg_button"
         android:layout_width="250dp"
@@ -21,7 +21,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="53dp"
         android:backgroundTint="@android:color/white"
-        android:text="need a new Account"
+        android:text="@string/need_a_new_account"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp" />
 
@@ -33,7 +33,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="124dp"
         android:backgroundTint="@color/colorAccent"
-        android:text="Already have a account"
+        android:text="@string/already_have_a_account"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 </RelativeLayout>

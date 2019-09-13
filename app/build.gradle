@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.alliancesgallore.alliancesgallore"
+        applicationId "com.alliancesgalore.alliancesgalore"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.0.0'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

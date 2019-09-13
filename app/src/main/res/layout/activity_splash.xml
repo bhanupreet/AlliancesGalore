@@ -8,7 +8,19 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/logo1v"
+        android:layout_margin="75dp"
+        android:id="@+id/splashimage"
+        android:src="@drawable/web_hi_res_512"
         android:layout_centerInParent="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/splashimage"
+        android:text="Alliances Galore"
+        android:layout_marginTop="-200dp"
+        android:textSize="30sp"
+        android:textStyle="italic"
+        android:textColor="#212121"/>
 
 </RelativeLayout>
