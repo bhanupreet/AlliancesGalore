@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -37,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private ProgressDialog mregProgress;
     private DatabaseReference mDatabase;
+    private CredentialsClient mCredentialsClient;
 
 
     @Override
@@ -78,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void registeruser(String email, final String password) {
+    private void registeruser(final String email, final String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

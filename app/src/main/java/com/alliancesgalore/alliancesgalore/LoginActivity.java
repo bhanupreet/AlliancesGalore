@@ -74,8 +74,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     Credential credential = new Credential.Builder(email)
                             .setPassword(password).build();
-                    LogIn(email, password);
                     mCredentialsClient.save(credential);
+                    LogIn(email, password);
+
                 }
             }
         });
@@ -83,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
         mForgotPasswordbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent PasswordIntent = new Intent(LoginActivity.this,ForgotPsasswordActivity.class);
-//                startActivity(PasswordIntent);
+                Intent PasswordIntent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
+                startActivity(PasswordIntent);
             }
         });
 

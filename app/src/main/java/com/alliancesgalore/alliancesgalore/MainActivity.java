@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar appbar;
     private FirebaseAuth mAuth;
     private CoordinatorLayout layout;
-    private String url = "http://we-dpms.com/AGCRM/", email, password,decrypted;
+    private String url = "http://we-dpms.com/AGCRM/", email, password, decrypted;
     private ProgressBar progressBar;
     private DatabaseReference mUserRef;
     private Toolbar mToolbar;
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         mainview.getSettings().setSupportZoom(true);
 
 
+
         mainview.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int progress) {
@@ -83,42 +84,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mainview.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(mainview, url);
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                    mainview.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
-                            + email
-                            + "';document.getElementsByName('password')[0].value='"
-                            + decrypted
-                            + "';document.getElementsByTagName('form')[0].submit();})()");
-                    if(mainview.getUrl().equals("http://we-dpms.com/AGCRM/admin_login")){
-                        mainview.stopLoading();
+
+            mainview.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(mainview, url);
+                    if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                        mainview.loadUrl(url);
+                        mainview.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
+                                + email
+                                + "';document.getElementsByName('password')[0].value='"
+                                + decrypted
+                                + "';document.getElementsByTagName('form')[0].submit();})()");
+                        email = null;
+                        password = null;
                     }
                 }
-            }
-        });
+            });
 
-//        mainview.loadUrl("javascript:document.getElementsByName('_token').value = 'nLjTd6LXEKI8Bc5QzvRHhs4J4SuKSckNGkgFCzQS'");
-//        mainview.loadUrl("javascript:document.forms['Login'].submit()");
+
         appbar = findViewById(R.id.mainappbar);
         setSupportActionBar(appbar);
-        getSupportActionBar().setTitle("Alliances Gallore");
+        getSupportActionBar().setTitle("Alliances Galore");
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            mainview.loadUrl("http://we-dpms.com/AGCRM/admin_login");
-        } else {
-            mainview.loadUrl(url);
-        }
     }
 
     @Override
     public void onBackPressed() {
 
-        if(mainview.canGoBack()){
-        mainview.goBack();}
-        else{
+        if (mainview.canGoBack()) {
+            mainview.goBack();
+        } else {
             super.onBackPressed();
         }
     }
@@ -136,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                     email = dataSnapshot.child("email").getValue().toString();
                     password = dataSnapshot.child("password").getValue().toString();
                     String encrypted = password;
-                     decrypted = "";
+                    decrypted = "";
                     try {
                         decrypted = AESUtils.decrypt(encrypted);
                         Log.d("TEST", "decrypted:" + decrypted);
@@ -144,20 +140,26 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WebStorage.getInstance().deleteAllData();
-                    mainview.loadUrl("javascript:(" +
-                            "function(){" +
-                            "document.getElementsByName('email')[0].value='"
-                            + email
-                            + "';document.getElementsByName('password')[0].value='"
-                            + decrypted
-                            + "';document.getElementsByTagName('form')[0].submit();})()");
-                    mainview.getSettings().setBuiltInZoomControls(true);
-                    mainview.getSettings().setDisplayZoomControls(false);
-                    mainview.getSettings().supportZoom();
-                    mainview.setInitialScale(50);
-                    mainview.getSettings().setLoadWithOverviewMode(true);
-                    mainview.getSettings().setUseWideViewPort(true);
-                }
+
+                        mainview.loadUrl(url);
+                        if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                            mainview.loadUrl("javascript:(" +
+                                    "function(){" +
+                                    "document.getElementsByName('email')[0].value='"
+                                    + email
+                                    + "';document.getElementsByName('password')[0].value='"
+                                    + decrypted
+                                    + "';document.getElementsByTagName('form')[0].submit();})()");
+
+                            mainview.getSettings().setBuiltInZoomControls(true);
+                            mainview.getSettings().setDisplayZoomControls(false);
+                            mainview.getSettings().supportZoom();
+                            mainview.getSettings().setLoadWithOverviewMode(true);
+                            mainview.getSettings().setUseWideViewPort(true);
+
+                        }
+                    }
+
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -194,8 +196,10 @@ public class MainActivity extends AppCompatActivity {
 
                 mainview.loadUrl("javascript:" +
                         "document.getElementById('logout-form').submit();");
-
-
+                Intent StartIntent = new Intent(MainActivity.this, StartActivity.class);
+                FirebaseAuth.getInstance().signOut();
+                WebStorage.getInstance().deleteAllData();
+                startActivity(StartIntent);
 
                 mainview.setWebChromeClient(new WebChromeClient() {
                     @Override
@@ -211,13 +215,9 @@ public class MainActivity extends AppCompatActivity {
 //
                             mainview.stopLoading();
 
-                            Intent StartIntent = new Intent(MainActivity.this, StartActivity.class);
-                            FirebaseAuth.getInstance().signOut();
-                            WebStorage.getInstance().deleteAllData();
-                            startActivity(StartIntent);
 
-                        }
-                        else{
+
+                        } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
 
@@ -234,8 +234,9 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
