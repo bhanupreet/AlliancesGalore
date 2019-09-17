@@ -1,11 +1,11 @@
 package com.alliancesgalore.alliancesgalore;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -21,7 +21,7 @@ public class StartActivity extends AppCompatActivity {
         mRegBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent reg_intent = new Intent(StartActivity.this,RegisterActivity.class);
+                Intent reg_intent = new Intent(StartActivity.this, RegisterActivity.class);
                 startActivity(reg_intent);
             }
         });
@@ -30,7 +30,7 @@ public class StartActivity extends AppCompatActivity {
         mLoginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent login_intent = new Intent(StartActivity.this,LoginActivity.class);
+                Intent login_intent = new Intent(StartActivity.this, LoginActivity.class);
                 startActivity(login_intent);
             }
         });

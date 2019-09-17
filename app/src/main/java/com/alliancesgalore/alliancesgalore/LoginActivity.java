@@ -1,9 +1,5 @@
 package com.alliancesgalore.alliancesgalore;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,6 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.Credentials;
@@ -27,7 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import static com.google.firebase.FirebaseApp.initializeApp;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                     Toast.makeText(LoginActivity.this, "Email or Password cannot be left blank", Toast.LENGTH_SHORT).show();
                 } else {
-                  mprogressBar.setVisibility(View.VISIBLE);
+                    mprogressBar.setVisibility(View.VISIBLE);
 
                     Credential credential = new Credential.Builder(email)
                             .setPassword(password).build();
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         mForgotPasswordbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent PasswordIntent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
+                Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(PasswordIntent);
             }
         });
@@ -130,7 +130,13 @@ public class LoginActivity extends AppCompatActivity {
                             mprogressBar.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.
                             //Log.w(, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+//                            Snackbar snackbar = Snackbar
+//                                    .make(getWindow().getDecorView().getRootView(),
+//                                            Objects.requireNonNull(task.getException()).getMessage(),
+//                                            Snackbar.LENGTH_LONG);
+//                            snackbar.show();
+                            Toast.makeText(LoginActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                             //updateUI(null);
                         }
                     }

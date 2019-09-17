@@ -10,7 +10,7 @@ import androidx.core.view.NestedScrollingChildHelper
 
 class NestedScrollWebView constructor(
         context: Context,
-        attrs: AttributeSet): WebView(context, attrs), NestedScrollingChild2 {
+        attrs: AttributeSet) : WebView(context, attrs), NestedScrollingChild2 {
 
     private var lastMotionY = 0
     private var nestedYOffset = 0
@@ -64,7 +64,8 @@ class NestedScrollWebView constructor(
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> stopNestedScroll()
 
-            else -> { }
+            else -> {
+            }
         }
 
         return super.onTouchEvent(event)

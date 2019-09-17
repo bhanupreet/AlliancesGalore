@@ -1,9 +1,5 @@
 package com.alliancesgalore.alliancesgalore;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.credentials.Credential;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,6 +26,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -129,8 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                             startActivity(mainIntent);
                                                             finish();
                                                         } else {
-                                                            Toast.makeText(RegisterActivity.this, "There was an error while registering user.", Toast.LENGTH_SHORT).show();
-                                                        }
+                                                            Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();                                                        }
 
                                                     }
                                                 });
@@ -145,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
 //
                         } else {
                             mregProgress.hide();
-                            Toast.makeText(RegisterActivity.this, "There was an error while registering user.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
 
                         }
                     }
