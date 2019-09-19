@@ -52,9 +52,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        email = getIntent().getStringExtra("email");
 
-        password = getIntent().getStringExtra("password");
+        //getting email password
+//        email = getIntent().getStringExtra("email");
+//        password = getIntent().getStringExtra("password");
+//        //
+
         layout = findViewById(R.id.mainlayout);
         mToolbar = findViewById(R.id.mainappbar);
 
@@ -63,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-
         progressBar = findViewById(R.id.mainprogress);
-
         progressBar.setVisibility(View.VISIBLE);
 
         mainview = findViewById(R.id.mainweb);
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         mainview.getSettings().setJavaScriptEnabled(true);
         mainview.getSettings().supportMultipleWindows();
         mainview.getSettings().setSupportZoom(true);
-
 
         mainview.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -145,6 +145,10 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WebStorage.getInstance().deleteAllData();
+                    mainview.clearHistory();
+                    mainview.clearFormData();
+                    mainview.clearCache(true);
+                    android.webkit.CookieManager.getInstance().removeAllCookie();
 
                     mainview.loadUrl(url);
                     if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
@@ -214,9 +218,7 @@ public class MainActivity extends AppCompatActivity {
                             mainview.clearFormData();
                             mainview.clearCache(true);
                             android.webkit.CookieManager.getInstance().removeAllCookie();
-//
                             mainview.stopLoading();
-
 
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
@@ -247,10 +249,9 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
 
-                                                if(task.isSuccessful()){
-                                                    Toast.makeText(MainActivity.this,"Account Deleted Successfully",Toast.LENGTH_LONG).show();
-                                                }
-                                                else {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(MainActivity.this, "Account Deleted Successfully", Toast.LENGTH_LONG).show();
+                                                } else {
                                                     Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
 
                                                 }
@@ -275,6 +276,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
+        if(item.getItemId() == R.id.change_password_btn){
+            Intent changepasswordintent = new Intent(MainActivity.this,ChangePasswordActivity.class);
+            startActivity(changepasswordintent);
+            finish();
+        }
         //delete accountbtn
         return true;
     }

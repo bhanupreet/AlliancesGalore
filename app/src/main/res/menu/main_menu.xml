@@ -8,4 +8,7 @@
     <item
         android:id="@+id/main_delete_account_btn"
         android:title="Delete Acoount?"/>
+    <item
+        android:id="@+id/change_password_btn"
+        android:title="Change password"/>
 </menu>
