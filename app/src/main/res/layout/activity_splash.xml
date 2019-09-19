@@ -20,7 +20,6 @@
         android:text="Alliances Galore"
         android:layout_marginTop="-200dp"
         android:textSize="30sp"
-        android:textStyle="italic"
         android:textColor="#212121"/>
 
 </RelativeLayout>

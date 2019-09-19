@@ -24,6 +24,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private DatabaseReference mUserRef;
     private Toolbar mToolbar;
+    private FloatingActionButton mChat;
     private NestedScrollWebView mainwebview;
 
 
@@ -58,8 +60,20 @@ public class MainActivity extends AppCompatActivity {
 //        password = getIntent().getStringExtra("password");
 //        //
 
+
+        mChat = findViewById(R.id.chatbutton);
         layout = findViewById(R.id.mainlayout);
         mToolbar = findViewById(R.id.mainappbar);
+
+        mChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+                if (launchIntent != null) {
+                    startActivity(launchIntent);//null pointer check in case package name was not found
+                }
+            }
+        });
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("CRM");
@@ -74,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         mainview.getSettings().setJavaScriptEnabled(true);
         mainview.getSettings().supportMultipleWindows();
         mainview.getSettings().setSupportZoom(true);
+        mainview.clearHistory();
+        mainview.clearFormData();
+        mainview.clearCache(true);
+        android.webkit.CookieManager.getInstance().removeAllCookie();
 
         mainview.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -145,10 +163,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WebStorage.getInstance().deleteAllData();
-                    mainview.clearHistory();
-                    mainview.clearFormData();
-                    mainview.clearCache(true);
-                    android.webkit.CookieManager.getInstance().removeAllCookie();
+
 
                     mainview.loadUrl(url);
                     if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {

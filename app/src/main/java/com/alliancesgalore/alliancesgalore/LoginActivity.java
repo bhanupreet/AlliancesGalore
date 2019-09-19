@@ -56,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mForgotPasswordbtn = findViewById(R.id.forgotpasswordbtn);
 
-
         final CredentialsClient mCredentialsClient;
 
 // ...
