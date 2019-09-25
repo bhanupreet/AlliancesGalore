@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 String uid = current_user.getUid();
                                 mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-                                String encrypted = encrypt(password);
+                                String encrypted = Functions.encrypt(password);
                                 getrole();
 
                                 final HashMap<String, String> userMap = new HashMap<>();
@@ -141,16 +141,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private String encrypt(String decrypted) {
-        String encrypted = "";
-        try {
-            encrypted = AESUtils.encrypt(decrypted);
-            Log.d("TEST", "encrypted:" + encrypted);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encrypted;
-    }
+
 
     private void updatedatabase(HashMap<String, String> userMap) {
         mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

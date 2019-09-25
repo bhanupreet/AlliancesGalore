@@ -116,6 +116,8 @@ public class MainActivityold extends AppCompatActivity {
         mainview.clearCache(true);
         android.webkit.CookieManager.getInstance().removeAllCookie();
 
+
+
         mainview.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int progress) {
@@ -235,99 +237,99 @@ public class MainActivityold extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-
-        if (item.getItemId() == R.id.main_logout_btn) {
-
-
-            if (mAuth.getCurrentUser() != null) {
-
-                mainview.loadUrl("javascript:document.getElementById('logout-form').submit();");
-                Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
-                FirebaseAuth.getInstance().signOut();
-                WebStorage.getInstance().deleteAllData();
-                startActivity(StartIntent);
-
-                mainview.setWebChromeClient(new WebChromeClient() {
-                    @Override
-                    public void onProgressChanged(WebView view, int progress) {
-                        progressBar.setProgress(progress);
-                        if (progress == 100) {
-                            progressBar.setVisibility(View.GONE);
-
-                            mainview.clearHistory();
-                            mainview.clearFormData();
-                            mainview.clearCache(true);
-                            android.webkit.CookieManager.getInstance().removeAllCookie();
-                            mainview.stopLoading();
-
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                });
-            }
-        }
-        if (item.getItemId() == R.id.main_delete_account_btn) {
-
-            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivityold.this);
-            alert.setTitle("Delete Account");
-            alert.setMessage("Are you sure you want to delete the Account?");
-
-            alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    user.delete()
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
-                                        FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(MainActivityold.this, "Account Deleted Successfully", Toast.LENGTH_LONG).show();
-                                                } else {
-                                                    Toast.makeText(MainActivityold.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
-
-                                                }
-                                                progressBar.setVisibility(View.INVISIBLE);
-                                            }
-                                        });
-                                        startActivity(StartIntent);
-                                    }
-                                }
-                            });
-                }
-            });
-
-            alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            });
-
-            alert.show();
-
-        }
-
-
-        if (item.getItemId() == R.id.change_password_btn) {
-            Intent changepasswordintent = new Intent(MainActivityold.this, ChangePasswordActivity.class);
-            startActivity(changepasswordintent);
-            finish();
-        }
-        //delete accountbtn
-        return true;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        super.onOptionsItemSelected(item);
+//
+//        if (item.getItemId() == R.id.main_logout_btn) {
+//
+//
+//            if (mAuth.getCurrentUser() != null) {
+//
+//                mainview.loadUrl("javascript:document.getElementById('logout-form').submit();");
+//                Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
+//                FirebaseAuth.getInstance().signOut();
+//                WebStorage.getInstance().deleteAllData();
+//                startActivity(StartIntent);
+//
+//                mainview.setWebChromeClient(new WebChromeClient() {
+//                    @Override
+//                    public void onProgressChanged(WebView view, int progress) {
+//                        progressBar.setProgress(progress);
+//                        if (progress == 100) {
+//                            progressBar.setVisibility(View.GONE);
+//
+//                            mainview.clearHistory();
+//                            mainview.clearFormData();
+//                            mainview.clearCache(true);
+//                            android.webkit.CookieManager.getInstance().removeAllCookie();
+//                            mainview.stopLoading();
+//
+//                        } else {
+//                            progressBar.setVisibility(View.VISIBLE);
+//                        }
+//                    }
+//
+//                });
+//            }
+//        }
+//        if (item.getItemId() == R.id.main_delete_account_btn) {
+//
+//            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivityold.this);
+//            alert.setTitle("Delete Account");
+//            alert.setMessage("Are you sure you want to delete the Account?");
+//
+//            alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                    user.delete()
+//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
+//                                        FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                            @Override
+//                                            public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                if (task.isSuccessful()) {
+//                                                    Toast.makeText(MainActivityold.this, "Account Deleted Successfully", Toast.LENGTH_LONG).show();
+//                                                } else {
+//                                                    Toast.makeText(MainActivityold.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+//
+//                                                }
+//                                                progressBar.setVisibility(View.INVISIBLE);
+//                                            }
+//                                        });
+//                                        startActivity(StartIntent);
+//                                    }
+//                                }
+//                            });
+//                }
+//            });
+//
+//            alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    dialogInterface.cancel();
+//                }
+//            });
+//
+//            alert.show();
+//
+//        }
+//
+//
+//        if (item.getItemId() == R.id.change_password_btn) {
+//            Intent changepasswordintent = new Intent(MainActivityold.this, ChangePasswordActivity.class);
+//            startActivity(changepasswordintent);
+//            finish();
+//        }
+//        //delete accountbtn
+//        return true;
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

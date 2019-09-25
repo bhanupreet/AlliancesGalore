@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Activities.MainActivity">
 
-    <include layout="@layout/custom_app_bar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:id="@+id/main_app_bar"
-        android:layout_height="wrap_content"/>
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:minHeight="?actionBarSize"
-        app:tabGravity="fill"
-        android:id="@+id/main_tablayout"
-        app:tabIndicatorColor="#ffffff"
-        app:tabIndicatorHeight="4dp"
-        app:tabTextColor="#ffffff"
-        app:tabBackground="@color/colorPrimary"
-        app:tabMode="fixed"
-        android:layout_height="wrap_content"/>
-    <androidx.viewpager.widget.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/main_viewpager"/>
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/main_app_bar"
+            app:titleTextColor="#ffffff"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/main_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMaxWidth="0dp"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@android:color/white"
+            android:backgroundTint="@android:color/white"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
