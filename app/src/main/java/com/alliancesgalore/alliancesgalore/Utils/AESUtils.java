@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore
+package com.alliancesgalore.alliancesgalore.Utils
 
 import android.content.Context
 import android.util.AttributeSet

@@ -1,5 +1,6 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
+import com.alliancesgalore.alliancesgalore.Utils.NestedScrollWebView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,9 +37,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivityold extends AppCompatActivity {
+
+    private List<String> xyz;
+
+    public  int count = 0;
 
     private WebView mainview;
     private Toolbar appbar;
@@ -58,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         //getting email password
 //        email = getIntent().getStringExtra("email");
 //        password = getIntent().getStringExtra("password");
+//        String encrypted = password;
+//        decrypted = "";
+//        try {
+//            decrypted = AESUtils.decrypt(encrypted);
+//            Log.d("TEST", "decrypted:" + decrypted);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        //
 
 
@@ -68,10 +85,16 @@ public class MainActivity extends AppCompatActivity {
         mChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
-                if (launchIntent != null) {
-                    startActivity(launchIntent);//null pointer check in case package name was not found
+                try {
+                    launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
+                    startActivity(launchIntent);
                 }
+                catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -108,20 +131,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+//
+
         mainview.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(mainview, url);
+
                 if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                    mainview.loadUrl(url);
                     mainview.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
                             + email
                             + "';document.getElementsByName('password')[0].value='"
                             + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
-                    email = null;
-                    password = null;
+                    count++;
+                    if(count>1)
+                    {
+                        email = null;
+                        password = null;
+                    }
+
                 }
+                super.onPageFinished(mainview, url);
             }
         });
 
@@ -130,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(appbar);
         getSupportActionBar().setTitle("Alliances Galore");
 
+        if (savedInstanceState == null) {
+            mainview.loadUrl(url);
+        }
     }
 
     @Override
@@ -163,10 +196,8 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WebStorage.getInstance().deleteAllData();
-
-
                     mainview.loadUrl(url);
-                    if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                    if (!TextUtils.isEmpty(email)) {
                         mainview.loadUrl("javascript:(" +
                                 "function(){" +
                                 "document.getElementsByName('email')[0].value='"
@@ -180,21 +211,18 @@ public class MainActivity extends AppCompatActivity {
                         mainview.getSettings().supportZoom();
                         mainview.getSettings().setLoadWithOverviewMode(true);
                         mainview.getSettings().setUseWideViewPort(true);
-
                     }
                 }
 
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
         }
     }
 
     private void sendToStart() {
-        Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
+        Intent startIntent = new Intent(MainActivityold.this, StartActivity.class);
         startActivity(startIntent);
         finish();
     }
@@ -217,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             if (mAuth.getCurrentUser() != null) {
 
                 mainview.loadUrl("javascript:document.getElementById('logout-form').submit();");
-                Intent StartIntent = new Intent(MainActivity.this, StartActivity.class);
+                Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
                 FirebaseAuth.getInstance().signOut();
                 WebStorage.getInstance().deleteAllData();
                 startActivity(StartIntent);
@@ -245,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.main_delete_account_btn) {
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivityold.this);
             alert.setTitle("Delete Account");
             alert.setMessage("Are you sure you want to delete the Account?");
 
@@ -259,15 +287,15 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Intent StartIntent = new Intent(MainActivity.this, StartActivity.class);
+                                        Intent StartIntent = new Intent(MainActivityold.this, StartActivity.class);
                                         FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
 
                                                 if (task.isSuccessful()) {
-                                                    Toast.makeText(MainActivity.this, "Account Deleted Successfully", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(MainActivityold.this, "Account Deleted Successfully", Toast.LENGTH_LONG).show();
                                                 } else {
-                                                    Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(MainActivityold.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
 
                                                 }
                                                 progressBar.setVisibility(View.INVISIBLE);
@@ -292,8 +320,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if(item.getItemId() == R.id.change_password_btn){
-            Intent changepasswordintent = new Intent(MainActivity.this,ChangePasswordActivity.class);
+        if (item.getItemId() == R.id.change_password_btn) {
+            Intent changepasswordintent = new Intent(MainActivityold.this, ChangePasswordActivity.class);
             startActivity(changepasswordintent);
             finish();
         }
@@ -312,5 +340,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState )
+    {
+        super.onSaveInstanceState(outState);
+        mainview.saveState(outState);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        mainview.restoreState(savedInstanceState);
+    }
 }

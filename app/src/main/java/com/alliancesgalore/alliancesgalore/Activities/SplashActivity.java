@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,8 +6,10 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alliancesgalore.alliancesgalore.R;
+
 public class SplashActivity extends AppCompatActivity {
-    private static int SPLASH_TIME_OUT = 2000;
+    private static int SPLASH_TIME_OUT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                Intent i = new Intent(SplashActivity.this, StartActivity.class);
                 startActivity(i);
 
                 // close this activity

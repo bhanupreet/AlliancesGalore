@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.alliancesgalore.alliancesgalore.R;
 
 public class StartActivity extends AppCompatActivity {
 

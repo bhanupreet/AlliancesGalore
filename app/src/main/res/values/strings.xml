@@ -3,4 +3,16 @@
     <string name="msg_token_fmt">msg token</string>
     <string name="need_a_new_account">need a new Account?</string>
     <string name="already_have_a_account">Already have a account?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+        <string-array name="position">
+            <item>Select One</item>
+            <item>Manager</item>
+            <item>Team Leader</item>
+            <item>Executive</item>
+
+
+        </string-array>
 </resources>

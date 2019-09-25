@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -6,13 +6,19 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,13 +40,14 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout mEmail;
     private TextInputLayout mPassword;
     private Button mCreateBtn;
-    private String Email, password;
+    private String Email, password, role, display_name, token;
     private FirebaseAuth mAuth;
     private Toolbar mToolbar;
     private ProgressDialog mregProgress;
     private DatabaseReference mDatabase;
     private CredentialsClient mCredentialsClient;
-
+    private Spinner mSpinner;
+    private int level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +58,10 @@ public class RegisterActivity extends AppCompatActivity {
         mEmail = findViewById(R.id.reg_email);
         mPassword = findViewById(R.id.reg_password);
         mCreateBtn = findViewById(R.id.reg_create_btn);
+        mDisplayname = findViewById(R.id.reg_displayname);
+        mSpinner = findViewById(R.id.reg_spinner);
 
         mregProgress = new ProgressDialog(this);
-
 
         mToolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(mToolbar);
@@ -63,11 +71,11 @@ public class RegisterActivity extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  String display_name = mDisplayname.getEditText().getText().toString();
+                display_name = mDisplayname.getEditText().getText().toString();
                 Email = mEmail.getEditText().getText().toString();
                 password = mPassword.getEditText().getText().toString();
 
-                if (TextUtils.isEmpty(Email) || TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(Email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(display_name) || mSpinner.getSelectedItem().equals("Select One")) {
                     Toast.makeText(RegisterActivity.this, "Field  cannot be left blank", Toast.LENGTH_SHORT).show();
                 } else {
                     mregProgress.setTitle("Registering user");
@@ -79,6 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.position, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(adapter);
+
     }
 
     private void registeruser(final String email, final String password) {
@@ -88,66 +100,91 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-
                             if (current_user != null) {
+
 
                                 String uid = current_user.getUid();
                                 mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                                String encrypted = encrypt(password);
+                                getrole();
 
                                 final HashMap<String, String> userMap = new HashMap<>();
                                 userMap.put("email", Email);
-                                String encrypted = "";
-                                String sourceStr = password;
-                                try {
-                                    encrypted = AESUtils.encrypt(sourceStr);
-                                    Log.d("TEST", "encrypted:" + encrypted);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                userMap.put("password",encrypted);
+                                userMap.put("password", encrypted);
+                                userMap.put("display_name", display_name);
+                                userMap.put("image", "default");
+                                userMap.put("role", role);
+                                userMap.put("level", String.valueOf(level));
+
+
                                 FirebaseInstanceId.getInstance().getInstanceId()
                                         .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                             @Override
                                             public void onComplete(@NonNull Task<InstanceIdResult> task) {
                                                 if (!task.isSuccessful()) {
-                                                    Log.w("tag1", "getInstanceId failed", task.getException());
+                                                    Log.w("tag", "getInstanceId failed", task.getException());
                                                     return;
                                                 }
-
                                                 // Get new Instance ID token
                                                 String token = task.getResult().getToken();
-                                                FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                                                 userMap.put("TokenID", token);
-                                                // Log and toast
-                                                mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            mregProgress.dismiss();
-                                                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                                            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                            startActivity(mainIntent);
-                                                            finish();
-                                                        } else {
-                                                            Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();                                                        }
 
-                                                    }
-                                                });
-
-                                               // String msg = getString(R.string.msg_token_fmt, token);
-                                              //  Log.d("tag1", msg);
-                                                //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                updatedatabase(userMap);
                                             }
                                         });
-
                             }
-//
                         } else {
                             mregProgress.hide();
-                            Toast.makeText(RegisterActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-
+                            Functions.toast(task);
                         }
                     }
                 });
     }
+
+    private String encrypt(String decrypted) {
+        String encrypted = "";
+        try {
+            encrypted = AESUtils.encrypt(decrypted);
+            Log.d("TEST", "encrypted:" + encrypted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encrypted;
+    }
+
+    private void updatedatabase(HashMap<String, String> userMap) {
+        mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    mregProgress.dismiss();
+                    Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(mainIntent);
+                    finish();
+                } else {
+                    Functions.toast(task);
+                }
+            }
+        });
+    }
+
+    private void getrole() {
+        role = mSpinner.getSelectedItem().toString();
+        switch (role.toLowerCase()) {
+            case "manager":
+                level = 10;
+                break;
+            case "team leader":
+                level = 20;
+                break;
+            case "executive":
+                level = 30;
+                break;
+            default:
+                level = 0;
+
+        }
+    }
+
 }

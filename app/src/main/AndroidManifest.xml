@@ -12,26 +12,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ChangePasswordActivity"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".Activities.MainActivity"></activity>
         <activity
-            android:name=".ForgotPasswordActivity"
-            android:parentActivityName=".LoginActivity" />
+            android:name=".Activities.ChangePasswordActivity"
+            android:parentActivityName=".Activities.MainActivityold" />
         <activity
-            android:name=".RegisterActivity"
-            android:parentActivityName=".StartActivity" />
-        <activity android:name=".StartActivity" />
+            android:name=".Activities.ForgotPasswordActivity"
+            android:parentActivityName=".Activities.LoginActivity" />
         <activity
-            android:name=".LoginActivity"
-            android:parentActivityName=".StartActivity" />
-        <activity android:name=".SplashActivity">
+            android:name=".Activities.RegisterActivity"
+            android:parentActivityName=".Activities.StartActivity" />
+        <activity android:name=".Activities.StartActivity" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:parentActivityName=".Activities.StartActivity" />
+        <activity android:name=".Activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".Activities.MainActivityold"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

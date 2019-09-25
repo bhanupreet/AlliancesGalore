@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.Credentials;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
@@ -117,7 +120,15 @@ public class LoginActivity extends AppCompatActivity {
                                                 public void onSuccess(Void aVoid) {
                                                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                                     mainIntent.putExtra("email", email);
-                                                    mainIntent.putExtra("password", password);
+                                                    String encrypted = "";
+                                                    String sourceStr = password;
+                                                    try {
+                                                        encrypted = AESUtils.encrypt(sourceStr);
+                                                        Log.d("TEST", "encrypted:" + encrypted);
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    mainIntent.putExtra("password", encrypted);
                                                     mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     startActivity(mainIntent);
                                                     finish();
@@ -127,15 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                                     });
                         } else {
                             mprogressBar.setVisibility(View.GONE);
-                            // If sign in fails, display a message to the user.
-                            //Log.w(, "signInWithEmail:failure", task.getException());
-
-//                            Snackbar snackbar = Snackbar
-//                                    .make(getWindow().getDecorView().getRootView(),
-//                                            Objects.requireNonNull(task.getException()).getMessage(),
-//                                            Snackbar.LENGTH_LONG);
-//                            snackbar.show();
-                            Toast.makeText(LoginActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                            Functions.toast(task);
                             //updateUI(null);
                         }
                     }

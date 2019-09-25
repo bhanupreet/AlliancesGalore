@@ -1,23 +1,23 @@
-package com.alliancesgalore.alliancesgalore;
+package com.alliancesgalore.alliancesgalore.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -55,7 +55,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivityold.class);
                 mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(mainIntent);
             }
@@ -85,7 +85,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (!task.isSuccessful()) {
-                                            Toast.makeText(ChangePasswordActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                            Functions.toast(task);
                                         } else {
                                             String encrypted = encrypt(newPassword);
                                             FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid()).child("password").setValue(encrypted).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -93,13 +93,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Toast.makeText(ChangePasswordActivity.this, "Password changed successfully!", Toast.LENGTH_LONG).show();
-                                                        Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                                                        Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivityold.class);
                                                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                         startActivity(mainIntent);
                                                     } else {
                                                         dialogbox();
-                                                        Toast.makeText(ChangePasswordActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
-                                                    }
+                                                        Functions.toast(task);                                                    }
 //                                                    mProgressbar.setVisibility(View.INVISIBLE);
                                                 }
                                             });
@@ -153,7 +152,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                     Toast.makeText(ChangePasswordActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
                                     dialogBuilder.dismiss();
                                 } else {
-                                    Toast.makeText(ChangePasswordActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                    Functions.toast(task);
                                 }
                                 mProgressbar.setVisibility(View.INVISIBLE);
 
@@ -165,7 +164,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // DO SOMETHINGS
-                Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(ChangePasswordActivity.this, MainActivityold.class);
                 mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(mainIntent);
                 dialogBuilder.dismiss();
