@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void settings() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        settingsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(settingsIntent);
     }
 
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_settings_btn:
                 settings();
                 break;
+
         }
         return true;
     }

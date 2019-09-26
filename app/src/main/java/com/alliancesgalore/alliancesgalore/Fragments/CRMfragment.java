@@ -34,7 +34,7 @@ import kotlin.Function;
 public class CRMfragment extends Fragment {
 
     public int count = 0;
-
+    Bundle savedInstanceStateout = null;
     private WebView crmweb;
     private ProgressBar progressBar;
     private String email, password, decrypted;
@@ -134,6 +134,8 @@ public class CRMfragment extends Fragment {
         if (savedInstanceState == null) {
             crmweb.loadUrl(url);
         }
+        else
+            crmweb.restoreState(savedInstanceState);
     }
 
     @Override
@@ -145,14 +147,15 @@ public class CRMfragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        count = 0;
+        getemailpass();
+        login();
         crmweb.restoreState(savedInstanceState);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        getemailpass();
-
     }
 
     @Override
@@ -171,8 +174,10 @@ public class CRMfragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getemailpass();
-        login();
+        count = 0;
+        if (savedInstanceStateout != null) {
+            crmweb.restoreState(savedInstanceStateout);
+        }
     }
 
     private ValueEventListener getemailpassEventListener = new ValueEventListener() {
@@ -208,5 +213,11 @@ public class CRMfragment extends Fragment {
             return true;
         else
             return false;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        crmweb.restoreState(savedInstanceState);
     }
 }

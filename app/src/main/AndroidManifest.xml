@@ -12,9 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.SettingsActivity"></activity>
+        <activity android:name=".Activities.SettingsActivity"
+            android:parentActivityName=".Activities.MainActivity"></activity>
         <activity
             android:name=".Activities.MainActivity"
+            android:persistent="true"
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".Activities.ChangePasswordActivity"
