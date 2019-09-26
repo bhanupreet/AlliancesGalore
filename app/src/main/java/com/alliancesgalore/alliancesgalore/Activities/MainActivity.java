@@ -45,15 +45,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_new);
+        FindIds();
+        SetToolBar();
+        Tabadapter();
+    }
 
+    private void FindIds() {
         mViewPager = findViewById(R.id.main_viewpager);
         mTabLayout = findViewById(R.id.main_tablayout);
         mToolbar = findViewById(R.id.main_app_bar);
+    }
 
+    private void SetToolBar() {
         setmToolbar(mToolbar, " Alliances Galore", R.mipmap.ic_launcher);
+    }
 
+    private void Tabadapter() {
         adapter = new MainActivityAdapter(getSupportFragmentManager());
-
         adapter.addFragment(new CRMfragment(), "CRM");
         adapter.addFragment(new LocationFragment(), "Location");
         adapter.addFragment(new RemindersFragment(), "Reminders");
@@ -67,7 +75,21 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setLogo(Resid);
+    }
 
+    private void sendToStart() {
+        Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
+        startActivity(startIntent);
+        finish();
+    }
+
+    private void logout() {
+        AuthUI.getInstance().signOut(this).addOnCompleteListener(SignOutonComplete);
+    }
+
+    private void settings() {
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(settingsIntent);
     }
 
     @Override
@@ -78,41 +100,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendToStart() {
-        Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
-        startActivity(startIntent);
-        finish();
-    }
-
     @Override
-    protected void onSaveInstanceState(Bundle outState )
-    {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
-
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-
-        if (item.getItemId() == R.id.main_logout_btn) {
-            AuthUI.getInstance()
-                    .signOut(this)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // ...
-                            Intent startInent = new Intent(MainActivity.this,StartActivity.class);
-                            startActivity(startInent);
-                        }
-                    });
+        switch (item.getItemId()) {
+            case R.id.main_logout_btn:
+                logout();
+                break;
+            case R.id.main_settings_btn:
+                settings();
+                break;
         }
-
         return true;
     }
 
@@ -121,7 +129,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
-
     }
+
+    private OnCompleteListener SignOutonComplete = new OnCompleteListener<Void>() {
+        public void onComplete(@NonNull Task<Void> task) {
+            sendToStart();
+        }
+    };
 
 }

@@ -43,7 +43,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Forgot password");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        resetclick(mResetButton);
+    }
 
+    private void resetclick(Button mResetButton){
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

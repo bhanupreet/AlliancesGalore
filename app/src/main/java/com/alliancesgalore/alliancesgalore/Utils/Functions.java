@@ -3,8 +3,14 @@ package com.alliancesgalore.alliancesgalore.Utils;
 import android.annotation.SuppressLint;
 import android.util.Log;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
@@ -12,7 +18,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public final class Functions {
     @SuppressLint("RestrictedApi")
-    public static void toast(Task task){
+    public static void toast(Task task) {
         Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
     }
 
@@ -25,5 +31,19 @@ public final class Functions {
             e.printStackTrace();
         }
         return encrypted;
+    }
+
+    public static String decrypt(String encrypted) {
+        String decrypted = "";
+        try {
+            decrypted = AESUtils.decrypt(encrypted);
+            Log.d("TEST", "decrypted:" + decrypted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decrypted;
+    }
+    public static String TextOf (TextInputLayout textInputLayout){
+        return textInputLayout.getEditText().getText().toString();
     }
 }

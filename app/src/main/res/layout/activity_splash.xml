@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     tools:context=".Activities.SplashActivity">
+
     <ImageView
+        android:id="@+id/splashimage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_margin="75dp"
-        android:id="@+id/splashimage"
         android:src="@drawable/web_hi_res_512"
-        android:layout_centerInParent="true"/>
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/splashimage"
+        android:layout_centerHorizontal="true"
         android:text="Alliances Galore"
-        android:layout_marginTop="-200dp"
+        android:textColor="#212121"
         android:textSize="30sp"
-        android:textColor="#212121"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/splashimage" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

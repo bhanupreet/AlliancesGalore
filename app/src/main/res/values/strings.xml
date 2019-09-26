@@ -7,12 +7,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-        <string-array name="position">
-            <item>Select One</item>
-            <item>Manager</item>
-            <item>Team Leader</item>
-            <item>Executive</item>
+    <string-array name="position">
+        <item>Select One</item>
+        <item>Manager</item>
+        <item>Team Leader</item>
+        <item>Executive</item>
 
 
-        </string-array>
+    </string-array>
 </resources>
