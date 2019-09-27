@@ -14,6 +14,7 @@
         android:layout_height="64dp"
         android:backgroundTint="#d3d3d3"
         android:src="#d3d3d3"
+        android:transitionName="profile_pic_transition"
         android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,8 +28,7 @@
         android:layout_marginStart="10dp"
         android:textColor="#212121"
         android:textSize="22sp"
-        android:textStyle="bold"
-        android:transitionName="profiletrans"
+        android:transitionName="display_name_anim"
         app:layout_constraintStart_toEndOf="@+id/settings_profile_image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
+        android:transitionName="designation_anim"
         android:layout_below="@+id/settings_displayname"
         android:layout_toRightOf="@+id/settings_profile_image"
         android:text="Designation"

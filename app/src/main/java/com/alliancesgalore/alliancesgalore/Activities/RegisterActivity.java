@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private CredentialsClient mCredentialsClient;
     private Spinner mSpinner;
-    private int level;
+    private String level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,16 +98,16 @@ public class RegisterActivity extends AppCompatActivity {
         role = mSpinner.getSelectedItem().toString();
         switch (role.toLowerCase()) {
             case "manager":
-                level = 10;
+                level = "10";
                 break;
             case "team leader":
-                level = 20;
+                level = "20";
                 break;
             case "executive":
-                level = 30;
+                level = "30";
                 break;
             default:
-                level = 0;
+                level = "0";
         }
     }
 
@@ -125,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
         userMap.put("display_name", display_name);
         userMap.put("image", "default");
         userMap.put("role", role);
-        userMap.put("level", String.valueOf(level));
+        userMap.put("level",level);
         userMap.put("TokenID", token);
 
     }

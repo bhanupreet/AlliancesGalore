@@ -6,18 +6,29 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public final class Functions {
+
+    public static UserProfile myProfile;
+
     @SuppressLint("RestrictedApi")
+
+
     public static void toast(Task task) {
         Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
     }
@@ -43,7 +54,10 @@ public final class Functions {
         }
         return decrypted;
     }
-    public static String TextOf (TextInputLayout textInputLayout){
+
+    public static String TextOf(TextInputLayout textInputLayout) {
         return textInputLayout.getEditText().getText().toString();
     }
+
+
 }

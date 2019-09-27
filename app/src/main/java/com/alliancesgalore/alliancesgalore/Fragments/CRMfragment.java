@@ -33,7 +33,7 @@ import kotlin.Function;
 
 public class CRMfragment extends Fragment {
 
-    public int count = 0;
+    public static int count = 0;
     Bundle savedInstanceStateout = null;
     private WebView crmweb;
     private ProgressBar progressBar;
@@ -59,7 +59,7 @@ public class CRMfragment extends Fragment {
         FindIds(view);
         websettings(crmweb);
         webclicklistener(crmweb);
-        getemailpass();
+//        getemailpass();
         login();
         SavedStateCheck(savedInstanceState);
         return view;
@@ -97,31 +97,36 @@ public class CRMfragment extends Fragment {
         crmweb.setOnKeyListener(crmKeyListener);
     }
 
-    private void getemailpass() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(getemailpassEventListener);
-    }
+//    private void getemailpass() {
+//        try {
+//            email = Functions.myProfile.getEmail();
+//            password = Functions.myProfile.getPassword();
+//            decrypted = Functions.decrypt(password);
+//        } catch (Exception e) {
+//
+//        }
+//    }
+
 
     private void login() {
-        getemailpass();
+
         crmweb.setWebViewClient(new WebViewClient() {
+            String email0, decrypted;
+
             @Override
             public void onPageFinished(WebView view, String url) {
-
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                super.onPageFinished(crmweb, url);
+                if (Functions.myProfile != null && count < 1) {
+                    email0 = Functions.myProfile.getEmail();
+                    decrypted = Functions.decrypt(Functions.myProfile.getPassword());
                     crmweb.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
-                            + email
+                            + email0
                             + "';document.getElementsByName('password')[0].value='"
                             + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
                     count++;
-                    if (count > 1) {
-                        email = null;
-                        password = null;
-                    }
-
                 }
-                super.onPageFinished(crmweb, url);
+
             }
         });
     }
@@ -133,8 +138,7 @@ public class CRMfragment extends Fragment {
     private void SavedStateCheck(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             crmweb.loadUrl(url);
-        }
-        else
+        } else
             crmweb.restoreState(savedInstanceState);
     }
 
@@ -148,7 +152,6 @@ public class CRMfragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         count = 0;
-        getemailpass();
         login();
         crmweb.restoreState(savedInstanceState);
     }
@@ -156,18 +159,21 @@ public class CRMfragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        count = 0;
+
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        count = 0;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         count = 0;
-        getemailpass();
+//        getemailpass();
         login();
     }
 
@@ -179,22 +185,6 @@ public class CRMfragment extends Fragment {
             crmweb.restoreState(savedInstanceStateout);
         }
     }
-
-    private ValueEventListener getemailpassEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                email = dataSnapshot.child("email").getValue().toString();
-                password = dataSnapshot.child("password").getValue().toString();
-                decrypted = Functions.decrypt(password);
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };
 
     private View.OnKeyListener crmKeyListener = new View.OnKeyListener() {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -219,5 +209,17 @@ public class CRMfragment extends Fragment {
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         crmweb.restoreState(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        count = 0;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        count = 0;
     }
 }

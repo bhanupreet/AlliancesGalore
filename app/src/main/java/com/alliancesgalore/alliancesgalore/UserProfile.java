@@ -1,13 +1,12 @@
 package com.alliancesgalore.alliancesgalore;
 
 public class UserProfile {
-    String TokenID, display_name, email, image, password, role;
-    int level;
+    String TokenID, display_name, email, image, password, role,level;
 
     public UserProfile() {
     }
 
-    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, int level) {
+    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role,String level) {
         TokenID = tokenID;
         this.display_name = display_name;
         this.email = email;
@@ -65,11 +64,11 @@ public class UserProfile {
         this.role = role;
     }
 
-    public int getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
