@@ -47,7 +47,7 @@ public class SettingsFragment extends Fragment {
     private TextView mDesignation;
     private ImageView mProfileImage;
     private ConstraintLayout mView;
-    private String mDisplayNameString,mDesignationString,mProfileImageString;
+    private String mDisplayNameString, mDesignationString, mProfileImageString;
     private UserProfile myProfile;
 
 
@@ -89,21 +89,21 @@ public class SettingsFragment extends Fragment {
         mView.setOnClickListener(viewClickListener);
     }
 
-    private void LoadImage(String url) {
+    private void LoadImage() {
         Glide.with(getContext())
-                .load(url)
+                .load(R.drawable.defaultprofile)
                 .placeholder(R.drawable.defaultprofile)
                 .apply(RequestOptions.circleCropTransform())
                 .into(mProfileImage);
     }
 
-    private void setAnimClick(){
+    private void setAnimClick() {
         ProfileFragment profileFragment = new ProfileFragment();
         getFragmentManager()
                 .beginTransaction()
                 .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))
-                .addSharedElement(mDisplayName,ViewCompat.getTransitionName(mDisplayName))
-                .addSharedElement(mDesignation,ViewCompat.getTransitionName(mDesignation))
+                .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
+                .addSharedElement(mDesignation, ViewCompat.getTransitionName(mDesignation))
                 .addToBackStack("settings")
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.settings_container, profileFragment)
@@ -113,18 +113,19 @@ public class SettingsFragment extends Fragment {
     private View.OnClickListener viewClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          setAnimClick();
+            setAnimClick();
         }
     };
 
 
-
-    private void setDetails(){
-        LoadImage(Functions.myProfile.getImage());
-        mDesignation.setText(Functions.myProfile.getRole());
-        mDisplayName.setText(Functions.myProfile.getDisplay_name());
+    private void setDetails() {
+        LoadImage();
+        if
+        (Functions.myProfile != null) {
+            mDesignation.setText(Functions.myProfile.getRole());
+            mDisplayName.setText(Functions.myProfile.getDisplay_name());
+        }
     }
-
 
 
 }

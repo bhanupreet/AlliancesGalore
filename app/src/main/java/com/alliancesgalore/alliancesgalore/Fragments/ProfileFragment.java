@@ -15,19 +15,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alliancesgalore.alliancesgalore.Activities.SettingsActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Objects;
 
+import kotlin.Function;
+
 
 public class ProfileFragment extends Fragment {
 
     private ImageView mProfileImage;
+    private TextView mDisplayName, mEmail, mDeesignation;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,17 +44,16 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        mProfileImage = view.findViewById(R.id.profile_displayImage);
-        FragFunctions.setToolBarTitle("Profile",view);
-        LoadImage();
+        FragFunctions.setToolBarTitle("Profile", view);
+        FindIds(view);
+        setDetails();
         return view;
     }
 
-    private void LoadImage(){
+    private void LoadImage() {
         Glide.with(getContext())
                 .load(R.drawable.defaultprofile)
                 .apply(RequestOptions.circleCropTransform())
-                .placeholder(R.drawable.defaultprofile)
                 .into(mProfileImage);
     }
 
@@ -74,5 +79,19 @@ public class ProfileFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setDetails() {
+        LoadImage();
+        mDisplayName.setText(Functions.myProfile.getDisplay_name());
+        mEmail.setText(Functions.myProfile.getEmail());
+        mDeesignation.setText(Functions.myProfile.getRole());
+    }
+
+    private void FindIds(View view) {
+        mProfileImage = view.findViewById(R.id.profile_displayImage);
+        mDisplayName = view.findViewById(R.id.profile_displayName);
+        mDeesignation = view.findViewById(R.id.profile_display_Designation);
+        mEmail = view.findViewById(R.id.profile_display_Email);
     }
 }
