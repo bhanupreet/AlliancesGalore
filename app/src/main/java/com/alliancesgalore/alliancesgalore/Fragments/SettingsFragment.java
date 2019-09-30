@@ -26,6 +26,7 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,11 +46,9 @@ public class SettingsFragment extends Fragment {
 
     private TextView mDisplayName;
     private TextView mDesignation;
+    private TextView mChangePassword;
     private ImageView mProfileImage;
     private ConstraintLayout mView;
-    private String mDisplayNameString, mDesignationString, mProfileImageString;
-    private UserProfile myProfile;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +64,7 @@ public class SettingsFragment extends Fragment {
         viewClick();
         FragFunctions.setToolBarTitle("Settings", view);
         setDetails();
+        changepasswordclick();
         return view;
     }
 
@@ -83,6 +83,7 @@ public class SettingsFragment extends Fragment {
         mDisplayName = view.findViewById(R.id.settings_displayname);
         mProfileImage = view.findViewById(R.id.settings_profile_image);
         mDesignation = view.findViewById(R.id.settings_designation);
+        mChangePassword = view.findViewById(R.id.settings_changepaswrdtn);
     }
 
     private void viewClick() {
@@ -121,11 +122,27 @@ public class SettingsFragment extends Fragment {
     private void setDetails() {
         LoadImage();
         if
-        (Functions.myProfile != null) {
-            mDesignation.setText(Functions.myProfile.getRole());
-            mDisplayName.setText(Functions.myProfile.getDisplay_name());
+        (Global.myProfile != null) {
+            mDesignation.setText(Global.myProfile.getRole());
+            mDisplayName.setText(Global.myProfile.getDisplay_name());
         }
     }
 
+    private void changepasswordclick() {
+        mChangePassword.setOnClickListener(ChangePasswordListener);
+    }
 
+    private View.OnClickListener ChangePasswordListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+           ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
+            getFragmentManager()
+                    .beginTransaction()
+                    .addSharedElement(mChangePassword, ViewCompat.getTransitionName(mChangePassword))
+                    .addToBackStack("settings")
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.settings_container, changePasswordFragment)
+                    .commit();
+        }
+    };
 }

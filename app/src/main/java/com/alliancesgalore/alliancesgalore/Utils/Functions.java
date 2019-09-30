@@ -23,12 +23,9 @@ import java.util.Objects;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public final class Functions {
-
     public static UserProfile myProfile;
 
     @SuppressLint("RestrictedApi")
-
-
     public static void toast(Task task) {
         Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
     }
@@ -58,6 +55,4 @@ public final class Functions {
     public static String TextOf(TextInputLayout textInputLayout) {
         return textInputLayout.getEditText().getText().toString();
     }
-
-
 }

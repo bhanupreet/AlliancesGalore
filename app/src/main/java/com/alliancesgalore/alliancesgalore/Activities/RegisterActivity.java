@@ -174,9 +174,8 @@ public class RegisterActivity extends AppCompatActivity {
     private OnCompleteListener TokenOnCompleteListener = new OnCompleteListener<InstanceIdResult>() {
         @Override
         public void onComplete(@NonNull Task<InstanceIdResult> task) {
-            if (!task.isSuccessful()) {
+            if (!task.isSuccessful())
                 Functions.toast(task);
-            }
             String token = task.getResult().getToken();
             String encrypted = Functions.encrypt(password);
             HashMap<String, String> userMap = new HashMap<>();

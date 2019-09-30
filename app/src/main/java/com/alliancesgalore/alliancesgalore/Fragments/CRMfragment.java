@@ -15,12 +15,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,13 +33,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import kotlin.Function;
 
+import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 public class CRMfragment extends Fragment {
 
+    private UserProfile myProfile;
     public static int count = 0;
     Bundle savedInstanceStateout = null;
     private WebView crmweb;
     private ProgressBar progressBar;
-    private String email, password, decrypted;
+    private String email, decrypted;
     private String url = "http://we-dpms.com/AGCRM/";
     private Handler handler = new Handler() {
         @Override
@@ -59,7 +65,7 @@ public class CRMfragment extends Fragment {
         FindIds(view);
         websettings(crmweb);
         webclicklistener(crmweb);
-//        getemailpass();
+        getemailpass();
         login();
         SavedStateCheck(savedInstanceState);
         return view;
@@ -97,36 +103,34 @@ public class CRMfragment extends Fragment {
         crmweb.setOnKeyListener(crmKeyListener);
     }
 
-//    private void getemailpass() {
-//        try {
-//            email = Functions.myProfile.getEmail();
-//            password = Functions.myProfile.getPassword();
-//            decrypted = Functions.decrypt(password);
-//        } catch (Exception e) {
-//
-//        }
-//    }
+    private void getemailpass() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        try {
+            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+        } catch (Exception e) {
+
+        }
+    }
 
 
     private void login() {
 
         crmweb.setWebViewClient(new WebViewClient() {
-            String email0, decrypted;
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(crmweb, url);
-                if (Functions.myProfile != null && count < 1) {
-                    email0 = Functions.myProfile.getEmail();
-                    decrypted = Functions.decrypt(Functions.myProfile.getPassword());
+                getemailpass();
+                if (myProfile != null && count<2) {
+                    email = myProfile.getEmail();
+                    decrypted = Functions.decrypt(myProfile.getPassword());
                     crmweb.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
-                            + email0
+                            + email
                             + "';document.getElementsByName('password')[0].value='"
                             + decrypted
                             + "';document.getElementsByTagName('form')[0].submit();})()");
                     count++;
                 }
-
             }
         });
     }
@@ -173,7 +177,6 @@ public class CRMfragment extends Fragment {
     public void onStart() {
         super.onStart();
         count = 0;
-//        getemailpass();
         login();
     }
 
@@ -181,9 +184,12 @@ public class CRMfragment extends Fragment {
     public void onResume() {
         super.onResume();
         count = 0;
+        login();
         if (savedInstanceStateout != null) {
             crmweb.restoreState(savedInstanceStateout);
+
         }
+
     }
 
     private View.OnKeyListener crmKeyListener = new View.OnKeyListener() {
@@ -222,4 +228,24 @@ public class CRMfragment extends Fragment {
         super.onPause();
         count = 0;
     }
+
+    public ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+                myProfile = dataSnapshot.getValue(UserProfile.class);
+                Toast.makeText(getContext(), "details added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), myProfile.getEmail(), Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
 }

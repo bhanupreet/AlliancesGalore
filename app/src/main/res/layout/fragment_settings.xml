@@ -2,49 +2,81 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:padding="15dp"
-    android:id="@+id/settings_view"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp">
 
-    <ImageView
-        android:id="@+id/settings_profile_image"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:backgroundTint="#d3d3d3"
-        android:src="#d3d3d3"
-        android:transitionName="profile_pic_transition"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/settings_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/settings_profile_image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="#d3d3d3"
+            android:src="#d3d3d3"
+            android:transitionName="profile_pic_transition"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/settings_displayname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_toRightOf="@+id/settings_profile_image"
+            android:text="Display Name"
+            android:textColor="#212121"
+            android:textSize="22sp"
+            android:transitionName="display_name_anim"
+            app:layout_constraintStart_toEndOf="@+id/settings_profile_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/settings_designation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_displayname"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/settings_profile_image"
+            android:text="Designation"
+            android:textColor="#212121"
+            android:textSize="18sp"
+            android:transitionName="designation_anim"
+            app:layout_constraintStart_toEndOf="@+id/settings_profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/settings_displayname" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:background="#9E9E9E"
+            app:layout_constraintTop_toBottomOf="@+id/settings_designation" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/settings_displayname"
-        android:layout_width="wrap_content"
+        android:id="@+id/settings_changepaswrdtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/settings_profile_image"
-        android:text="Display Name"
-        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Change Password"
         android:textColor="#212121"
         android:textSize="22sp"
-        android:transitionName="display_name_anim"
-        app:layout_constraintStart_toEndOf="@+id/settings_profile_image"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/settings_designation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:transitionName="designation_anim"
-        android:layout_below="@+id/settings_displayname"
-        android:layout_toRightOf="@+id/settings_profile_image"
-        android:text="Designation"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/settings_profile_image"
-        app:layout_constraintTop_toBottomOf="@+id/settings_displayname" />
-
+        android:transitionName="changepassword_anim"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

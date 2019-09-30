@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -18,17 +19,21 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import kotlin.Function;
+
+import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.main_viewpager);
         mTabLayout = findViewById(R.id.main_tablayout);
         mToolbar = findViewById(R.id.main_app_bar);
+        CRMfragment.count = 0;
     }
 
     private void SetToolBar() {
@@ -76,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
-        finish();
     }
 
     private void logout() {
@@ -92,11 +97,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            sendToStart();
-        } else {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
             String uid = FirebaseAuth.getInstance().getUid();
             FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+            Toast.makeText(MainActivity.this,  " user is signed in", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(MainActivity.this, "no user is signed in", Toast.LENGTH_LONG).show();
+            sendToStart();
+            // No user is signed in
         }
     }
 
@@ -142,17 +152,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
-                Functions.myProfile = dataSnapshot.getValue(UserProfile.class);
-                Toast.makeText(getApplicationContext(), Functions.myProfile.getEmail(), Toast.LENGTH_LONG).show();
-            } else {
-                sendToStart();
+                myProfile = dataSnapshot.getValue(UserProfile.class);
+                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
             }
         }
-
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
 
         }
     };
+
 
 }

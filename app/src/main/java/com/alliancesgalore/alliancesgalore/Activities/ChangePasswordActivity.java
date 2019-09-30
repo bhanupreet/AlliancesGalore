@@ -45,7 +45,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         pwd1 = findViewById(R.id.changepasswrd_pwd1);
         pwd2 = findViewById(R.id.changepasswrd_pwd2);
         mToolbar = findViewById(R.id.changepassword_toolbar);
-        changepassworn_btn = findViewById(R.id.changepassword_changepasswordbtn);
+//        changepassworn_btn = findViewById(R.id.changepassword_changepasswordbtn);
         mProgressbar = findViewById(R.id.changepassword_progress);
 
         setSupportActionBar(mToolbar);
