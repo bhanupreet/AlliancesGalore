@@ -35,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Objects;
@@ -92,10 +93,9 @@ public class SettingsFragment extends Fragment {
 
     private void LoadImage() {
         if (Global.myProfile != null) {
-            Glide.with(getContext())
+            Picasso.get()
                     .load(Global.myProfile.getImage())
                     .placeholder(R.drawable.defaultprofile)
-                    .apply(RequestOptions.circleCropTransform())
                     .into(mProfileImage);
         }
     }

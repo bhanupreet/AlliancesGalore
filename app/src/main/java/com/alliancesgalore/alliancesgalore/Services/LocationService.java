@@ -11,10 +11,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -22,6 +24,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -46,35 +49,41 @@ public class LocationService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "received stop broadcast");
-            // Stop the service when the notification is tapped
             unregisterReceiver(stopReceiver);
             stopSelf();
         }
     };
 
     private void requestLocationUpdates() {
-        LocationRequest request = new LocationRequest();
-        request.setInterval(10000);
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        int permission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            client.requestLocationUpdates(request, new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                        Log.d(TAG, "location update " + location);
-                        HashMap<String, Object> userMap = new HashMap<>();
-                        userMap.put("Latitude", String.valueOf(location.getLatitude()));
-                        userMap.put("Longitude", String.valueOf(location.getLongitude()));
-                        userMap.put("LastUpdated", ServerValue.TIMESTAMP);
-                        String uid = FirebaseAuth.getInstance().getUid();
-                        FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(userMap);
-                    }
-                }
-            }, null);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            LocationRequest request = new LocationRequest();
+            request.setInterval(10000);
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+            int permission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permission == PackageManager.PERMISSION_GRANTED) {
+                client.requestLocationUpdates(request, locationCallback, null);
+            }
         }
+
     }
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location location = locationResult.getLastLocation();
+            if (location != null) {
+                Log.d(TAG, "location update " + location);
+                HashMap<String, Object> userMap = new HashMap<>();
+                userMap.put("Latitude", String.valueOf(location.getLatitude()));
+                userMap.put("Longitude", String.valueOf(location.getLongitude()));
+                userMap.put("LastUpdated", ServerValue.TIMESTAMP);
+                String uid = FirebaseAuth.getInstance().getUid();
+                if (uid != null)
+                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(userMap);
+            }
+        }
+    };
 }

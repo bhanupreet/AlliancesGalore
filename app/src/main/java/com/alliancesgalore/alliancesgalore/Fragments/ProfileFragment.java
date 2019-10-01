@@ -55,6 +55,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageActivity;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -109,7 +110,7 @@ public class ProfileFragment extends Fragment {
 
     private void LoadImage() {
         if (Global.myProfile.getImage() != null) {
-            Glide.with(getContext())
+            Picasso.get()
                     .load(Global.myProfile.getImage())
                     .placeholder(R.drawable.defaultprofile)
                     .into(mProfileImage);
@@ -190,6 +191,7 @@ public class ProfileFragment extends Fragment {
         public void onClick(View view) {
             mProgress.setVisibility(View.VISIBLE);
             CropImage.activity()
+                    .setAspectRatio(1, 1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(getContext(), ProfileFragment.this);
         }
@@ -215,8 +217,8 @@ public class ProfileFragment extends Fragment {
         Bitmap thumb_bitmap = null;
         try {
             thumb_bitmap = new Compressor(getContext())
-                    .setMaxWidth(250)
-                    .setMaxHeight(250)
+                    .setMaxWidth(512)
+                    .setMaxHeight(512)
                     .setQuality(70)
                     .compressToBitmap(thumb_filepath);
         } catch (IOException e) {

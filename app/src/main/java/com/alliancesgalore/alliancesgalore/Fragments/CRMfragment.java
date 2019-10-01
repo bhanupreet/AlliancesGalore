@@ -26,6 +26,7 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,7 +44,7 @@ public class CRMfragment extends Fragment {
     public static int count = 0;
     Bundle savedInstanceStateout = null;
     private WebView crmweb;
-    private SwipeRefreshLayout mRefresh;
+    private SwipeToRefresh mRefresh;
     private ProgressBar progressBar;
     private String email, decrypted;
     private String url = "http://we-dpms.com/AGCRM/";
@@ -118,6 +119,7 @@ public class CRMfragment extends Fragment {
 
 
     private void login() {
+        crmweb.getSettings().setSupportZoom(true);
         crmweb.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -239,10 +241,10 @@ public class CRMfragment extends Fragment {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
-                Toast.makeText(getContext(), "details added", Toast.LENGTH_SHORT).show();
                 login();
-            } else
-                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
+            } else {
+            }
+//                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -251,7 +253,7 @@ public class CRMfragment extends Fragment {
     };
 
     private void mRefreshFunction() {
-mRefresh.setOnRefreshListener(mRefreshListener);
+        mRefresh.setOnRefreshListener(mRefreshListener);
     }
 
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {

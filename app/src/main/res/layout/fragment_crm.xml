@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh
         android:layout_width="match_parent"
         android:id="@+id/crm_refresh"
         android:layout_height="wrap_content">
@@ -14,7 +14,7 @@
             android:id="@+id/crm_web"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh>
 
     <ProgressBar
         android:id="@+id/crm_prog"

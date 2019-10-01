@@ -72,13 +72,22 @@ public class ChangePasswordFragment extends Fragment {
     private View.OnClickListener ChangePasswordOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (TextUtils.isEmpty(Functions.TextOf(mPasswordOld)) || TextUtils.isEmpty(Functions.TextOf(mPasswordnew1)) || TextUtils.isEmpty(Functions.TextOf(mPasswordnew2)))
+            String paswrd = Functions.TextOf(mPasswordOld);
+            final AuthCredential credential = EmailAuthProvider.getCredential(Global.myProfile.getEmail(), paswrd);
+            if (TextUtils.isEmpty(Functions.TextOf(mPasswordOld))
+                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew1))
+                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew2))) {
                 Toast.makeText(getContext(), "Field cannot be left blank", Toast.LENGTH_SHORT).show();
-            else {
-                mProgress.setVisibility(View.VISIBLE);
-                String paswrd = Functions.TextOf(mPasswordOld);
-                final AuthCredential credential = EmailAuthProvider.getCredential(Global.myProfile.getEmail(), paswrd);
+
+            } else if (!Functions.TextOf(mPasswordnew2).equals(Functions.TextOf(mPasswordnew1))) {
+                Toast.makeText(getContext(), "Both new passwords must be same", Toast.LENGTH_SHORT).show();
+
+            } else if (Functions.TextOf(mPasswordOld).equals(Functions.TextOf(mPasswordnew1))) {
+                Toast.makeText(getContext(), "New Password cannot be same as old password", Toast.LENGTH_SHORT).show();
+
+            } else {
                 user.reauthenticate(credential).addOnCompleteListener(reauthenticateOnComplete);
+                mProgress.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -87,12 +96,11 @@ public class ChangePasswordFragment extends Fragment {
     private OnCompleteListener reauthenticateOnComplete = new OnCompleteListener() {
         @Override
         public void onComplete(@NonNull Task task) {
-            if (!task.isSuccessful())
+            if (!task.isSuccessful()) {
                 Functions.toast(task);
-            if (Functions.TextOf(mPasswordnew1).equals(Functions.TextOf(mPasswordnew2)))
+                mProgress.setVisibility(View.INVISIBLE);
+            } else
                 user.updatePassword(Functions.TextOf(mPasswordnew2)).addOnCompleteListener(updateOnComplete);
-            else
-                Toast.makeText(getContext(), "Both Fields must be same", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -101,14 +109,17 @@ public class ChangePasswordFragment extends Fragment {
         @Override
         public void onComplete(@NonNull Task task) {
             if (task.isSuccessful())
-                FirebaseDatabase.getInstance()
+                FirebaseDatabase
+                        .getInstance()
                         .getReference()
                         .child("Users")
                         .child(user.getUid()).child("password")
                         .setValue(Functions.encrypt(Functions.TextOf(mPasswordnew2)))
                         .addOnCompleteListener(updateDataBaseOnComplete);
-            else
+            else{
                 Functions.toast(task);
+                mProgress.setVisibility(View.INVISIBLE);
+            }
         }
 
     };
@@ -117,17 +128,11 @@ public class ChangePasswordFragment extends Fragment {
         @Override
         public void onComplete(@NonNull Task task) {
             if (task.isSuccessful()) {
-                sendToMain();
+                getFragmentManager().popBackStack();
                 Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
             } else
                 Functions.toast(task);
             mProgress.setVisibility(View.INVISIBLE);
         }
     };
-
-    private void sendToMain() {
-        Intent mainIntent = new Intent(getActivity(), MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-    }
 }

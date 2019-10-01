@@ -20,6 +20,7 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
+import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -43,7 +44,7 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
     private static final int PERMISSIONS_REQUEST = 100;
     MapView mMapView;
     private GoogleMap googleMap;
-    private SwipeRefreshLayout mMapsRefresh;
+    private SwipeToRefresh mMapsRefresh;
     private MarkerOptions markeroptions;
     private Marker marker;
     private LatLng MyLocation;

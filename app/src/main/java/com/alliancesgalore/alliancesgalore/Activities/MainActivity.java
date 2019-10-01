@@ -102,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
             // User is signed in
             String uid = FirebaseAuth.getInstance().getUid();
             FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
-            Toast.makeText(MainActivity.this,  " user is signed in", Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this,  " user is signed in", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(MainActivity.this, "no user is signed in", Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, "no user is signed in", Toast.LENGTH_LONG).show();
             sendToStart();
             // No user is signed in
         }
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
-                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
+//                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
             }
         }
         @Override

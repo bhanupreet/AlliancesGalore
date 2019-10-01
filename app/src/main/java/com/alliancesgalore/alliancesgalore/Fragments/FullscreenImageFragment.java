@@ -25,10 +25,12 @@ import androidx.fragment.app.Fragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.squareup.picasso.Picasso;
 
 
 public class FullscreenImageFragment extends Fragment {
-    private ImageView mFullscreenImage;
+    private PhotoView mFullscreenImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,10 +53,11 @@ public class FullscreenImageFragment extends Fragment {
     }
 
     private void LoadImage() {
-        if (Global.myProfile.getImage() != null)
-            Glide.with(getContext())
+        if (Global.myProfile.getImage() != null) {
+            Picasso.get()
                     .load(Global.myProfile.getImage())
                     .placeholder(R.drawable.defaultprofile)
                     .into(mFullscreenImage);
+        }
     }
 }
