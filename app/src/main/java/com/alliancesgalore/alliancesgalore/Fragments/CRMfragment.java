@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -42,6 +43,7 @@ public class CRMfragment extends Fragment {
     public static int count = 0;
     Bundle savedInstanceStateout = null;
     private WebView crmweb;
+    private SwipeRefreshLayout mRefresh;
     private ProgressBar progressBar;
     private String email, decrypted;
     private String url = "http://we-dpms.com/AGCRM/";
@@ -67,6 +69,7 @@ public class CRMfragment extends Fragment {
         webclicklistener(crmweb);
         getemailpass();
         login();
+        mRefreshFunction();
         SavedStateCheck(savedInstanceState);
         return view;
     }
@@ -74,6 +77,7 @@ public class CRMfragment extends Fragment {
     private void FindIds(View view) {
         crmweb = view.findViewById(R.id.crm_web);
         progressBar = view.findViewById(R.id.crm_prog);
+        mRefresh = view.findViewById(R.id.crm_refresh);
     }
 
     private void websettings(WebView crmweb) {
@@ -91,7 +95,7 @@ public class CRMfragment extends Fragment {
                 progressBar.setProgress(progress);
                 if (progress == 100) {
                     progressBar.setVisibility(View.GONE);
-
+                    mRefresh.setRefreshing(false);
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                 }
@@ -114,14 +118,12 @@ public class CRMfragment extends Fragment {
 
 
     private void login() {
-
         crmweb.setWebViewClient(new WebViewClient() {
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(crmweb, url);
-                getemailpass();
-                if (myProfile != null && count<2) {
+                if (myProfile != null && count < 2) {
                     email = myProfile.getEmail();
                     decrypted = Functions.decrypt(myProfile.getPassword());
                     crmweb.loadUrl("javascript:(function(){document.getElementsByName('email')[0].value='"
@@ -156,6 +158,7 @@ public class CRMfragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         count = 0;
+        getemailpass();
         login();
         crmweb.restoreState(savedInstanceState);
     }
@@ -177,6 +180,7 @@ public class CRMfragment extends Fragment {
     public void onStart() {
         super.onStart();
         count = 0;
+        getemailpass();
         login();
     }
 
@@ -184,6 +188,7 @@ public class CRMfragment extends Fragment {
     public void onResume() {
         super.onResume();
         count = 0;
+        getemailpass();
         login();
         if (savedInstanceStateout != null) {
             crmweb.restoreState(savedInstanceStateout);
@@ -235,17 +240,24 @@ public class CRMfragment extends Fragment {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
                 Toast.makeText(getContext(), "details added", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getContext(), myProfile.getEmail(), Toast.LENGTH_SHORT).show();
-
-            } else {
+                login();
+            } else
                 Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
-
-            }
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+    };
 
+    private void mRefreshFunction() {
+mRefresh.setOnRefreshListener(mRefreshListener);
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            crmweb.reload();
         }
     };
 }

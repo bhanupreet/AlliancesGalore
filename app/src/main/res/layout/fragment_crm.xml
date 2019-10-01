@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-   <com.alliancesgalore.alliancesgalore.Utils.NestedScrollWebView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/crm_web"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:id="@+id/crm_refresh"
+        android:layout_height="wrap_content">
+
+        <com.alliancesgalore.alliancesgalore.Utils.NestedScrollWebView
+            android:id="@+id/crm_web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
+        android:id="@+id/crm_prog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/crm_prog"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
 </RelativeLayout>

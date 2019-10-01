@@ -2,10 +2,15 @@ package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
@@ -21,12 +26,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.alliancesgalore.alliancesgalore.Activities.SettingsActivity;
@@ -37,24 +45,52 @@ import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 import kotlin.Function;
 
+import static android.app.Activity.RESULT_OK;
 import static com.alliancesgalore.alliancesgalore.R.menu.settings_menu;
 
 
 public class ProfileFragment extends Fragment {
 
-    private ImageView mProfileImage, mChangeNamebtn;
+    private String downloadurl;
+    private ImageView mChangeNamebtn;
+    private ImageButton mChangePhotobtn;
     private TextView mEmail, mDeesignation, mDisplayName;
+    private CircleImageView mProfileImage;
+    private DatabaseReference myRef;
+    private StorageReference mImageStorage;
+    private ProgressBar mProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+        Activity activity = (Activity) getContext();
+        ((AppCompatActivity) activity).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1565C0")));
+
     }
 
     @Override
@@ -64,16 +100,20 @@ public class ProfileFragment extends Fragment {
         FragFunctions.setToolBarTitle("Profile", view);
         setHasOptionsMenu(true);
         FindIds(view);
+        changePhotoClick();
         setDetails();
+        mProfileImageClick();
         editNameBtn();
         return view;
     }
 
     private void LoadImage() {
-        Glide.with(getContext())
-                .load(R.drawable.defaultprofile)
-                .apply(RequestOptions.circleCropTransform())
-                .into(mProfileImage);
+        if (Global.myProfile.getImage() != null) {
+            Glide.with(getContext())
+                    .load(Global.myProfile.getImage())
+                    .placeholder(R.drawable.defaultprofile)
+                    .into(mProfileImage);
+        }
     }
 
     @Override
@@ -112,6 +152,9 @@ public class ProfileFragment extends Fragment {
         mDeesignation = view.findViewById(R.id.profile_display_Designation);
         mChangeNamebtn = view.findViewById(R.id.profile_editnamebtn);
         mEmail = view.findViewById(R.id.profile_display_Email);
+        mChangePhotobtn = view.findViewById(R.id.profile_changePhoto);
+        mImageStorage = FirebaseStorage.getInstance().getReference();
+        mProgress = view.findViewById(R.id.profile_progress);
     }
 
     @Override
@@ -134,6 +177,113 @@ public class ProfileFragment extends Fragment {
                     .addToBackStack("profile")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.settings_container, changeNameFragment)
+                    .commit();
+        }
+    };
+
+    private void changePhotoClick() {
+        mChangePhotobtn.setOnClickListener(changePhotoOnClick);
+    }
+
+    private View.OnClickListener changePhotoOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mProgress.setVisibility(View.VISIBLE);
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(getContext(), ProfileFragment.this);
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                UploadTask uploadTask = uploadToDatabase(resultUri);
+                uploadTask.addOnCompleteListener(uploadOnComplete);
+            } else
+                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+    }
+
+    private UploadTask uploadToDatabase(Uri resultUri) {
+        File thumb_filepath = new File(resultUri.getPath());
+        Bitmap thumb_bitmap = null;
+        try {
+            thumb_bitmap = new Compressor(getContext())
+                    .setMaxWidth(250)
+                    .setMaxHeight(250)
+                    .setQuality(70)
+                    .compressToBitmap(thumb_filepath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        byte[] thumb_byte = baos.toByteArray();
+
+        StorageReference filepath = mImageStorage.child("Profile_Images").child(FirebaseAuth.getInstance().getUid() + ".jpg");
+        UploadTask uploadTask = filepath.putBytes(thumb_byte);
+        return uploadTask;
+    }
+
+    OnCompleteListener uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
+
+        @Override
+        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+            if (task.isSuccessful()) {
+                Toast.makeText(getContext(), "URL got successfully", Toast.LENGTH_SHORT).show();
+
+                mImageStorage.child("Profile_Images").child(FirebaseAuth.getInstance().getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(downloadURLsuccess);
+            } else
+                Functions.toast(task);
+        }
+    };
+
+    private OnSuccessListener downloadURLsuccess = new OnSuccessListener<Uri>() {
+        @Override
+        public void onSuccess(Uri uri) {
+            Toast.makeText(getContext(), "URL got successfully", Toast.LENGTH_SHORT).show();
+
+            downloadurl = uri.toString();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid());
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("image", downloadurl);
+            myRef.updateChildren(result).addOnCompleteListener(updateDatabaseOnComplete);
+        }
+    };
+    private OnCompleteListener updateDatabaseOnComplete = new OnCompleteListener() {
+        @Override
+        public void onComplete(@NonNull Task task) {
+            if (task.isSuccessful()) {
+                mProgress.setVisibility(View.INVISIBLE);
+                Toast.makeText(getContext(), "image uploaded successfully", Toast.LENGTH_SHORT).show();
+                LoadImage();
+            } else
+                Functions.toast(task);
+        }
+    };
+
+
+    private void mProfileImageClick() {
+        mProfileImage.setOnClickListener(mProfileImageOnClick);
+    }
+
+    private View.OnClickListener mProfileImageOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            FullscreenImageFragment fullscreenImageFragment = new FullscreenImageFragment();
+            getFragmentManager()
+                    .beginTransaction()
+                    .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))
+                    .addToBackStack("fullscreenimage")
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.settings_container, fullscreenImageFragment)
                     .commit();
         }
     };

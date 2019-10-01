@@ -91,11 +91,13 @@ public class SettingsFragment extends Fragment {
     }
 
     private void LoadImage() {
-        Glide.with(getContext())
-                .load(R.drawable.defaultprofile)
-                .placeholder(R.drawable.defaultprofile)
-                .apply(RequestOptions.circleCropTransform())
-                .into(mProfileImage);
+        if (Global.myProfile != null) {
+            Glide.with(getContext())
+                    .load(Global.myProfile.getImage())
+                    .placeholder(R.drawable.defaultprofile)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mProfileImage);
+        }
     }
 
     private void setAnimClick() {
@@ -135,7 +137,7 @@ public class SettingsFragment extends Fragment {
     private View.OnClickListener ChangePasswordListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-           ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
+            ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
             getFragmentManager()
                     .beginTransaction()
                     .addSharedElement(mChangePassword, ViewCompat.getTransitionName(mChangePassword))

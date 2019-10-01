@@ -1,12 +1,20 @@
 package com.alliancesgalore.alliancesgalore;
 
 public class UserProfile {
-    String TokenID, display_name, email, image, password, role,level;
+    String TokenID;
+    String display_name;
+    String email;
+    String image;
+    String password;
+    String role;
+    String level;
+    String Latitude;
+    String Longitude;
+    String ReportingTo;
+    Long LastUpdated;
 
-    public UserProfile() {
-    }
 
-    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role,String level) {
+    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, String level, String latitude, String longitude, String reportingTo, Long lastUpdated) {
         TokenID = tokenID;
         this.display_name = display_name;
         this.email = email;
@@ -14,6 +22,45 @@ public class UserProfile {
         this.password = password;
         this.role = role;
         this.level = level;
+        Latitude = latitude;
+        Longitude = longitude;
+        ReportingTo = reportingTo;
+        LastUpdated = lastUpdated;
+    }
+
+    public UserProfile() {
+    }
+
+    public String getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        Latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        Longitude = longitude;
+    }
+
+    public Long getLastUpdated() {
+        return LastUpdated;
+    }
+
+    public void setLastUpdated(Long lastUpdated) {
+        LastUpdated = lastUpdated;
+    }
+
+    public String getReportingTo() {
+        return ReportingTo;
+    }
+
+    public void setReportingTo(String reportingTo) {
+        ReportingTo = reportingTo;
     }
 
     public String getTokenID() {

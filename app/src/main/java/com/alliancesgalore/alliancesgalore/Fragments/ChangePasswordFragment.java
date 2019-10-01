@@ -93,7 +93,6 @@ public class ChangePasswordFragment extends Fragment {
                 user.updatePassword(Functions.TextOf(mPasswordnew2)).addOnCompleteListener(updateOnComplete);
             else
                 Toast.makeText(getContext(), "Both Fields must be same", Toast.LENGTH_SHORT).show();
-
         }
     };
 
