@@ -77,8 +77,8 @@ public class LocationService extends Service {
             if (location != null) {
                 Log.d(TAG, "location update " + location);
                 HashMap<String, Object> userMap = new HashMap<>();
-                userMap.put("Latitude", String.valueOf(location.getLatitude()));
-                userMap.put("Longitude", String.valueOf(location.getLongitude()));
+                userMap.put("Latitude", location.getLatitude());
+                userMap.put("Longitude", location.getLongitude());
                 userMap.put("LastUpdated", ServerValue.TIMESTAMP);
                 String uid = FirebaseAuth.getInstance().getUid();
                 if (uid != null)

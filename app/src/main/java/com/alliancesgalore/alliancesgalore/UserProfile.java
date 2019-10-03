@@ -7,14 +7,41 @@ public class UserProfile {
     String image;
     String password;
     String role;
-    String level;
-    String Latitude;
-    String Longitude;
+    int level;
+    double Latitude;
+    double Longitude;
     String ReportingTo;
     Long LastUpdated;
 
+    public int getLevel() {
+        return level;
+    }
 
-    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, String level, String latitude, String longitude, String reportingTo, Long lastUpdated) {
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+
+    public UserProfile() {
+    }
+
+    public double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        Latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        Longitude = longitude;
+    }
+
+    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, int level, double latitude, double longitude, String reportingTo, Long lastUpdated) {
         TokenID = tokenID;
         this.display_name = display_name;
         this.email = email;
@@ -26,25 +53,6 @@ public class UserProfile {
         Longitude = longitude;
         ReportingTo = reportingTo;
         LastUpdated = lastUpdated;
-    }
-
-    public UserProfile() {
-    }
-
-    public String getLatitude() {
-        return Latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        Latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return Longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        Longitude = longitude;
     }
 
     public Long getLastUpdated() {
@@ -109,14 +117,6 @@ public class UserProfile {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
     }
 
 

@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
+        finish();
     }
 
     private void logout() {
@@ -153,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
+                if(TextUtils.isEmpty(myProfile.getReportingTo())){
+                    sendToReport();
+                }
 //                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
             }
         }
@@ -160,6 +164,12 @@ public class MainActivity extends AppCompatActivity {
         public void onCancelled(@NonNull DatabaseError databaseError) {
         }
     };
+
+    private void sendToReport() {
+        Intent startIntent = new Intent(MainActivity.this, ReportingToActivity.class);
+        startActivity(startIntent);
+        finish();
+    }
 
 
 }

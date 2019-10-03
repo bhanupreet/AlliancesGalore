@@ -19,6 +19,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+        <activity android:name=".Activities.ReportingToActivity"></activity>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -26,7 +28,7 @@
         <service
             android:name=".Services.LocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".Activities.SettingsActivity"
@@ -69,6 +71,5 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/API_KEY" />
     </application>
-
 
 </manifest>

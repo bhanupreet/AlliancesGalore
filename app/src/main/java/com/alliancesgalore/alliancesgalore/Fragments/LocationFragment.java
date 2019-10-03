@@ -71,6 +71,8 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
 
     private void startTrackerService() {
         getActivity().startService(new Intent(getActivity(), LocationService.class));
+
+
     }
 
     private void getLocation() {
@@ -82,9 +84,6 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST);
-        }
-        if (Global.myProfile != null) {
-            MyLocation = new LatLng(Double.valueOf(Global.myProfile.getLatitude()), Double.valueOf(Global.myProfile.getLongitude()));
         }
     }
 
@@ -99,12 +98,13 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
     }
 
     private void setLocation(final LatLng MyLocation) {
+
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 googleMap.setMyLocationEnabled(true);
-                if (Global.myProfile != null) {
+                if (Global.myProfile.getLastUpdated() != null) {
                     googleMap = mMap;
                     googleMap.setMyLocationEnabled(false);
                     SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
@@ -112,7 +112,6 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
                     marker.setPosition(MyLocation);
                     marker.setTitle("Location");
                     marker.setSnippet("Last Updated: " + time);
-
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(MyLocation).zoom(14).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     mMapsRefresh.setRefreshing(false);
@@ -124,10 +123,15 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
     private SwipeRefreshLayout.OnRefreshListener MapRefrshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            if (Global.myProfile != null) {
-                MyLocation = new LatLng(Double.valueOf(Global.myProfile.getLatitude()), Double.valueOf(Global.myProfile.getLongitude()));
+            if (Global.myProfile.getLastUpdated() != null) {
+                MyLocation = new LatLng(Global.myProfile.getLatitude(), Global.myProfile.getLongitude());
                 setLocation(MyLocation);
             }
+            else{
+                startTrackerService();
+                mMapsRefresh.setRefreshing(false);
+            }
+
         }
     };
 

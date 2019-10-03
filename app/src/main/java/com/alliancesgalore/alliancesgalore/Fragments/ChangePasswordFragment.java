@@ -116,7 +116,7 @@ public class ChangePasswordFragment extends Fragment {
                         .child(user.getUid()).child("password")
                         .setValue(Functions.encrypt(Functions.TextOf(mPasswordnew2)))
                         .addOnCompleteListener(updateDataBaseOnComplete);
-            else{
+            else {
                 Functions.toast(task);
                 mProgress.setVisibility(View.INVISIBLE);
             }

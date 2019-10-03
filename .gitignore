@@ -10,4 +10,6 @@
 .DS_Store
 /build
 /captures
+/app/src/main/res/values/string.xml
 .externalNativeBuild
+cd

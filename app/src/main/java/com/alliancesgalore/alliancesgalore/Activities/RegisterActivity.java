@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private CredentialsClient mCredentialsClient;
     private Spinner mSpinner;
-    private String level;
+    private int level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, RegUserOnComplete);
     }
 
-    private void updatedatabase(HashMap<String, String> userMap) {
+    private void updatedatabase(HashMap<String, Object> userMap) {
         mDatabase.setValue(userMap).addOnCompleteListener(UpdateDatabaseOnCompleteListener);
     }
 
@@ -98,16 +98,16 @@ public class RegisterActivity extends AppCompatActivity {
         role = mSpinner.getSelectedItem().toString();
         switch (role.toLowerCase()) {
             case "manager":
-                level = "10";
+                level = 10;
                 break;
             case "team leader":
-                level = "20";
+                level = 20;
                 break;
             case "executive":
-                level = "30";
+                level = 30;
                 break;
             default:
-                level = "0";
+                level = 0;
         }
     }
 
@@ -119,15 +119,16 @@ public class RegisterActivity extends AppCompatActivity {
         mregProgress.show();
     }
 
-    private void updateMap(HashMap<String, String> userMap, String token, String encrypted) {
+    private void updateMap(HashMap<String, Object> userMap, String token, String encrypted) {
         userMap.put("email", Email);
         userMap.put("password", encrypted);
         userMap.put("display_name", display_name);
         userMap.put("image", "default");
         userMap.put("role", role);
-        userMap.put("level",level);
+        userMap.put("level", level);
         userMap.put("TokenID", token);
-
+        if (role.toLowerCase().equals("manager"))
+            userMap.put("ReportingTo", "Admin");
     }
 
     private Boolean EmptyFieldsCheck() {
@@ -178,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Functions.toast(task);
             String token = task.getResult().getToken();
             String encrypted = Functions.encrypt(password);
-            HashMap<String, String> userMap = new HashMap<>();
+            HashMap<String, Object> userMap = new HashMap<>();
             updateMap(userMap, token, encrypted);
             updatedatabase(userMap);
         }

@@ -2,18 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:padding="15dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/users_single_profile_image"
         android:layout_width="64dp"
         android:layout_height="64dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="#d3d3d3"
         android:src="#d3d3d3"
-        android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,9 +21,9 @@
         android:id="@+id/users_single_displayname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_toRightOf="@+id/users_single_profile_image"
         android:text="Display Name"
-        android:layout_marginStart="10dp"
         android:textColor="#212121"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -34,9 +34,9 @@
         android:id="@+id/users_Single_designation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
         android:layout_below="@+id/users_single_displayname"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/users_single_profile_image"
         android:text="Designation"
         android:textColor="#212121"
