@@ -39,5 +39,9 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="@android:color/white"
             android:backgroundTint="@android:color/white"/>
+    <FrameLayout
+        android:id="@+id/simpleFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

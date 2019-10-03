@@ -1,5 +1,9 @@
 package com.alliancesgalore.alliancesgalore;
 
+import android.icu.lang.UScript;
+
+import java.util.Comparator;
+
 public class UserProfile {
     String TokenID;
     String display_name;
@@ -119,5 +123,14 @@ public class UserProfile {
         this.role = role;
     }
 
+    public void compare1(){
+        Comparator<UserProfile> compareByrole = (UserProfile o1, UserProfile o2) ->
+                o1.getRole().compareTo(o2.getRole());
+    }
 
+    public void compare2 (){
+        Comparator<UserProfile> compareByName = (UserProfile o1, UserProfile o2) ->
+                o1.getDisplay_name().compareTo(o2.getDisplay_name());
+    }
 }
+

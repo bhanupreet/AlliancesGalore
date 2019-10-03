@@ -118,6 +118,7 @@ public class ReportingToActivity extends AppCompatActivity {
 
     private void RecyclerClick() {
         adapter.setClickListener(adapterClickListener);
+        adapter.setLongClickListener(adapterLongClickListener);
     }
 
     private View.OnClickListener adapterClickListener = new View.OnClickListener() {
@@ -134,4 +135,11 @@ public class ReportingToActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+    private View.OnLongClickListener adapterLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+            int pos = mRecycler.indexOfChild(view);
+            return false;
+        }
+    };
 }

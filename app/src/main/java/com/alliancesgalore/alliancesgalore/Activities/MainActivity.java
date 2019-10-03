@@ -3,9 +3,15 @@ package com.alliancesgalore.alliancesgalore.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,8 +21,10 @@ import android.widget.Toast;
 import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
 import com.alliancesgalore.alliancesgalore.Fragments.LocationFragment;
 import com.alliancesgalore.alliancesgalore.Adapters.MainActivityAdapter;
+import com.alliancesgalore.alliancesgalore.Fragments.LocationListFragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
+import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
@@ -36,6 +44,7 @@ import kotlin.Function;
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int PERMISSIONS_REQUEST = 100;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private MainActivityAdapter adapter;
@@ -47,8 +56,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_new);
         FindIds();
         SetToolBar();
+        LocationService();
         Tabadapter();
+    }
 
+    private void LocationService() {
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            finish();
+        }
+        int permission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startTrackerService();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST);
+        }
     }
 
     private void FindIds() {
@@ -65,10 +90,15 @@ public class MainActivity extends AppCompatActivity {
     private void Tabadapter() {
         adapter = new MainActivityAdapter(getSupportFragmentManager());
         adapter.addFragment(new CRMfragment(), "CRM");
-        adapter.addFragment(new LocationFragment(), "Location");
+        if (myProfile != null && myProfile.getLevel() == 30) {
+            adapter.addFragment(new LocationFragment(), "Location");
+        } else {
+            adapter.addFragment(new LocationListFragment(), "Location");
+        }
         adapter.addFragment(new RemindersFragment(), "Reminders");
 
         mViewPager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.setOffscreenPageLimit(2);
     }
@@ -100,15 +130,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            // User is signed in
             String uid = FirebaseAuth.getInstance().getUid();
             FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
-//            Toast.makeText(MainActivity.this,  " user is signed in", Toast.LENGTH_LONG).show();
-        } else {
-//            Toast.makeText(MainActivity.this, "no user is signed in", Toast.LENGTH_LONG).show();
+        } else
             sendToStart();
-            // No user is signed in
-        }
     }
 
     @Override
@@ -131,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_settings_btn:
                 settings();
                 break;
-
         }
         return true;
     }
@@ -154,12 +178,13 @@ public class MainActivity extends AppCompatActivity {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
-                if(TextUtils.isEmpty(myProfile.getReportingTo())){
+                if (TextUtils.isEmpty(myProfile.getReportingTo())) {
                     sendToReport();
                 }
 //                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
             }
         }
+
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
         }
@@ -171,5 +196,18 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]
+            grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startTrackerService();
+        } else {
+            Toast.makeText(this, "Please enable location services to allow GPS tracking", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private void startTrackerService() {
+        startService(new Intent(this, LocationService.class));
+    }
 }
