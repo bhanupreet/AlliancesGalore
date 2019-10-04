@@ -1,18 +1,15 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
-
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.UserProfile;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import mva2.adapter.ItemViewHolder;
 
-class UserProfileViewHolder extends RecyclerView.ViewHolder {
-    TextView mDesignation,mDisplayName;
+public class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
+    TextView mDesignation, mDisplayName;
     CircleImageView mProfileImage;
 
     public UserProfileViewHolder(@NonNull View itemView) {

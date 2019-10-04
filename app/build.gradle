@@ -56,6 +56,11 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    implementation 'dev.ahamed.mva2:adapter:2.0.0-beta01'
+    implementation 'dev.ahamed.mva2:ext-databinding:2.0.0-beta01'  // DataBinding
+    implementation 'dev.ahamed.mva2:ext-decorator:2.0.0-beta01'    // Decorators
+    implementation 'dev.ahamed.mva2:ext-diffutil-rx:2.0.0-beta01'
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:padding="15dp"
+    android:clickable="true">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/users_single_profile_image"

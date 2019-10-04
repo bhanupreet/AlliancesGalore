@@ -1,9 +1,13 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -11,6 +15,8 @@ import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +28,8 @@ import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
+import com.alliancesgalore.alliancesgalore.Utils.RecyclerItemClickListener;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,13 +43,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mva2.adapter.ListSection;
+import mva2.adapter.MultiViewAdapter;
+
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class LocationListFragment extends Fragment {
+    ActionMode mActionMode;
+    Menu context_menu;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
-    private List<UserProfile> allsubordinatesList, subordinatesList, subsubordinateslist, newlist;
+    private List<UserProfile> allsubordinatesList, subordinatesList, multiselect_list;
     private String mail;
     private Boolean isMultiselect = false;
     private FloatingActionButton fab;
@@ -56,16 +70,17 @@ public class LocationListFragment extends Fragment {
         allsubordinatesList = new ArrayList<>();
         subordinatesList = new ArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
         Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
         query.keepSynced(true);
         query.addValueEventListener(valueEventListener);
 
         adapter = new UserProfileAdapter(getContext(), subordinatesList);
+
         mRecycler.setAdapter(adapter);
         setAdapter(mRecycler);
         adapter.notifyDataSetChanged();
         itemClick();
-
 
         return view;
     }
@@ -91,6 +106,13 @@ public class LocationListFragment extends Fragment {
             if (subordinatesList.isEmpty())
                 subordinatesList.add(myProfile);
 
+            if (mail.equals("superadmin@gmail.com")) {
+                subordinatesList.clear();
+                subordinatesList.addAll(allsubordinatesList);
+                Collections.sort(subordinatesList, (t1, t2) ->
+                        t1.getLevel() - t2.getLevel()
+                );
+            }
             adapter.notifyDataSetChanged();
         }
 
@@ -121,22 +143,12 @@ public class LocationListFragment extends Fragment {
             }
         });
 
-        adapter.setLongClickListener(view -> {
-            int pos = mRecycler.indexOfChild(view);
-            UserProfile selected = subordinatesList.get(pos);
-            Toast.makeText(getContext(), selected.getDisplay_name(), Toast.LENGTH_SHORT).show();
-
-            return false;
-        });
     }
 
     private void multiSelect(int pos) {
         fab.show();
-        UserProfile profile = subordinatesList.get(pos);
-        if (profile.getSelected()) {
-            profile.setSelected(false);
-        } else
-            profile.setSelected(true);
+        UserProfile selected = subordinatesList.get(pos);
+        selected.setSelected(!selected.getSelected());
     }
 
 
@@ -144,5 +156,6 @@ public class LocationListFragment extends Fragment {
         for (UserProfile profile : allsubordinatesList)
             if (profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
                 subordinatesList.add(profile);
+
     }
 }

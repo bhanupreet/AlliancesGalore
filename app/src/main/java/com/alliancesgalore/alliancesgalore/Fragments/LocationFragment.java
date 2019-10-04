@@ -86,7 +86,7 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
             if (Global.myProfile.getLastUpdated() != null) {
                 googleMap = mMap;
                 googleMap.setMyLocationEnabled(true);
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(MyLocation).zoom(14).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(MyLocation).zoom(18).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 mMapsRefresh.setRefreshing(false);
             }

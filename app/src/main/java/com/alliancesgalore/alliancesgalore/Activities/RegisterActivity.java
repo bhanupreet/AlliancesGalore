@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
         userMap.put("level", level);
         userMap.put("TokenID", token);
         if (role.toLowerCase().equals("manager"))
-            userMap.put("ReportingTo", "Admin");
+            userMap.put("ReportingTo", "superadmin@gmail.com");
     }
 
     private Boolean EmptyFieldsCheck() {

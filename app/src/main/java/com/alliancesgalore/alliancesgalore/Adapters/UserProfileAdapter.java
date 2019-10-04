@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import mva2.adapter.ItemBinder;
 
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHolder> {
 
