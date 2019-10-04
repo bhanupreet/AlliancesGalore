@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         holder.mDesignation.setText(userProfile.getRole());
         holder.mDisplayName.setText(userProfile.getDisplay_name());
         Glide.with(mCtx).load(userProfile.getImage()).placeholder(R.drawable.defaultprofile).into(holder.mProfileImage);
+        holder.itemView.setBackgroundColor(userProfile.getSelected() ? Color.CYAN : Color.WHITE);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         @Override
         public boolean onLongClick(View view) {
             mLongClickListener.onLongClick(view);
-            return false;
+            return true;
         }
     };
 }

@@ -26,7 +26,6 @@
         android:text="Display Name"
         android:textColor="#212121"
         android:textSize="22sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/users_single_profile_image"
         app:layout_constraintTop_toTopOf="parent" />
 

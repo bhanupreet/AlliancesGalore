@@ -2,9 +2,10 @@ package com.alliancesgalore.alliancesgalore;
 
 import android.icu.lang.UScript;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class UserProfile {
+public class UserProfile implements Serializable {
     String TokenID;
     String display_name;
     String email;
@@ -16,6 +17,7 @@ public class UserProfile {
     double Longitude;
     String ReportingTo;
     Long LastUpdated;
+    Boolean isSelected = false;
 
     public int getLevel() {
         return level;
@@ -27,6 +29,29 @@ public class UserProfile {
 
 
     public UserProfile() {
+    }
+
+    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, int level, double latitude, double longitude, String reportingTo, Long lastUpdated, Boolean isSelected) {
+        TokenID = tokenID;
+        this.display_name = display_name;
+        this.email = email;
+        this.image = image;
+        this.password = password;
+        this.role = role;
+        this.level = level;
+        Latitude = latitude;
+        Longitude = longitude;
+        ReportingTo = reportingTo;
+        LastUpdated = lastUpdated;
+        this.isSelected = isSelected;
+    }
+
+    public Boolean getSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
     }
 
     public double getLatitude() {
@@ -43,20 +68,6 @@ public class UserProfile {
 
     public void setLongitude(double longitude) {
         Longitude = longitude;
-    }
-
-    public UserProfile(String tokenID, String display_name, String email, String image, String password, String role, int level, double latitude, double longitude, String reportingTo, Long lastUpdated) {
-        TokenID = tokenID;
-        this.display_name = display_name;
-        this.email = email;
-        this.image = image;
-        this.password = password;
-        this.role = role;
-        this.level = level;
-        Latitude = latitude;
-        Longitude = longitude;
-        ReportingTo = reportingTo;
-        LastUpdated = lastUpdated;
     }
 
     public Long getLastUpdated() {
@@ -123,12 +134,12 @@ public class UserProfile {
         this.role = role;
     }
 
-    public void compare1(){
+    public void compare1() {
         Comparator<UserProfile> compareByrole = (UserProfile o1, UserProfile o2) ->
                 o1.getRole().compareTo(o2.getRole());
     }
 
-    public void compare2 (){
+    public void compare2() {
         Comparator<UserProfile> compareByName = (UserProfile o1, UserProfile o2) ->
                 o1.getDisplay_name().compareTo(o2.getDisplay_name());
     }

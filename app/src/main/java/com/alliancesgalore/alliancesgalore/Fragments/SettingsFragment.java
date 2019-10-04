@@ -40,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import kotlin.Function;
 
 
@@ -48,7 +49,7 @@ public class SettingsFragment extends Fragment {
     private TextView mDisplayName;
     private TextView mDesignation;
     private TextView mChangePassword;
-    private ImageView mProfileImage;
+    private CircleImageView mProfileImage;
     private ConstraintLayout mView;
 
     @Override

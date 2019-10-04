@@ -90,17 +90,30 @@ public class MainActivity extends AppCompatActivity {
     private void Tabadapter() {
         adapter = new MainActivityAdapter(getSupportFragmentManager());
         adapter.addFragment(new CRMfragment(), "CRM");
-        if (myProfile != null && myProfile.getLevel() == 30) {
-            adapter.addFragment(new LocationFragment(), "Location");
-        } else {
-            adapter.addFragment(new LocationListFragment(), "Location");
-        }
+        adapter.addFragment(new LocationListFragment(), "Location");
         adapter.addFragment(new RemindersFragment(), "Reminders");
+
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mViewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.setOffscreenPageLimit(2);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
