@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +20,19 @@ import com.alliancesgalore.alliancesgalore.Fragments.LocationFragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
+import com.alliancesgalore.alliancesgalore.Utils.Global;
+import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
@@ -30,12 +40,15 @@ import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_
 public class MapActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private BottomSheetBehavior bottomSheetBehavior;
-    private UserProfile selected;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
     private List<UserProfile> mMapSelectionList;
-    private LocationFragment locationFragment;
     private Bundle bundle;
+    MapView mMapView;
+    private GoogleMap googleMap;
+    private SwipeToRefresh mMapsRefresh;
+    private LatLng MyLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +57,14 @@ public class MapActivity extends AppCompatActivity {
         mMapSelectionList = new ArrayList<>();
         mMapSelectionList = getIntent().getParcelableArrayListExtra("objectlist");
 
-        setFragment();
+        FindIds(savedInstanceState);
+        mMapsRefresh.setOnRefreshListener(MapRefrshListener);
+        bundle = new Bundle();
+        UserProfile obj = getIntent().getParcelableExtra("object");
+        MyLocation = new LatLng(obj.getLatitude(), obj.getLongitude());
+        LatLng location = new LatLng(obj.getLatitude(), obj.getLongitude());
+        setdefault(obj, location);
+        setLocation(location);
         setmToolbar();
         setAdapter();
         RecyclerClick();
@@ -86,6 +106,14 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
+    private void FindIds(Bundle savedInstanceState) {
+        mMapView = findViewById(R.id.mapview);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+        mMapsRefresh = findViewById(R.id.mapsrefresh);
+
+    }
+
     private void setAdapter() {
         mRecycler = findViewById(R.id.maplist_recyler);
         mRecycler.setHasFixedSize(true);
@@ -97,16 +125,20 @@ public class MapActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void setFragment() {
-        locationFragment = new LocationFragment();
-        bundle = new Bundle();
-        selected = getIntent().getParcelableExtra("object");
-        bundle.putParcelable("object", selected);
-        locationFragment.setArguments(bundle);
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.map_container, locationFragment);
-        ft.commit();
+    private void setdefault(UserProfile obj, LatLng location) {
+
+        mMapView.getMapAsync(mMap -> {
+            googleMap = mMap;
+            googleMap.clear();
+            SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+            String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
+            mMap.addMarker(new MarkerOptions()
+                    .position(location)
+                    .snippet("Last Updated" + time)
+                    .title(obj.getDisplay_name()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+        });
     }
 
     private void setmToolbar() {
@@ -131,16 +163,39 @@ public class MapActivity extends AppCompatActivity {
         adapter.setClickListener(adapterClickListener);
     }
 
+    private void setLocation(LatLng location) {
+
+        mMapView.getMapAsync(mMap -> {
+            googleMap = mMap;
+            googleMap.setMyLocationEnabled(true);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            mMapsRefresh.setRefreshing(false);
+
+        });
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener MapRefrshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            setLocation(MyLocation);
+        }
+    };
+
     private View.OnClickListener adapterClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             int pos = mRecycler.indexOfChild(view);
-            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
-            adapter.swap(pos, 0);
-            adapter.notifyDataSetChanged();
-            bottomSheetBehavior.setState(STATE_COLLAPSED);
 
+
+            bottomSheetBehavior.setState(STATE_COLLAPSED);
+            UserProfile obj = mMapSelectionList.get(pos);
+            LatLng MyLocation = new LatLng(obj.getLatitude(), obj.getLongitude());
+            Toast.makeText(MapActivity.this, obj.getDisplay_name(), Toast.LENGTH_SHORT).show();
+            setdefault(obj, MyLocation);
+            setLocation(MyLocation);
+            adapter.swap(0, pos);
+            adapter.notifyDataSetChanged();
         }
     };
 

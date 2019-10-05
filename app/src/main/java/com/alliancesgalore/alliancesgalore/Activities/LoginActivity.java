@@ -142,17 +142,13 @@ public class LoginActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Toast.makeText(LoginActivity.this, "Email or Password cannot be left blank", Toast.LENGTH_SHORT).show();
             } else {
-
                 mprogressBar.setVisibility(View.VISIBLE);
                 Credential credential = new Credential.Builder(email).setPassword(password).build();
                 mCredentialsClient.save(credential);
                 LogIn(email, password);
-
             }
         }
     };
-
-
     private View.OnClickListener ForgotOnClickListener = v -> {
         Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
         startActivity(PasswordIntent);

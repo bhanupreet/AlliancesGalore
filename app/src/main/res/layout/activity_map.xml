@@ -18,11 +18,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/map_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize" />
+    <include layout="@layout/fragment_location" />
 
     <include layout="@layout/content_bottom_sheet" />
 
