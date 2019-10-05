@@ -117,17 +117,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    private OnCompleteListener tokenOnComplete = new OnCompleteListener<InstanceIdResult>() {
-        @Override
-        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-            if (!task.isSuccessful()) {
-                Log.w("tag", "getInstanceId failed", task.getException());
-                return;
-            }
+    private OnCompleteListener tokenOnComplete = (OnCompleteListener<InstanceIdResult>) task -> {
+        if (!task.isSuccessful()) {
+            Functions.toast(task);
+        } else {
             // Get new Instance ID token
-            String token = task.getResult().getToken();
+            String token = Objects.requireNonNull(task.getResult()).getToken();
             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-
             FirebaseDatabase.getInstance().getReference()
                     .child("Users")
                     .child(current_user.getUid())
@@ -157,12 +153,9 @@ public class LoginActivity extends AppCompatActivity {
     };
 
 
-    private View.OnClickListener ForgotOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(PasswordIntent);
-        }
+    private View.OnClickListener ForgotOnClickListener = v -> {
+        Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+        startActivity(PasswordIntent);
     };
 
 }

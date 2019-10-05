@@ -62,7 +62,7 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
         FindIds(view, savedInstanceState);
         mMapsRefresh.setOnRefreshListener(MapRefrshListener);
         Bundle bundle = getArguments();
-        obj = (UserProfile) bundle.getSerializable("object");
+        obj = bundle.getParcelable("object");
         Toast.makeText(getContext(), obj.getDisplay_name(), Toast.LENGTH_SHORT).show();
         MyLocation = new LatLng(obj.getLatitude(), obj.getLongitude());
         setdefult(true);

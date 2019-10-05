@@ -1,11 +1,13 @@
 package com.alliancesgalore.alliancesgalore;
 
 import android.icu.lang.UScript;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class UserProfile implements Serializable {
+public class UserProfile implements Parcelable {
     String TokenID;
     String display_name;
     String email;
@@ -18,6 +20,38 @@ public class UserProfile implements Serializable {
     String ReportingTo;
     Long LastUpdated;
     Boolean isSelected = false;
+
+    protected UserProfile(Parcel in) {
+        TokenID = in.readString();
+        display_name = in.readString();
+        email = in.readString();
+        image = in.readString();
+        password = in.readString();
+        role = in.readString();
+        level = in.readInt();
+        Latitude = in.readDouble();
+        Longitude = in.readDouble();
+        ReportingTo = in.readString();
+        if (in.readByte() == 0) {
+            LastUpdated = null;
+        } else {
+            LastUpdated = in.readLong();
+        }
+        byte tmpIsSelected = in.readByte();
+        isSelected = tmpIsSelected == 0 ? null : tmpIsSelected == 1;
+    }
+
+    public static final Creator<UserProfile> CREATOR = new Creator<UserProfile>() {
+        @Override
+        public UserProfile createFromParcel(Parcel in) {
+            return new UserProfile(in);
+        }
+
+        @Override
+        public UserProfile[] newArray(int size) {
+            return new UserProfile[size];
+        }
+    };
 
     public int getLevel() {
         return level;
@@ -142,6 +176,32 @@ public class UserProfile implements Serializable {
     public void compare2() {
         Comparator<UserProfile> compareByName = (UserProfile o1, UserProfile o2) ->
                 o1.getDisplay_name().compareTo(o2.getDisplay_name());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(TokenID);
+        parcel.writeString(display_name);
+        parcel.writeString(email);
+        parcel.writeString(image);
+        parcel.writeString(password);
+        parcel.writeString(role);
+        parcel.writeInt(level);
+        parcel.writeDouble(Latitude);
+        parcel.writeDouble(Longitude);
+        parcel.writeString(ReportingTo);
+        if (LastUpdated == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(LastUpdated);
+        }
+        parcel.writeByte((byte) (isSelected == null ? 0 : isSelected ? 1 : 2));
     }
 }
 

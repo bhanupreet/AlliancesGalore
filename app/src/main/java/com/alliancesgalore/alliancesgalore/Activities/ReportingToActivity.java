@@ -50,7 +50,7 @@ public class ReportingToActivity extends AppCompatActivity {
     }
 
     private void query() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users");
+        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("level").equalTo(level);
         query.keepSynced(true);
         query.addValueEventListener(valueEventListener);
     }
@@ -80,19 +80,10 @@ public class ReportingToActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             mReportingToList.clear();
-            if (dataSnapshot.exists()) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    UserProfile getProfile = snapshot.getValue(UserProfile.class);
-//                    Toast.makeText(ReportingToActivity.this, toastLevel, Toast.LENGTH_SHORT).show();
-                    if (getProfile.getLevel() == level) {
-//                    if (getProfile.getLevel().equals(ReportingTo)) {
-//                        Toast.makeText(ReportingToActivity.this, getProfile.getDisplay_name() + " " + getProfile.getLevel(), Toast.LENGTH_SHORT).show();
-                        mReportingToList.add(getProfile);
-//                    }
-                    }
-                }
-                adapter.notifyDataSetChanged();
-            }
+            if (dataSnapshot.exists())
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                    mReportingToList.add(snapshot.getValue(UserProfile.class));
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -102,18 +93,18 @@ public class ReportingToActivity extends AppCompatActivity {
     };
 
     private void ReportingToSwitch() {
+
 //        Toast.makeText(ReportingToActivity.this, Global.myProfile.getRole(), Toast.LENGTH_SHORT).show();
-        switch (Global.myProfile.getRole().toLowerCase()) {
-            case "team leader":
-                level = 10;
-                break;
-            case "executive":
-                level = 20;
-                break;
-            default:
-                level = 0;
+            switch (Global.myProfile.getRole().toLowerCase()) {
+                case "team leader":
+                    level = 10;
+                    break;
+                case "executive":
+                    level = 20;
+                    break;
+                default:
+                    level = 0;
         }
-        toastLevel = String.valueOf(level);
     }
 
     private void RecyclerClick() {
@@ -135,6 +126,7 @@ public class ReportingToActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+
     private View.OnLongClickListener adapterLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {

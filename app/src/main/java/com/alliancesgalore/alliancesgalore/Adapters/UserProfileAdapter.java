@@ -14,6 +14,8 @@ import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import mva2.adapter.ItemBinder;
@@ -75,4 +77,13 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
             return true;
         }
     };
+
+    public void swap(int a, int b) {
+        UserProfile aProfile = mUsersList.get(a), bProfile = mUsersList.get(b);
+        mUsersList.set(a, bProfile);
+        mUsersList.set(b, aProfile);
+        Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        Collections.sort(mUsersList.subList(1,mUsersList.size()),(t1,t2)-> t1.getLevel()-t2.getLevel());
+
+    }
 }

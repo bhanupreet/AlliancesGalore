@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
+import com.alliancesgalore.alliancesgalore.Activities.ReportingToActivity;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -41,7 +44,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import mva2.adapter.ListSection;
 import mva2.adapter.MultiViewAdapter;
@@ -64,6 +69,9 @@ public class LocationListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
+        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo())) {
+            sendToReport();
+        }
         mRecycler = view.findViewById(R.id.locationlist_recycler);
         fab = view.findViewById(R.id.fab_locationlist);
         fab.hide();
@@ -88,6 +96,9 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo())) {
+            sendToReport();
+        }
     }
 
     private ValueEventListener valueEventListener = new ValueEventListener() {
@@ -96,24 +107,24 @@ public class LocationListFragment extends Fragment {
             allsubordinatesList.clear();
             subordinatesList.clear();
             if (dataSnapshot.exists()) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                    allsubordinatesList.add(snapshot.getValue(UserProfile.class));
-            }
-            fetch(mail);
-            for (UserProfile profile1 : subordinatesList)
-                fetch(profile1.getEmail());
+                Iterable<DataSnapshot> snapshotIterator = dataSnapshot.getChildren();
+                for (DataSnapshot next : snapshotIterator) {
+                    allsubordinatesList.add(next.getValue(UserProfile.class));
+                }
 
-            if (subordinatesList.isEmpty())
-                subordinatesList.add(myProfile);
-
-            if (mail.equals("superadmin@gmail.com")) {
-                subordinatesList.clear();
-                subordinatesList.addAll(allsubordinatesList);
-                Collections.sort(subordinatesList, (t1, t2) ->
-                        t1.getLevel() - t2.getLevel()
-                );
+                if (mail.equals("superadmin@gmail.com")) {
+                    subordinatesList.clear();
+                    subordinatesList.addAll(allsubordinatesList);
+                    Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - t2.getLevel());
+                } else if (myProfile != null) {
+                    fetch(mail);
+                    for (UserProfile profile1 : subordinatesList)
+                        fetch(profile1.getEmail());
+                    if (subordinatesList.isEmpty())
+                        subordinatesList.add(myProfile);
+                }
+                adapter.notifyDataSetChanged();
             }
-            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -132,15 +143,13 @@ public class LocationListFragment extends Fragment {
 
         adapter.setClickListener(view -> {
             int pos = mRecycler.indexOfChild(view);
-            if (isMultiselect) {
-                //if multiple selection is enabled then select item on single click else perform normal click on item.
-                multiSelect(pos);
-            } else {
-                Intent mapIntent = new Intent(getActivity(), MapActivity.class);
-                UserProfile selected = subordinatesList.get(pos);
-                mapIntent.putExtra("object", selected);
-                startActivity(mapIntent);
-            }
+
+            Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+            UserProfile selected = subordinatesList.get(pos);
+            adapter.swap(pos, 0);
+            mapIntent.putExtra("object", selected);
+            mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) subordinatesList);
+            startActivity(mapIntent);
         });
 
     }
@@ -154,8 +163,14 @@ public class LocationListFragment extends Fragment {
 
     private void fetch(String email) {
         for (UserProfile profile : allsubordinatesList)
-            if (profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
+            if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
                 subordinatesList.add(profile);
 
+    }
+
+    private void sendToReport() {
+        Intent startIntent = new Intent(getActivity(), ReportingToActivity.class);
+        startActivity(startIntent);
+        Objects.requireNonNull(getActivity()).finish();
     }
 }
