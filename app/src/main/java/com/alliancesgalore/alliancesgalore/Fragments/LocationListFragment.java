@@ -118,7 +118,8 @@ public class LocationListFragment extends Fragment {
                     Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - t2.getLevel());
                 } else if (myProfile != null) {
                     fetch(mail);
-                    for (UserProfile profile1 : subordinatesList)
+                    Iterable<UserProfile> iterable = subordinatesList;
+                    for (UserProfile profile1 : iterable)
                         fetch(profile1.getEmail());
                     if (subordinatesList.isEmpty())
                         subordinatesList.add(myProfile);
@@ -162,7 +163,8 @@ public class LocationListFragment extends Fragment {
 
 
     private void fetch(String email) {
-        for (UserProfile profile : allsubordinatesList)
+        Iterable<UserProfile> iterable = allsubordinatesList;
+        for (UserProfile profile : iterable)
             if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
                 subordinatesList.add(profile);
 
