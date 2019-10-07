@@ -62,6 +62,7 @@ dependencies {
     implementation 'dev.ahamed.mva2:ext-decorator:2.0.0-beta01'    // Decorators
     implementation 'dev.ahamed.mva2:ext-diffutil-rx:2.0.0-beta01'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

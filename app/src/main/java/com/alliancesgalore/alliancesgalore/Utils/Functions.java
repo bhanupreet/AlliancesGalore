@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -54,5 +55,9 @@ public final class Functions {
 
     public static String TextOf(TextInputLayout textInputLayout) {
         return textInputLayout.getEditText().getText().toString();
+    }
+
+    public static void toast(String text, Context mCtx) {
+        Toast.makeText(mCtx, text, Toast.LENGTH_SHORT).show();
     }
 }

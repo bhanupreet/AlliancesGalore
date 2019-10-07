@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        android:id="@+id/locationlist_recyclershimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shimmer_demo_angle="20"
+        app:shimmer_demo_child_count="10"
+        app:shimmer_demo_layout="@layout/users_single_layout_shimmer"
+        app:shimmer_demo_shimmer_color="#fafafa"
+        app:shimmer_demo_view_holder_item_background="#ffffff" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/locationlist_recycler"
         android:layout_width="match_parent"
@@ -12,9 +23,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_locationlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/fab_locationlist"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 

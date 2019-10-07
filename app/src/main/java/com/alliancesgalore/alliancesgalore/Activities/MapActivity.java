@@ -2,9 +2,6 @@ package com.alliancesgalore.alliancesgalore.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -16,11 +13,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
-import com.alliancesgalore.alliancesgalore.Fragments.LocationFragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
@@ -54,56 +50,25 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        mMapSelectionList = new ArrayList<>();
-        mMapSelectionList = getIntent().getParcelableArrayListExtra("objectlist");
 
+        mMapSelectionList = new ArrayList<>();
+        mMapSelectionList = ObjectListIntent();
         FindIds(savedInstanceState);
-        mMapsRefresh.setOnRefreshListener(MapRefrshListener);
-        bundle = new Bundle();
-        UserProfile obj = getIntent().getParcelableExtra("object");
-        MyLocation = new LatLng(obj.getLatitude(), obj.getLongitude());
-        LatLng location = new LatLng(obj.getLatitude(), obj.getLongitude());
+        setMapRefreshListener();
+        UserProfile obj = ObjectIntent();
+        MyLocation = setLatLong(obj);
+        LatLng location = MyLocation;
         setdefault(obj, location);
         setLocation(location);
         setmToolbar();
         setAdapter();
         RecyclerClick();
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
+        setBottomSheetBehavior();
 
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    //      bottomSheetHeading.setText(getString(R.string.text_collapse_me));
-                } else {
-                    //     bottomSheetHeading.setText(getString(R.string.text_expand_me));
-                }
+    }
 
-                switch (newState) {
-                    case STATE_COLLAPSED:
-                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        adapter.notifyDataSetChanged();
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
-                        break;
-                }
-            }
-
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-
-            }
-        });
+    private void setMapRefreshListener() {
+        mMapsRefresh.setOnRefreshListener(MapRefreshListener);
     }
 
     private void FindIds(Bundle savedInstanceState) {
@@ -136,15 +101,15 @@ public class MapActivity extends AppCompatActivity {
                     .position(location)
                     .snippet("Last Updated" + time)
                     .title(obj.getDisplay_name()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         });
     }
 
     private void setmToolbar() {
         mToolbar = findViewById(R.id.map_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Location");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Location");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -161,21 +126,23 @@ public class MapActivity extends AppCompatActivity {
 
     private void RecyclerClick() {
         adapter.setClickListener(adapterClickListener);
+        adapter.setLongClickListener(view -> {
+            Toast.makeText(MapActivity.this, "long press", Toast.LENGTH_SHORT);
+            return false;
+        });
     }
 
     private void setLocation(LatLng location) {
 
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
-            googleMap.setMyLocationEnabled(true);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(17).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMapsRefresh.setRefreshing(false);
-
         });
     }
 
-    private SwipeRefreshLayout.OnRefreshListener MapRefrshListener = new SwipeRefreshLayout.OnRefreshListener() {
+    private SwipeRefreshLayout.OnRefreshListener MapRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             setLocation(MyLocation);
@@ -186,18 +153,63 @@ public class MapActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             int pos = mRecycler.indexOfChild(view);
-
-
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             UserProfile obj = mMapSelectionList.get(pos);
-            LatLng MyLocation = new LatLng(obj.getLatitude(), obj.getLongitude());
+            LatLng Location = setLatLong(obj);
             Toast.makeText(MapActivity.this, obj.getDisplay_name(), Toast.LENGTH_SHORT).show();
-            setdefault(obj, MyLocation);
-            setLocation(MyLocation);
+            setdefault(obj, Location);
+            setLocation(Location);
             adapter.swap(0, pos);
             adapter.notifyDataSetChanged();
         }
     };
 
+    private void setBottomSheetBehavior() {
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
 
+                switch (newState) {
+                    case STATE_COLLAPSED:
+                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
+                        break;
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                        break;
+                }
+            }
+
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
+
+            }
+        });
+    }
+
+    private UserProfile ObjectIntent() {
+        return getIntent().getParcelableExtra("object");
+    }
+
+    private LatLng setLatLong(UserProfile obj) {
+        LatLng returnthis = new LatLng(obj.getLatitude(), obj.getLongitude());
+        MyLocation = returnthis;
+        return returnthis;
+    }
+
+    private ArrayList<UserProfile> ObjectListIntent() {
+        return getIntent().getParcelableArrayListExtra("objectlist");
+    }
 }

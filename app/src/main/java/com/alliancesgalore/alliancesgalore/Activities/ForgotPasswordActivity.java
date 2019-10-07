@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -25,56 +27,55 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private Button mResetButton;
     private Toolbar mToolBar;
     private ProgressBar mprogressBar;
+    private Context mCtx = getApplicationContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+        FindIds();
+        setToolbar();
+        resetclick();
+    }
 
-
-        //setting ids
-        mprogressBar = findViewById(R.id.forgotpasswordprogress);
-        mEmail = findViewById(R.id.forgotpswrdemail);
-        mToolBar = findViewById(R.id.forgotpasswordappbar);
-        mResetButton = findViewById(R.id.resetPasswordbtn);
-
-        //toolbar
+    private void setToolbar() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("Forgot password");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        resetclick(mResetButton);
     }
 
-    private void resetclick(Button mResetButton){
-        mResetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void FindIds() {
+        mprogressBar = findViewById(R.id.forgotpasswordprogress);
+        mEmail = findViewById(R.id.forgotpswrdemail);
+        mToolBar = findViewById(R.id.forgotpasswordappbar);
+        mResetButton = findViewById(R.id.resetPasswordbtn);
+    }
 
-                FirebaseAuth auth = FirebaseAuth.getInstance();
+    private void resetclick() {
+        mResetButton.setOnClickListener(v -> {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            String emailAddress = Functions.TextOf(mEmail);
+            if (!TextUtils.isEmpty(emailAddress)) {
+                mprogressBar.setVisibility(View.VISIBLE);
+                auth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(resetClickOnComplete);
 
-                String emailAddress = mEmail.getEditText().getText().toString();
-                if (!TextUtils.isEmpty(emailAddress)) {
-                    mprogressBar.setVisibility(View.VISIBLE);
-                    auth.sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(ForgotPasswordActivity.this, "Email sent!", Toast.LENGTH_LONG).show();
-                                        Log.d("123", "Email sent.");
-                                    } else {
-                                        Toast.makeText(ForgotPasswordActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                    mprogressBar.setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                } else {
-                    mprogressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(ForgotPasswordActivity.this, "Email cannot be left blank.", Toast.LENGTH_LONG).show();
-                }
+            } else {
+                mprogressBar.setVisibility(View.INVISIBLE);
+                Functions.toast("Email cannot be left blank.", mCtx);
             }
         });
     }
+
+    private OnCompleteListener resetClickOnComplete = new OnCompleteListener<Void>() {
+        @Override
+        public void onComplete(@NonNull Task<Void> task) {
+            if (task.isSuccessful())
+                Functions.toast("Email sent", mCtx);
+            else
+                Functions.toast(task);
+            mprogressBar.setVisibility(View.INVISIBLE);
+        }
+    };
 }

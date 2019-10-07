@@ -32,6 +32,7 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.alliancesgalore.alliancesgalore.Utils.RecyclerItemClickListener;
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.firebase.ui.auth.data.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +48,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import mva2.adapter.ListSection;
 import mva2.adapter.MultiViewAdapter;
@@ -62,6 +64,7 @@ public class LocationListFragment extends Fragment {
     private UserProfileAdapter adapter;
     private List<UserProfile> allsubordinatesList, subordinatesList, multiselect_list;
     private String mail;
+    private ShimmerRecyclerView shimmerRecycler;
     private Boolean isMultiselect = false;
     private FloatingActionButton fab;
 
@@ -72,11 +75,13 @@ public class LocationListFragment extends Fragment {
         if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo())) {
             sendToReport();
         }
+        shimmerRecycler = view.findViewById(R.id.locationlist_recyclershimmer);
+        shimmerRecycler.showShimmerAdapter();
         mRecycler = view.findViewById(R.id.locationlist_recycler);
         fab = view.findViewById(R.id.fab_locationlist);
         fab.hide();
         allsubordinatesList = new ArrayList<>();
-        subordinatesList = new ArrayList<>();
+        subordinatesList = new CopyOnWriteArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
@@ -125,6 +130,7 @@ public class LocationListFragment extends Fragment {
                         subordinatesList.add(myProfile);
                 }
                 adapter.notifyDataSetChanged();
+                shimmerRecycler.hideShimmerAdapter();
             }
         }
 
@@ -149,7 +155,10 @@ public class LocationListFragment extends Fragment {
             UserProfile selected = subordinatesList.get(pos);
             adapter.swap(pos, 0);
             mapIntent.putExtra("object", selected);
-            mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) subordinatesList);
+            List<UserProfile> temp = new ArrayList<>();
+            temp.clear();
+            temp.addAll(subordinatesList);
+            mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
             startActivity(mapIntent);
         });
 

@@ -46,7 +46,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         View view = LayoutInflater.from(mCtx).inflate(R.layout.users_single_layout, parent, false);
         UserProfileViewHolder holder = new UserProfileViewHolder(view);
         holder.itemView.setOnClickListener(holderClickLisener);
-        holder.itemView.setOnLongClickListener(holderLongClickListener);
+
         return holder;
     }
 
@@ -70,13 +70,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
             mClickListener.onClick(view);
         }
     };
-    private View.OnLongClickListener holderLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            mLongClickListener.onLongClick(view);
-            return true;
-        }
-    };
+
 
     public void swap(int a, int b) {
         UserProfile aProfile = mUsersList.get(a), bProfile = mUsersList.get(b);
