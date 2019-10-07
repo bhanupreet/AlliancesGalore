@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alliancesgalore.alliancesgalore.Adapters.ItemClickListener;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -39,7 +40,6 @@ public class MapActivity extends AppCompatActivity {
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
     private List<UserProfile> mMapSelectionList;
-    private Bundle bundle;
     MapView mMapView;
     private GoogleMap googleMap;
     private SwipeToRefresh mMapsRefresh;
@@ -64,7 +64,6 @@ public class MapActivity extends AppCompatActivity {
         setAdapter();
         RecyclerClick();
         setBottomSheetBehavior();
-
     }
 
     private void setMapRefreshListener() {
@@ -119,21 +118,25 @@ public class MapActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
         }
         return (super.onOptionsItemSelected(item));
     }
 
     private void RecyclerClick() {
-        adapter.setClickListener(adapterClickListener);
-        adapter.setLongClickListener(view -> {
-            Toast.makeText(MapActivity.this, "long press", Toast.LENGTH_SHORT);
-            return false;
+        adapter.addItemClickListener(pos -> {
+            bottomSheetBehavior.setState(STATE_COLLAPSED);
+            UserProfile obj = mMapSelectionList.get(pos);
+            LatLng Location = setLatLong(obj);
+            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
+            setdefault(obj, Location);
+            setLocation(Location);
+            adapter.swap(0, pos);
+            Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
+            adapter.notifyDataSetChanged();
         });
     }
 
     private void setLocation(LatLng location) {
-
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(17).build();
@@ -156,10 +159,11 @@ public class MapActivity extends AppCompatActivity {
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             UserProfile obj = mMapSelectionList.get(pos);
             LatLng Location = setLatLong(obj);
-            Toast.makeText(MapActivity.this, obj.getDisplay_name(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
             setdefault(obj, Location);
             setLocation(Location);
             adapter.swap(0, pos);
+            Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
             adapter.notifyDataSetChanged();
         }
     };

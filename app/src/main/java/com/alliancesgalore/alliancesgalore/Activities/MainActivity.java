@@ -12,10 +12,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
@@ -31,6 +34,7 @@ import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,9 +43,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.AccessController;
+import java.util.Objects;
+
 import kotlin.Function;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST = 100;
@@ -49,11 +57,13 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private MainActivityAdapter adapter;
     private Toolbar mToolbar;
+    public FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_new);
+
         FindIds();
         SetToolBar();
         LocationService();
@@ -80,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.main_viewpager);
         mTabLayout = findViewById(R.id.main_tablayout);
         mToolbar = findViewById(R.id.main_app_bar);
+        fab = findViewById(R.id.fab_locationlist);
         CRMfragment.count = 0;
     }
 
@@ -99,21 +110,38 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.setOffscreenPageLimit(2);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
+    }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
+    private void swappingAway() {
+        fab.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_down);
+        fab.startAnimation(animation);
+    }
+
+    private void selectedTabs(int tab) {
+        fab.show();
+
+        //a bit animation of popping up.
+        fab.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_up);
+        fab.startAnimation(animation);
+        switch (tab) {
+            case 0:
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_chat_white_24dp));
+                break;
+            case 1:
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_playlist_add_check_black_24dp));
+
+                break;
+            default:
+                tab = 0;
+                fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
+
+
+        }
+
+        //you can do more task. for example, change color for each tabs, or custom action for each tabs.
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
@@ -141,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        fabanim();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid = FirebaseAuth.getInstance().getUid();
@@ -149,9 +178,71 @@ public class MainActivity extends AppCompatActivity {
             sendToStart();
     }
 
+    private void fabanim() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            private int state = 0;
+            private boolean isFloatButtonHidden = false;
+            private int position = 0;
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                if (isFloatButtonHidden == false && state == 1 && positionOffset != 0.0) {
+                    isFloatButtonHidden = true;
+                    //hide floating action button
+                    swappingAway();
+//                    fab.hide();
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //reset floating
+                this.position = position;
+                switch (position) {
+                    case 0:
+                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, MainActivity.this.getTheme()));
+                        break;
+                    case 1:
+                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
+                        break;
+                    default:
+                        position = 1;
+                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
+
+                }
+                if (state == 2) {
+                    //have end in selected tab
+                    isFloatButtonHidden = false;
+                    selectedTabs(position);
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //state 0 = nothing happen, state 1 = begining scrolling, state 2 = stop at selected tab.
+                this.state = state;
+                if (state == 0) {
+                    isFloatButtonHidden = false;
+                } else if (state == 2 && isFloatButtonHidden) {
+                    //this only happen if user is swapping but swap back to current tab (cancel to change tab)
+                    selectedTabs(position);
+                }
+
+            }
+        });
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        fabanim();
     }
 
     @Override

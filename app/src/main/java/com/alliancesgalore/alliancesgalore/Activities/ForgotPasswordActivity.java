@@ -27,7 +27,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private Button mResetButton;
     private Toolbar mToolBar;
     private ProgressBar mprogressBar;
-    private Context mCtx = getApplicationContext();
+    private Context mCtx = ForgotPasswordActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

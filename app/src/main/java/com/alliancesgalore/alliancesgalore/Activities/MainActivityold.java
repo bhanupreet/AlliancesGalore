@@ -82,20 +82,17 @@ public class MainActivityold extends AppCompatActivity {
         layout = findViewById(R.id.mainlayout);
         mToolbar = findViewById(R.id.mainappbar);
 
-        mChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        mChat.setOnClickListener(view -> {
 
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
-                try {
-                    launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
-                    startActivity(launchIntent);
-                }
-                catch (Exception e){
-                    Toast.makeText(getApplicationContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
-                }
-
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+            try {
+                launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
+                startActivity(launchIntent);
             }
+            catch (Exception e){
+                Toast.makeText(getApplicationContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
+            }
+
         });
 
         setSupportActionBar(mToolbar);

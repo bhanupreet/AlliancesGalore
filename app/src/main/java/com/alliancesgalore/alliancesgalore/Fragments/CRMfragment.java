@@ -1,6 +1,8 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
@@ -192,10 +195,26 @@ public class CRMfragment extends Fragment {
         count = 0;
         getemailpass();
         login();
-        if (savedInstanceStateout != null) {
+        if (savedInstanceStateout != null)
             crmweb.restoreState(savedInstanceStateout);
 
-        }
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.fab.show();
+        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, getContext().getTheme()));
+
+        mainActivity.fab.setOnClickListener(v -> {
+
+            Intent launchIntent = mainActivity.getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+            try {
+                launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
+                startActivity(launchIntent);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
 
     }
 
@@ -262,4 +281,12 @@ public class CRMfragment extends Fragment {
             crmweb.reload();
         }
     };
+
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed()) {
+            onResume();
+        }
+    }
 }

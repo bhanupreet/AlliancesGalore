@@ -24,6 +24,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 
@@ -33,20 +35,27 @@ public class ReportingToActivity extends AppCompatActivity {
     private List<UserProfile> mReportingToList;
     private int level;
     private UserProfileAdapter adapter;
-    private String toastLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reporting_to);
+
         FindIds();
         setToolBar();
         ReportingToSwitch();
-        serAdapter(mRecycler);
         query();
+        setAdapter();
+        RecyclerClick();
+    }
+
+    private void setAdapter() {
+        mRecycler.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecycler.setLayoutManager(layoutManager);
         adapter = new UserProfileAdapter(this, mReportingToList);
         mRecycler.setAdapter(adapter);
-        RecyclerClick();
+        adapter.notifyDataSetChanged();
     }
 
     private void query() {
@@ -55,19 +64,10 @@ public class ReportingToActivity extends AppCompatActivity {
         query.addValueEventListener(valueEventListener);
     }
 
-    private void serAdapter(RecyclerView mRecycler) {
-        mRecycler.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecycler.setLayoutManager(layoutManager);
-
-
-    }
-
     private void setToolBar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Reporting To");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
     }
 
     private void FindIds() {
@@ -83,33 +83,30 @@ public class ReportingToActivity extends AppCompatActivity {
             if (dataSnapshot.exists())
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     mReportingToList.add(snapshot.getValue(UserProfile.class));
+            Collections.sort(mReportingToList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
             adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-
         }
     };
 
     private void ReportingToSwitch() {
-
-//        Toast.makeText(ReportingToActivity.this, Global.myProfile.getRole(), Toast.LENGTH_SHORT).show();
-            switch (Global.myProfile.getRole().toLowerCase()) {
-                case "team leader":
-                    level = 10;
-                    break;
-                case "executive":
-                    level = 20;
-                    break;
-                default:
-                    level = 0;
+        switch (Global.myProfile.getRole().toLowerCase()) {
+            case "team leader":
+                level = 10;
+                break;
+            case "executive":
+                level = 20;
+                break;
+            default:
+                level = 0;
         }
     }
 
     private void RecyclerClick() {
         adapter.setClickListener(adapterClickListener);
-        adapter.setLongClickListener(adapterLongClickListener);
     }
 
     private View.OnClickListener adapterClickListener = new View.OnClickListener() {
@@ -127,11 +124,4 @@ public class ReportingToActivity extends AppCompatActivity {
         finish();
     }
 
-    private View.OnLongClickListener adapterLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            int pos = mRecycler.indexOfChild(view);
-            return false;
-        }
-    };
 }

@@ -27,9 +27,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
 import com.alliancesgalore.alliancesgalore.Activities.ReportingToActivity;
+import com.alliancesgalore.alliancesgalore.Adapters.ItemClickListener;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.alliancesgalore.alliancesgalore.Utils.RecyclerItemClickListener;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
@@ -66,7 +68,7 @@ public class LocationListFragment extends Fragment {
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
     private Boolean isMultiselect = false;
-    private FloatingActionButton fab;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,9 +80,8 @@ public class LocationListFragment extends Fragment {
         shimmerRecycler = view.findViewById(R.id.locationlist_recyclershimmer);
         shimmerRecycler.showShimmerAdapter();
         mRecycler = view.findViewById(R.id.locationlist_recycler);
-        fab = view.findViewById(R.id.fab_locationlist);
-        fab.hide();
         allsubordinatesList = new ArrayList<>();
+        multiselect_list = new ArrayList<>();
         subordinatesList = new CopyOnWriteArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
@@ -128,6 +129,8 @@ public class LocationListFragment extends Fragment {
                     if (subordinatesList.isEmpty())
                         subordinatesList.add(myProfile);
                 }
+                Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+                Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
             }
@@ -146,29 +149,50 @@ public class LocationListFragment extends Fragment {
     }
 
     private void itemClick() {
+        adapter.addItemClickListener(pos -> {
+            if (isMultiselect) {
+                UserProfile selectedprofile = subordinatesList.get(pos);
+                selectedprofile.setSelected(!selectedprofile.getSelected());
+                Functions.toast(selectedprofile.getDisplay_name() + selectedprofile.getSelected(), getContext());
+                adapter.notifyDataSetChanged();
+            } else {
+                Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+                UserProfile selected = subordinatesList.get(pos);
+                adapter.swap(pos, 0);
+                mapIntent.putExtra("object", selected);
+                List<UserProfile> temp = new ArrayList<>();
+                temp.clear();
+                temp.addAll(subordinatesList);
+                mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
+                startActivity(mapIntent);
+                MainActivity mainActivity = (MainActivity) getActivity();
 
-        adapter.setClickListener(view -> {
-            int pos = mRecycler.indexOfChild(view);
-
-            Intent mapIntent = new Intent(getActivity(), MapActivity.class);
-            UserProfile selected = subordinatesList.get(pos);
-            adapter.swap(pos, 0);
-            mapIntent.putExtra("object", selected);
-            List<UserProfile> temp = new ArrayList<>();
-            temp.clear();
-            temp.addAll(subordinatesList);
-            mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
-            startActivity(mapIntent);
+            }
         });
+//        adapter.setClickListener(view -> {
+//            int pos = mRecycler.indexOfChild(view);
+//            if (isMultiselect) {
+//                UserProfile selectedprofile = subordinatesList.get(pos);
+//                selectedprofile.setSelected(!selectedprofile.getSelected());
+//                Functions.toast(selectedprofile.getDisplay_name() + selectedprofile.getSelected(), getContext());
+//                adapter.notifyDataSetChanged();
+//            } else {
+//                Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+//                UserProfile selected = subordinatesList.get(pos);
+//                adapter.swap(pos, 0);
+//                mapIntent.putExtra("object", selected);
+//                List<UserProfile> temp = new ArrayList<>();
+//                temp.clear();
+//                temp.addAll(subordinatesList);
+//                mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
+//                startActivity(mapIntent);
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//
+//            }
+//
+//        });
 
     }
-
-    private void multiSelect(int pos) {
-        fab.show();
-        UserProfile selected = subordinatesList.get(pos);
-        selected.setSelected(!selected.getSelected());
-    }
-
 
     private void fetch(String email) {
         for (UserProfile profile : allsubordinatesList)
@@ -181,5 +205,31 @@ public class LocationListFragment extends Fragment {
         Intent startIntent = new Intent(getActivity(), ReportingToActivity.class);
         startActivity(startIntent);
         Objects.requireNonNull(getActivity()).finish();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed()) {
+            onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+        mainActivity.fab.setOnClickListener(v -> isMultiselect = !isMultiselect);
     }
 }

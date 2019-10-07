@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="false"
+    android:focusable="false"
+    android:nestedScrollingEnabled="false"
     android:orientation="vertical"
-    android:padding="15dp"
-    android:clickable="true"
-    android:focusable="true">
+    android:padding="15dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/users_single_profile_image"
@@ -18,6 +19,15 @@
         android:src="#d3d3d3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_single_selected"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:animateLayoutChanges="true"
+        android:src="@drawable/tick"
+        app:layout_constraintBottom_toBottomOf="@id/users_single_profile_image"
+        app:layout_constraintEnd_toEndOf="@id/users_single_profile_image" />
 
     <TextView
         android:id="@+id/users_single_displayname"
