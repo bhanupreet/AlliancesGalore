@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST = 100;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private Toolbar mToolbar;
+    public Toolbar mToolbar;
     public FloatingActionButton fab;
 
     @Override
