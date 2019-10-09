@@ -10,9 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -22,15 +20,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
-import com.alliancesgalore.alliancesgalore.Fragments.LocationFragment;
 import com.alliancesgalore.alliancesgalore.Adapters.MainActivityAdapter;
 import com.alliancesgalore.alliancesgalore.Fragments.LocationListFragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.UserProfile;
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,19 +38,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.AccessController;
-import java.util.Objects;
-
-import kotlin.Function;
-
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST = 100;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private MainActivityAdapter adapter;
     private Toolbar mToolbar;
     public FloatingActionButton fab;
 
@@ -99,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Tabadapter() {
-        adapter = new MainActivityAdapter(getSupportFragmentManager());
+        MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
         adapter.addFragment(new CRMfragment(), "CRM");
         adapter.addFragment(new LocationListFragment(), "Location");
         adapter.addFragment(new RemindersFragment(), "Reminders");
@@ -271,11 +259,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private OnCompleteListener SignOutonComplete = new OnCompleteListener<Void>() {
-        public void onComplete(@NonNull Task<Void> task) {
-            sendToStart();
-        }
-    };
+    private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();
 
     public ValueEventListener valueEventListener = new ValueEventListener() {
         @Override

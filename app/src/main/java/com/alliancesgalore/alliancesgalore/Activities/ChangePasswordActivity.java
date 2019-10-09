@@ -27,13 +27,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Objects;
-
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private TextInputLayout pwd1, pwd2;
     private String pwd1string, pwd2string;
-    private Toolbar mToolbar;
     private ProgressBar mProgressbar;
     private Button changepassworn_btn;
 
@@ -44,7 +41,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         pwd1 = findViewById(R.id.changepasswrd_pwd1);
         pwd2 = findViewById(R.id.changepasswrd_pwd2);
-        mToolbar = findViewById(R.id.changepassword_toolbar);
+        Toolbar mToolbar = findViewById(R.id.changepassword_toolbar);
 //        changepassworn_btn = findViewById(R.id.changepassword_changepasswordbtn);
         mProgressbar = findViewById(R.id.changepassword_progress);
 

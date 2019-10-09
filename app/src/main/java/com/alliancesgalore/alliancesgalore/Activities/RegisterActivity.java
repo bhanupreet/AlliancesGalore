@@ -4,9 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -17,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,7 +29,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -132,10 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private Boolean EmptyFieldsCheck() {
-        if (TextUtils.isEmpty(Email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(display_name) || mSpinner.getSelectedItem().equals("Select One"))
-            return true;
-        else
-            return false;
+        return TextUtils.isEmpty(Email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(display_name) || mSpinner.getSelectedItem().equals("Select One");
     }
 
     private View.OnClickListener CreateBtnClickListener = new View.OnClickListener() {
@@ -198,6 +191,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     };
-
-
 }

@@ -1,10 +1,8 @@
 package com.alliancesgalore.alliancesgalore;
 
-import android.icu.lang.UScript;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 public class UserProfile implements Parcelable {

@@ -1,40 +1,26 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Fade;
-import androidx.transition.Transition;
 
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import mva2.adapter.ItemBinder;
 
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHolder> {
 
 
     private Context mCtx;
     private List<UserProfile> mUsersList;
-    private View.OnClickListener mClickListener;
     private ItemClickListener mItemClickListener;
-
-    public void setClickListener(View.OnClickListener callback) {
-        mClickListener = callback;
-    }
 
     public UserProfileAdapter(Context mCtx, List<UserProfile> mUsersList) {
         this.mCtx = mCtx;

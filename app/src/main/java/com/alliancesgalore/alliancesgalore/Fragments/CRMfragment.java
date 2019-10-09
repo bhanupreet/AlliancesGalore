@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +25,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
-import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,11 +32,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import kotlin.Function;
-
-import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class CRMfragment extends Fragment {
 
@@ -50,7 +42,6 @@ public class CRMfragment extends Fragment {
     private SwipeToRefresh mRefresh;
     private ProgressBar progressBar;
     private String email, decrypted;
-    private String url = "http://we-dpms.com/AGCRM/";
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message message) {
@@ -148,6 +139,7 @@ public class CRMfragment extends Fragment {
 
     private void SavedStateCheck(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
+            String url = "http://we-dpms.com/AGCRM/";
             crmweb.loadUrl(url);
         } else
             crmweb.restoreState(savedInstanceState);
@@ -218,23 +210,18 @@ public class CRMfragment extends Fragment {
 
     }
 
-    private View.OnKeyListener crmKeyListener = new View.OnKeyListener() {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (KeyCheck(keyCode, event)) {
-                handler.sendEmptyMessage(1);
-                return true;
-            }
-            return false;
+    private View.OnKeyListener crmKeyListener = (v, keyCode, event) -> {
+        if (KeyCheck(keyCode, event)) {
+            handler.sendEmptyMessage(1);
+            return true;
         }
+        return false;
     };
 
     private Boolean KeyCheck(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK
+        return keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == MotionEvent.ACTION_UP
-                && crmweb.canGoBack())
-            return true;
-        else
-            return false;
+                && crmweb.canGoBack();
     }
 
     @Override

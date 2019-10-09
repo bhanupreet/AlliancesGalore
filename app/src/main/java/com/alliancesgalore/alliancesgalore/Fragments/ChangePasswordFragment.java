@@ -1,6 +1,5 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.TransitionInflater;
@@ -14,9 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.alliancesgalore.alliancesgalore.Activities.ChangePasswordActivity;
-import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
-import com.alliancesgalore.alliancesgalore.Activities.MainActivityold;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
@@ -29,8 +25,6 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-
-import kotlin.Function;
 
 
 public class ChangePasswordFragment extends Fragment {

@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.alliancesgalore.alliancesgalore.Adapters.ItemClickListener;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -35,7 +34,6 @@ import java.util.Objects;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
 public class MapActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
     private BottomSheetBehavior bottomSheetBehavior;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
@@ -53,11 +51,14 @@ public class MapActivity extends AppCompatActivity {
 
         mMapSelectionList = new ArrayList<>();
         mMapSelectionList = ObjectListIntent();
+
         FindIds(savedInstanceState);
         setMapRefreshListener();
+
         UserProfile obj = ObjectIntent();
         MyLocation = setLatLong(obj);
         LatLng location = MyLocation;
+
         setdefault(obj, location);
         setLocation(location);
         setmToolbar();
@@ -75,7 +76,6 @@ public class MapActivity extends AppCompatActivity {
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         mMapsRefresh = findViewById(R.id.mapsrefresh);
-
     }
 
     private void setAdapter() {
@@ -90,7 +90,6 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setdefault(UserProfile obj, LatLng location) {
-
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
             googleMap.clear();
@@ -106,7 +105,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setmToolbar() {
-        mToolbar = findViewById(R.id.map_toolbar);
+        Toolbar mToolbar = findViewById(R.id.map_toolbar);
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Location");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -152,22 +151,6 @@ public class MapActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener adapterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            int pos = mRecycler.indexOfChild(view);
-            bottomSheetBehavior.setState(STATE_COLLAPSED);
-            UserProfile obj = mMapSelectionList.get(pos);
-            LatLng Location = setLatLong(obj);
-            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
-            setdefault(obj, Location);
-            setLocation(Location);
-            adapter.swap(0, pos);
-            Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
-            adapter.notifyDataSetChanged();
-        }
-    };
-
     private void setBottomSheetBehavior() {
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -195,10 +178,8 @@ public class MapActivity extends AppCompatActivity {
                 }
             }
 
-
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
-
             }
         });
     }

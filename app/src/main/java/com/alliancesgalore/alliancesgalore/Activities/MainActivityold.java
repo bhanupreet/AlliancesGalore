@@ -1,14 +1,12 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
@@ -18,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -26,11 +23,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.NestedScrollWebView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Objects;
 
 public class MainActivityold extends AppCompatActivity {
 
@@ -47,14 +40,9 @@ public class MainActivityold extends AppCompatActivity {
     public  int count = 0;
 
     private WebView mainview;
-    private Toolbar appbar;
-    private FirebaseAuth mAuth;
-    private CoordinatorLayout layout;
     private String url = "http://we-dpms.com/AGCRM/", email, password, decrypted;
     private ProgressBar progressBar;
     private DatabaseReference mUserRef;
-    private Toolbar mToolbar;
-    private FloatingActionButton mChat;
     private NestedScrollWebView mainwebview;
 
 
@@ -78,9 +66,9 @@ public class MainActivityold extends AppCompatActivity {
 //        //
 
 
-        mChat = findViewById(R.id.chatbutton);
-        layout = findViewById(R.id.mainlayout);
-        mToolbar = findViewById(R.id.mainappbar);
+        FloatingActionButton mChat = findViewById(R.id.chatbutton);
+        CoordinatorLayout layout = findViewById(R.id.mainlayout);
+        Toolbar mToolbar = findViewById(R.id.mainappbar);
 
         mChat.setOnClickListener(view -> {
 
@@ -98,7 +86,7 @@ public class MainActivityold extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("CRM");
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.mainprogress);
         progressBar.setVisibility(View.VISIBLE);
@@ -155,7 +143,7 @@ public class MainActivityold extends AppCompatActivity {
         });
 
 
-        appbar = findViewById(R.id.mainappbar);
+        Toolbar appbar = findViewById(R.id.mainappbar);
         setSupportActionBar(appbar);
         getSupportActionBar().setTitle("Alliances Galore");
 

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 
@@ -70,15 +68,12 @@ public class ChangeNameFragment extends Fragment {
     };
 
 
-    private OnCompleteListener changenameOnComplete = new OnCompleteListener() {
-        @Override
-        public void onComplete(@NonNull Task task) {
-            if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();
-                getFragmentManager().popBackStack();
-            } else {
-                Functions.toast(task);
-            }
+    private OnCompleteListener changenameOnComplete = task -> {
+        if (task.isSuccessful()) {
+            Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();
+            getFragmentManager().popBackStack();
+        } else {
+            Functions.toast(task);
         }
     };
 

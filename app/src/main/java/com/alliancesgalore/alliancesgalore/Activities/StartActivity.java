@@ -29,25 +29,20 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void RegBtnClick() {
+        mRegBtn.setOnClickListener(v -> regIntent());
+    }
 
-        mRegBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent reg_intent = new Intent(StartActivity.this, RegisterActivity.class);
-                startActivity(reg_intent);
-            }
-        });
-
+    private void regIntent() {
+        Intent reg_intent = new Intent(StartActivity.this, RegisterActivity.class);
+        startActivity(reg_intent);
     }
 
     private void LoginBtnClick() {
-        mLoginbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent login_intent = new Intent(StartActivity.this, LoginActivity.class);
-                startActivity(login_intent);
-            }
-        });
+        mLoginbtn.setOnClickListener(v -> loginIntent());
     }
 
+    private void loginIntent() {
+        Intent login_intent = new Intent(StartActivity.this, LoginActivity.class);
+        startActivity(login_intent);
+    }
 }

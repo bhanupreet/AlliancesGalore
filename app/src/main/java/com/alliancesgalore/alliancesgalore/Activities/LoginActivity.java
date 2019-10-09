@@ -3,7 +3,6 @@ package com.alliancesgalore.alliancesgalore.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -14,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.AESUtils;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.Credentials;
@@ -36,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputLayout mLoginEmail;
     private TextInputLayout mLoginPassword;
-    private FirebaseAuth mAuth;
     private Button mLoginBtn;
     private String email, password;
     private Button mForgotPasswordbtn;
@@ -84,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void LogIn(final String email, final String password) {
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, LoginOnComplete);

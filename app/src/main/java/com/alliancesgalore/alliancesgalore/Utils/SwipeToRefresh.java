@@ -9,7 +9,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class SwipeToRefresh extends SwipeRefreshLayout {
 
     private static final float REFRESH_RATE = 10f;
-    private float mDownX, mDownY, scaleX, scaleY;
+    private float mDownX;
+    private float mDownY;
 
     public SwipeToRefresh(Context context) {
         super(context);
@@ -35,8 +36,8 @@ public class SwipeToRefresh extends SwipeRefreshLayout {
     }
 
     private boolean doRefresh(MotionEvent ev) {
-        scaleX = Math.abs(ev.getX() - mDownX);
-        scaleY = Math.abs(ev.getY() - mDownY);
+        float scaleX = Math.abs(ev.getX() - mDownX);
+        float scaleY = Math.abs(ev.getY() - mDownY);
         if (scaleY / scaleX > REFRESH_RATE) {
             return super.onInterceptTouchEvent(ev);
         } else {

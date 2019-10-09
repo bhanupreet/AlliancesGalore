@@ -1,23 +1,17 @@
 package com.alliancesgalore.alliancesgalore.Services;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
-import com.alliancesgalore.alliancesgalore.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,7 +19,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 

@@ -11,7 +11,6 @@ public class Alliancesgalore extends Application {
 
 
     private DatabaseReference mUserDatabase;
-    private FirebaseAuth mAuth;
 
     @Override
     public void onCreate() {
@@ -20,7 +19,7 @@ public class Alliancesgalore extends Application {
         FirebaseApp.initializeApp(this);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
     }
 }
 

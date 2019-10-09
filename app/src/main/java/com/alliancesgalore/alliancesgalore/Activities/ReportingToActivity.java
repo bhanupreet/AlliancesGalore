@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
@@ -25,9 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Queue;
 
 public class ReportingToActivity extends AppCompatActivity {
     private RecyclerView mRecycler;
@@ -106,17 +101,11 @@ public class ReportingToActivity extends AppCompatActivity {
     }
 
     private void RecyclerClick() {
-        adapter.setClickListener(adapterClickListener);
-    }
-
-    private View.OnClickListener adapterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            int pos = mRecycler.indexOfChild(view);
+        adapter.addItemClickListener(pos -> {
             FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid()).child("ReportingTo").setValue(mReportingToList.get(pos).getEmail());
             sendToMain();
-        }
-    };
+        });
+    }
 
     private void sendToMain() {
         Intent mainIntent = new Intent(ReportingToActivity.this, MainActivity.class);
