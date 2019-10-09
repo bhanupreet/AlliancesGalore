@@ -76,31 +76,38 @@ public class LocationListFragment extends Fragment {
                     temp.addAll(subordinatesList);
                     isMultiselect = !isMultiselect;
                     if (mActionmode == null) {
-                        mainActivity.mToolbar.startActionMode(actionMode);
-                        settingadapter(temp);
-                        adapter.addItemClickListener(pos -> {
-                            if (isMultiselect) {
-                                UserProfile selectedprofile = temp.get(pos);
-                                selectedprofile.setSelected(!selectedprofile.getSelected());
-                                if (multiselect_list.contains(selectedprofile))
-                                    multiselect_list.remove(selectedprofile);
-                                else
-                                    multiselect_list.add(selectedprofile);
-
-                                if (multiselect_list.size() > 0)
-                                    mActionmode.setTitle("Selected: " + multiselect_list.size());
-                                else
-                                    mActionmode.setTitle("Select");
-                                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
+                        startActionMode(mainActivity);
 
                     } else {
                         resetActionMode();
                     }
                 }
         );
+    }
+
+    private void startActionMode(MainActivity mainActivity) {
+        mainActivity.mToolbar.startActionMode(actionMode);
+        settingadapter(temp);
+        adapter.addItemClickListener(pos -> {
+            if (isMultiselect) {
+                UserProfile selectedprofile = temp.get(pos);
+
+                setSelectedTick(selectedprofile);
+                setActionModeTitle();
+
+                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void setSelectedTick(UserProfile selectedprofile) {
+        selectedprofile.setSelected(!selectedprofile.getSelected());
+        if (multiselect_list.contains(selectedprofile))
+            multiselect_list.remove(selectedprofile);
+        else
+            multiselect_list.add(selectedprofile);
     }
 
     private void settingadapter(List<UserProfile> subordinatesList) {
@@ -157,7 +164,7 @@ public class LocationListFragment extends Fragment {
                 if (mail.equals("superadmin@gmail.com")) {
                     subordinatesList.clear();
                     subordinatesList.addAll(allsubordinatesList);
-                    Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - t2.getLevel());
+                    sort(subordinatesList);
 
                 } else if (myProfile != null) {
                     fetch(mail);
@@ -168,8 +175,7 @@ public class LocationListFragment extends Fragment {
                         subordinatesList.add(myProfile);
                 }
 
-                Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-                Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+                sort(subordinatesList);
 
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
@@ -181,6 +187,11 @@ public class LocationListFragment extends Fragment {
 
         }
     };
+
+    private void sort(List<UserProfile> subordinatesList) {
+        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+    }
 
     private void itemClick(List<UserProfile> subordinatesList) {
         adapter.addItemClickListener(pos -> {
@@ -241,26 +252,30 @@ public class LocationListFragment extends Fragment {
         super.onResume();
         if (mActionmode != null) {
             resetActionMode();
-
         }
+
         if (!getUserVisibleHint()) {
             return;
         }
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+        SetFAB();
         fabclick();
 
+    }
+
+    private void SetFAB() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
     }
 
     private void resetActionMode() {
         isMultiselect = false;
         mActionmode.finish();
+
         for (UserProfile profile : subordinatesList)
             profile.setSelected(false);
+
         multiselect_list.clear();
-        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-        Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+        sort(subordinatesList);
         settingadapter(subordinatesList);
         itemClick(subordinatesList);
         adapter.notifyDataSetChanged();
@@ -274,10 +289,7 @@ public class LocationListFragment extends Fragment {
             MenuInflater inflater = actionMode.getMenuInflater();
             inflater.inflate(R.menu.selection_menu, menu);
             mActionmode = actionMode;
-            if (multiselect_list.isEmpty())
-                mActionmode.setTitle("Select");
-            else
-                mActionmode.setTitle("Selected: " + multiselect_list.size());
+            setActionModeTitle();
             return true;
         }
 
@@ -291,7 +303,6 @@ public class LocationListFragment extends Fragment {
 
             switch (menuItem.getItemId()) {
                 case R.id.action_cancel:
-
                     resetActionMode();
                     break;
 
@@ -311,4 +322,11 @@ public class LocationListFragment extends Fragment {
             mActionmode = null;
         }
     };
+
+    private void setActionModeTitle() {
+        if (multiselect_list.isEmpty())
+            mActionmode.setTitle("Select");
+        else
+            mActionmode.setTitle("Selected: " + multiselect_list.size());
+    }
 }

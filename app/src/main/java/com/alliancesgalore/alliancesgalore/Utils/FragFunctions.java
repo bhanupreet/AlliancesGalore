@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
+import com.alliancesgalore.alliancesgalore.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -23,4 +25,6 @@ public class FragFunctions extends Fragment {
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView);
     }
+
+
 }
