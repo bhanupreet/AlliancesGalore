@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -97,7 +98,7 @@ public class MapActivity extends AppCompatActivity {
             String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
             mMap.addMarker(new MarkerOptions()
                     .position(location)
-                    .snippet("Last Updated" + time)
+                    .snippet("Last Updated: " + time)
                     .title(obj.getDisplay_name()));
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -131,8 +132,14 @@ public class MapActivity extends AppCompatActivity {
             setLocation(Location);
             adapter.swap(0, pos);
             Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
+            sort(mMapSelectionList.subList(1, mMapSelectionList.size()));
             adapter.notifyDataSetChanged();
         });
+    }
+
+    private void sort(List<UserProfile> subordinatesList) {
+        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
     }
 
     private void setLocation(LatLng location) {
@@ -159,21 +166,13 @@ public class MapActivity extends AppCompatActivity {
 
                 switch (newState) {
                     case STATE_COLLAPSED:
-                        Log.e("Bottom Sheet Behaviour", "STATE_COLLAPSED");
-                        break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_DRAGGING");
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                    case BottomSheetBehavior.STATE_SETTLING:
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         adapter.notifyDataSetChanged();
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        Log.e("Bottom Sheet Behaviour", "STATE_HIDDEN");
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        Log.e("Bottom Sheet Behaviour", "STATE_SETTLING");
-                        break;
-                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
                         break;
                 }
             }

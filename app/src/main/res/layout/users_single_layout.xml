@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:clickable="false"
     android:focusable="false"
+    android:background="#ffffff"
     android:nestedScrollingEnabled="false"
     android:orientation="vertical"
     android:padding="15dp">

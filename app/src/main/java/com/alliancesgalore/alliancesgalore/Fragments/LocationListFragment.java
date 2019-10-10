@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -12,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
 import com.alliancesgalore.alliancesgalore.Activities.ReportingToActivity;
-import com.alliancesgalore.alliancesgalore.Adapters.ItemClickListener;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -49,11 +51,14 @@ public class LocationListFragment extends Fragment {
     private UserProfileAdapter adapter;
     private List<UserProfile> allsubordinatesList;
     private List<UserProfile> subordinatesList;
-    private List<UserProfile> multiselect_list;
+    private List<UserProfile> multiselect_list, filterlist;
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
     private Boolean isMultiselect = false;
     private ArrayList<UserProfile> temp;
+    private LinearLayout mFilterbtn;
+    private SharedPreferences execSetting, tlSetting, managerSetting;
+    private MenuItem mExecutives, mManagers, mTeamLeaders;
 
 
     @Override
@@ -62,18 +67,145 @@ public class LocationListFragment extends Fragment {
 
         ReportingToCheck();
         FindIds(view);
+
         query();
-        settingadapter(subordinatesList);
-        itemClick(subordinatesList);
+        execCheck(true);
+        tlCheck(true);
+        managerCheck(true);
+
+
         fabclick();
         return view;
+    }
+
+    private void execCheck(boolean b) {
+        execSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("executiveSettings", 0);
+        SharedPreferences.Editor editor = execSetting.edit();
+        editor.putBoolean("checkbox", b);
+        editor.apply();
+    }
+
+    private void tlCheck(boolean b) {
+        tlSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("tlSettings", 0);
+        SharedPreferences.Editor editor = tlSetting.edit();
+        editor.putBoolean("checkbox", b);
+        editor.apply();
+    }
+
+    private void managerCheck(boolean b) {
+        managerSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("managerSettings", 0);
+        SharedPreferences.Editor editor = managerSetting.edit();
+        editor.putBoolean("checkbox", b);
+        editor.apply();
+    }
+
+    private void FilterClick() {
+        mFilterbtn.setOnClickListener(view -> {
+            PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
+            FindIds(popup);
+            getSetChecked();
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.executives:
+                        mExecutives = item;
+                        executivesFilter();
+                        return false;
+                    case R.id.managers:
+                        mManagers = item;
+                        ManagerFilter();
+                        return false;
+                    case R.id.teamLeaders:
+                        mTeamLeaders = item;
+                        tlFilter();
+                        return false;
+                }
+                return super.onOptionsItemSelected(item);
+            });
+            popup.show();
+        });
+    }
+
+    private void getSetChecked() {
+        boolean execCheck = execSetting.getBoolean("checkbox", false);
+        boolean tlCheck = tlSetting.getBoolean("checkbox", false);
+        boolean managerCheck = managerSetting.getBoolean("checkbox", false);
+        mExecutives.setChecked(execCheck);
+        mManagers.setChecked(managerCheck);
+        mTeamLeaders.setChecked(tlCheck);
+
+    }
+
+    private void FindIds(PopupMenu popup) {
+        popup.getMenuInflater().inflate(R.menu.filter_menu, popup.getMenu());
+        mExecutives = popup.getMenu().findItem(R.id.executives);
+        mManagers = popup.getMenu().findItem(R.id.managers);
+        mTeamLeaders = popup.getMenu().findItem(R.id.teamLeaders);
+    }
+
+    private void executivesFilter() {
+        if (mExecutives.isChecked()) mExecutives.setChecked(false);
+        else mExecutives.setChecked(true);
+        SharedPreferences.Editor editor = execSetting.edit();
+        editor.putBoolean("checkbox", mExecutives.isChecked());
+        editor.apply();
+        if (!mExecutives.isChecked()) {
+            for (UserProfile profile : filterlist)
+                if (profile.getLevel() == 30)
+                    filterlist.remove(profile);
+        } else {
+            for (UserProfile profile : subordinatesList)
+                if (profile.getLevel() == 30 && !filterlist.contains(profile))
+                    filterlist.add(profile);
+        }
+        sort(filterlist);
+        settingadapter(filterlist);
+    }
+
+    private void ManagerFilter() {
+        if (mManagers.isChecked()) mManagers.setChecked(false);
+        else mManagers.setChecked(true);
+        SharedPreferences.Editor editor = managerSetting.edit();
+        editor.putBoolean("checkbox", mManagers.isChecked());
+        editor.apply();
+
+        if (!mManagers.isChecked()) {
+            for (UserProfile profile : filterlist)
+                if (profile.getLevel() == 10)
+                    filterlist.remove(profile);
+        } else {
+            for (UserProfile profile : subordinatesList)
+                if (profile.getLevel() == 10 && !filterlist.contains(profile))
+                    filterlist.add(profile);
+        }
+        sort(filterlist);
+        settingadapter(filterlist);
+    }
+
+    private void tlFilter() {
+        if (mTeamLeaders.isChecked()) mTeamLeaders.setChecked(false);
+        else mTeamLeaders.setChecked(true);
+        SharedPreferences.Editor editor = tlSetting.edit();
+        editor.putBoolean("checkbox", mTeamLeaders.isChecked());
+        editor.apply();
+
+        if (!mTeamLeaders.isChecked()) {
+            for (UserProfile profile : filterlist)
+                if (profile.getLevel() == 20)
+                    filterlist.remove(profile);
+        } else {
+            for (UserProfile profile : subordinatesList)
+                if (profile.getLevel() == 20 && !filterlist.contains(profile))
+                    filterlist.add(profile);
+        }
+        sort(filterlist);
+        settingadapter(filterlist);
     }
 
     private void fabclick() {
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.fab.setOnClickListener(v -> {
                     temp.clear();
-                    temp.addAll(subordinatesList);
+                    temp.addAll(filterlist);
                     isMultiselect = !isMultiselect;
                     if (mActionmode == null) {
                         startActionMode(mainActivity);
@@ -91,12 +223,9 @@ public class LocationListFragment extends Fragment {
         adapter.addItemClickListener(pos -> {
             if (isMultiselect) {
                 UserProfile selectedprofile = temp.get(pos);
-
                 setSelectedTick(selectedprofile);
                 setActionModeTitle();
-
                 Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
-
                 adapter.notifyDataSetChanged();
             }
         });
@@ -140,6 +269,7 @@ public class LocationListFragment extends Fragment {
         temp = new ArrayList<>();
         subordinatesList = new CopyOnWriteArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        mFilterbtn = view.findViewById(R.id.locationlist_filter);
     }
 
     @Override
@@ -176,9 +306,12 @@ public class LocationListFragment extends Fragment {
                 }
 
                 sort(subordinatesList);
-
+                filterlist = new CopyOnWriteArrayList<>(subordinatesList);
+                settingadapter(filterlist);
+                itemClick(filterlist);
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
+                FilterClick();
             }
         }
 
@@ -271,13 +404,13 @@ public class LocationListFragment extends Fragment {
         isMultiselect = false;
         mActionmode.finish();
 
-        for (UserProfile profile : subordinatesList)
+        for (UserProfile profile : filterlist)
             profile.setSelected(false);
 
         multiselect_list.clear();
-        sort(subordinatesList);
-        settingadapter(subordinatesList);
-        itemClick(subordinatesList);
+        sort(filterlist);
+        settingadapter(filterlist);
+        itemClick(filterlist);
         adapter.notifyDataSetChanged();
     }
 
@@ -300,7 +433,6 @@ public class LocationListFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-
             switch (menuItem.getItemId()) {
                 case R.id.action_cancel:
                     resetActionMode();
@@ -329,4 +461,5 @@ public class LocationListFragment extends Fragment {
         else
             mActionmode.setTitle("Selected: " + multiselect_list.size());
     }
+
 }

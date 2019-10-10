@@ -65,6 +65,5 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         mUsersList.set(b, aProfile);
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getLevel() - t2.getLevel());
-
     }
 }
