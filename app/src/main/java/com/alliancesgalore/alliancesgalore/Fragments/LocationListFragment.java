@@ -30,7 +30,6 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -72,7 +71,7 @@ public class LocationListFragment extends Fragment {
         execSetting = setPrefs(true, "executiveSettings");
         tlSetting = setPrefs(true, "tlSettings");
         managerSetting = setPrefs(true, "managerSettings");
-        FilterClick(isMultiselect);
+
         return view;
     }
 
@@ -84,33 +83,28 @@ public class LocationListFragment extends Fragment {
         return settings;
     }
 
-    private void tlCheck(boolean b) {
-        tlSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("tlSettings", 0);
-        SharedPreferences.Editor editor = tlSetting.edit();
-        editor.putBoolean("checkbox", b);
-        editor.apply();
-    }
+    private void FilterClick() {
+        if (myProfile.getLevel() == 10) {
+            mFilterbtn.setOnClickListener(view -> {
 
-    private void managerCheck(boolean b) {
-        managerSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("managerSettings", 0);
-        SharedPreferences.Editor editor = managerSetting.edit();
-        editor.putBoolean("checkbox", b);
-        editor.apply();
-    }
+                PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
+                FindIds(popup);
+                getSetChecked();
 
-    private void FilterClick(Boolean isMultiselect) {
-
-        mFilterbtn.setOnClickListener(view -> {
-
-            PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
-            FindIds(popup);
-            getSetChecked();
-            popup.setOnMenuItemClickListener(item -> {
-                FilterSettings(item);
-                return handleMenuItemClicks(item);
+                mManagers.setVisible(false);
+                popup.setOnMenuItemClickListener(item -> {
+                    FilterSettings(item);
+                    return handleMenuItemClicks(item);
+                });
+                popup.show();
             });
-            popup.show();
-        });
+        } else {
+            mFilterbtn.setClickable(false);
+            mFilterbtn.setEnabled(false);
+            mFilterbtn.setVisibility(View.INVISIBLE);
+//                mManagers.setVisible(false);
+//                mExecutives.setCheckable(false);
+        }
     }
 
     private void FilterSettings(MenuItem item) {
@@ -163,6 +157,8 @@ public class LocationListFragment extends Fragment {
         mExecutives = popup.getMenu().findItem(R.id.executives);
         mManagers = popup.getMenu().findItem(R.id.managers);
         mTeamLeaders = popup.getMenu().findItem(R.id.teamLeaders);
+
+
     }
 
     private void filterfunction(MenuItem item, int level, SharedPreferences setting) {
@@ -284,7 +280,7 @@ public class LocationListFragment extends Fragment {
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
                 fabclick();
-                FilterClick(isMultiselect);
+                FilterClick();
                 itemClick();
             }
         }
