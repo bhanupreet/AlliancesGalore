@@ -56,7 +56,7 @@ public class LocationListFragment extends Fragment {
     private ShimmerRecyclerView shimmerRecycler;
     private Boolean isMultiselect = false;
     private ArrayList<UserProfile> temp;
-    private LinearLayout mFilterbtn;
+    private LinearLayout mFilterbtn, mSortBtn;
     private SharedPreferences execSetting, tlSetting, managerSetting;
     private MenuItem mExecutives, mManagers, mTeamLeaders;
 
@@ -67,13 +67,10 @@ public class LocationListFragment extends Fragment {
 
         ReportingToCheck();
         FindIds(view);
-
         query();
         execCheck(true);
         tlCheck(true);
         managerCheck(true);
-
-
         fabclick();
         return view;
     }
@@ -100,29 +97,31 @@ public class LocationListFragment extends Fragment {
     }
 
     private void FilterClick() {
-        mFilterbtn.setOnClickListener(view -> {
-            PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
-            FindIds(popup);
-            getSetChecked();
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.executives:
-                        mExecutives = item;
-                        executivesFilter();
-                        return false;
-                    case R.id.managers:
-                        mManagers = item;
-                        ManagerFilter();
-                        return false;
-                    case R.id.teamLeaders:
-                        mTeamLeaders = item;
-                        tlFilter();
-                        return false;
-                }
-                return super.onOptionsItemSelected(item);
+        if (!isMultiselect) {
+            mFilterbtn.setOnClickListener(view -> {
+                PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
+                FindIds(popup);
+                getSetChecked();
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.executives:
+                            mExecutives = item;
+                            executivesFilter();
+                            return false;
+                        case R.id.managers:
+                            mManagers = item;
+                            ManagerFilter();
+                            return false;
+                        case R.id.teamLeaders:
+                            mTeamLeaders = item;
+                            tlFilter();
+                            return false;
+                    }
+                    return super.onOptionsItemSelected(item);
+                });
+                popup.show();
             });
-            popup.show();
-        });
+        }
     }
 
     private void getSetChecked() {
@@ -158,7 +157,7 @@ public class LocationListFragment extends Fragment {
                     filterlist.add(profile);
         }
         sort(filterlist);
-        settingadapter(filterlist);
+        adapter.notifyDataSetChanged();
     }
 
     private void ManagerFilter() {
@@ -178,7 +177,7 @@ public class LocationListFragment extends Fragment {
                     filterlist.add(profile);
         }
         sort(filterlist);
-        settingadapter(filterlist);
+        adapter.notifyDataSetChanged();
     }
 
     private void tlFilter() {
@@ -198,18 +197,15 @@ public class LocationListFragment extends Fragment {
                     filterlist.add(profile);
         }
         sort(filterlist);
-        settingadapter(filterlist);
+        adapter.notifyDataSetChanged();
     }
 
     private void fabclick() {
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.fab.setOnClickListener(v -> {
-                    temp.clear();
-                    temp.addAll(filterlist);
                     isMultiselect = !isMultiselect;
                     if (mActionmode == null) {
                         startActionMode(mainActivity);
-
                     } else {
                         resetActionMode();
                     }
@@ -219,16 +215,7 @@ public class LocationListFragment extends Fragment {
 
     private void startActionMode(MainActivity mainActivity) {
         mainActivity.mToolbar.startActionMode(actionMode);
-        settingadapter(temp);
-        adapter.addItemClickListener(pos -> {
-            if (isMultiselect) {
-                UserProfile selectedprofile = temp.get(pos);
-                setSelectedTick(selectedprofile);
-                setActionModeTitle();
-                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
-                adapter.notifyDataSetChanged();
-            }
-        });
+
     }
 
     private void setSelectedTick(UserProfile selectedprofile) {
@@ -251,7 +238,7 @@ public class LocationListFragment extends Fragment {
     private void query() {
         Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
         query.keepSynced(true);
-        query.addValueEventListener(valueEventListener);
+        query.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void ReportingToCheck() {
@@ -270,6 +257,7 @@ public class LocationListFragment extends Fragment {
         subordinatesList = new CopyOnWriteArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         mFilterbtn = view.findViewById(R.id.locationlist_filter);
+        mSortBtn = view.findViewById(R.id.locationlist_sort);
     }
 
     @Override
@@ -308,10 +296,11 @@ public class LocationListFragment extends Fragment {
                 sort(subordinatesList);
                 filterlist = new CopyOnWriteArrayList<>(subordinatesList);
                 settingadapter(filterlist);
-                itemClick(filterlist);
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
+
                 FilterClick();
+                itemClick();
             }
         }
 
@@ -326,12 +315,18 @@ public class LocationListFragment extends Fragment {
         Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
     }
 
-    private void itemClick(List<UserProfile> subordinatesList) {
+    private void itemClick() {
         adapter.addItemClickListener(pos -> {
+            UserProfile selectedprofile = filterlist.get(pos);
+            if (isMultiselect) {
+                setSelectedTick(selectedprofile);
+                setActionModeTitle();
+                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
+                adapter.notifyDataSetChanged();
+            }
             if (!isMultiselect) {
-                UserProfile selected = subordinatesList.get(pos);
-                adapter.swap(pos, 0);
-                sendToMap(selected, subordinatesList);
+
+                sendToMap(selectedprofile, filterlist);
             }
         });
     }
@@ -409,8 +404,6 @@ public class LocationListFragment extends Fragment {
 
         multiselect_list.clear();
         sort(filterlist);
-        settingadapter(filterlist);
-        itemClick(filterlist);
         adapter.notifyDataSetChanged();
     }
 
@@ -439,11 +432,10 @@ public class LocationListFragment extends Fragment {
                     break;
 
                 case R.id.action_select:
-
                     if (!multiselect_list.isEmpty())
                         sendToMap(multiselect_list.get(0), multiselect_list);
                     else
-                        resetActionMode();
+                        sendToMap(filterlist.get(0), filterlist);
                     break;
             }
             return true;

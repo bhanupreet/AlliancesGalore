@@ -3,6 +3,8 @@ package com.alliancesgalore.alliancesgalore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.util.Comparator;
 
 public class UserProfile implements Parcelable {
@@ -37,6 +39,18 @@ public class UserProfile implements Parcelable {
         }
         byte tmpIsSelected = in.readByte();
         isSelected = tmpIsSelected == 0 ? null : tmpIsSelected == 1;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        UserProfile o1 = (UserProfile) obj;
+        return o1.getEmail().equals(this.getEmail());
     }
 
     public static final Creator<UserProfile> CREATOR = new Creator<UserProfile>() {

@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/managers"
+            android:checked="true"
+            android:title="Managers" />
+        <item
+            android:id="@+id/teamLeaders"
+            android:title="Team Leaders" />
+        <item
+            android:id="@+id/executives"
+            android:checkable="true"
+            android:checked="true"
+            android:title="Executives" />
+    </group>
+</menu>

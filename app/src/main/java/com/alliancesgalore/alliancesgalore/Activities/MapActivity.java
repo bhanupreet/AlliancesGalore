@@ -43,6 +43,7 @@ public class MapActivity extends AppCompatActivity {
     private GoogleMap googleMap;
     private SwipeToRefresh mMapsRefresh;
     private LatLng MyLocation;
+    private int pos;
 
 
     @Override
@@ -57,6 +58,7 @@ public class MapActivity extends AppCompatActivity {
         setMapRefreshListener();
 
         UserProfile obj = ObjectIntent();
+        pos = mMapSelectionList.indexOf(obj);
         MyLocation = setLatLong(obj);
         LatLng location = MyLocation;
 
@@ -87,6 +89,7 @@ public class MapActivity extends AppCompatActivity {
         adapter = new UserProfileAdapter(this, mMapSelectionList);
         mRecycler.setAdapter(adapter);
         mRecycler.addItemDecoration(new DividerItemDecorator(this));
+//        adapter.swap(pos, 0);
         adapter.notifyDataSetChanged();
     }
 
@@ -123,6 +126,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void RecyclerClick() {
+        adapter.swap(pos, 0);
         adapter.addItemClickListener(pos -> {
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             UserProfile obj = mMapSelectionList.get(pos);
