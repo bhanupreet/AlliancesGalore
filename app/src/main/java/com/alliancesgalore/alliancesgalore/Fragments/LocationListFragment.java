@@ -69,18 +69,19 @@ public class LocationListFragment extends Fragment {
         ReportingToCheck();
         FindIds(view);
         query();
-        execCheck(true);
-        tlCheck(true);
-        managerCheck(true);
-        fabclick();
+        execSetting = setPrefs(true, "executiveSettings");
+        tlSetting = setPrefs(true, "tlSettings");
+        managerSetting = setPrefs(true, "managerSettings");
+        FilterClick(isMultiselect);
         return view;
     }
 
-    private void execCheck(boolean b) {
-        execSetting = Objects.requireNonNull(this.getActivity()).getSharedPreferences("executiveSettings", 0);
-        SharedPreferences.Editor editor = execSetting.edit();
+    private SharedPreferences setPrefs(boolean b, String settingstring) {
+        SharedPreferences settings = Objects.requireNonNull(this.getActivity()).getSharedPreferences(settingstring, 0);
+        SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("checkbox", b);
         editor.apply();
+        return settings;
     }
 
     private void tlCheck(boolean b) {
@@ -97,30 +98,55 @@ public class LocationListFragment extends Fragment {
         editor.apply();
     }
 
-    private void FilterClick() {
-        if (!isMultiselect) {
-            mFilterbtn.setOnClickListener(view -> {
-                PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
-                FindIds(popup);
-                getSetChecked();
-                popup.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-                        case R.id.executives:
-                            filterfunction(item, 30, execSetting);
-                            return false;
-                        case R.id.teamLeaders:
-                            filterfunction(item, 20, tlSetting);
-                            return false;
-                        case R.id.managers:
-                            filterfunction(item, 10, managerSetting);
-                            return false;
-                    }
-                    return super.onOptionsItemSelected(item);
-                });
-                popup.show();
+    private void FilterClick(Boolean isMultiselect) {
+
+        mFilterbtn.setOnClickListener(view -> {
+
+            PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
+            FindIds(popup);
+            getSetChecked();
+            popup.setOnMenuItemClickListener(item -> {
+                FilterSettings(item);
+                return handleMenuItemClicks(item);
             });
+            popup.show();
+        });
+    }
+
+    private void FilterSettings(MenuItem item) {
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        item.setActionView(new View(getContext()));
+        item.setOnActionExpandListener(menuActionExpandListener);
+
+    }
+
+    private Boolean handleMenuItemClicks(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.executives:
+                filterfunction(item, 30, execSetting);
+                return false;
+            case R.id.teamLeaders:
+                filterfunction(item, 20, tlSetting);
+                return false;
+            case R.id.managers:
+                filterfunction(item, 10, managerSetting);
+                return false;
+            default:
+                return false;
         }
     }
+
+    private MenuItem.OnActionExpandListener menuActionExpandListener = new MenuItem.OnActionExpandListener() {
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            return false;
+        }
+    };
 
     private void getSetChecked() {
         boolean execCheck = execSetting.getBoolean("checkbox", false);
@@ -165,6 +191,7 @@ public class LocationListFragment extends Fragment {
         mainActivity.fab.setOnClickListener(v -> {
             isMultiselect = !isMultiselect;
             if (mActionmode == null) {
+                mFilterbtn.setEnabled(false);
                 startActionMode(mainActivity);
             } else {
                 resetActionMode();
@@ -239,9 +266,8 @@ public class LocationListFragment extends Fragment {
                     allsubordinatesList.add(next.getValue(UserProfile.class));
 
                 if (mail.equals("superadmin@gmail.com")) {
-                    subordinatesList.clear();
-                    subordinatesList.addAll(allsubordinatesList);
-                    sort(subordinatesList);
+                    subordinatesList = allsubordinatesList;
+//                    subordinatesList.addAll(allsubordinatesList);
 
                 } else if (myProfile != null) {
                     fetch(mail);
@@ -257,8 +283,8 @@ public class LocationListFragment extends Fragment {
                 settingadapter(filterlist);
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
-
-                FilterClick();
+                fabclick();
+                FilterClick(isMultiselect);
                 itemClick();
             }
         }
@@ -284,7 +310,6 @@ public class LocationListFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
             if (!isMultiselect) {
-
                 sendToMap(selectedprofile, filterlist);
             }
         });
@@ -319,6 +344,7 @@ public class LocationListFragment extends Fragment {
         if (visible && isResumed()) {
             onResume();
         }
+
     }
 
     @Override
@@ -337,16 +363,13 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mActionmode != null) {
+        if (mActionmode != null)
             resetActionMode();
-        }
 
-        if (!getUserVisibleHint()) {
+        if (!getUserVisibleHint())
             return;
-        }
         SetFAB();
         fabclick();
-
     }
 
     private void SetFAB() {
@@ -357,7 +380,7 @@ public class LocationListFragment extends Fragment {
     private void resetActionMode() {
         isMultiselect = false;
         mActionmode.finish();
-
+        mFilterbtn.setEnabled(true);
         for (UserProfile profile : filterlist)
             profile.setSelected(false);
 
@@ -391,10 +414,12 @@ public class LocationListFragment extends Fragment {
                     break;
 
                 case R.id.action_select:
-                    if (!multiselect_list.isEmpty())
-                        sendToMap(multiselect_list.get(0), multiselect_list);
+                    if (filterlist.isEmpty())
+                        Functions.toast("List cannot be empty", getContext());
+                    else if (multiselect_list.isEmpty())
+                        Functions.toast("No items selected", getContext());
                     else
-                        sendToMap(filterlist.get(0), filterlist);
+                        sendToMap(multiselect_list.get(0), multiselect_list);
                     break;
             }
             return true;
