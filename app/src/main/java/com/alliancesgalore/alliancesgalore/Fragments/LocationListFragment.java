@@ -44,6 +44,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class LocationListFragment extends Fragment {
@@ -54,25 +55,31 @@ public class LocationListFragment extends Fragment {
     private List<UserProfile> multiselect_list, filterlist;
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
-    private Boolean isMultiselect = false;
+    private Boolean isMultiselect = false, sortByLevel = true, ascending = true;
     private ArrayList<UserProfile> temp;
     private LinearLayout mFilterbtn, mSortBtn;
-    private SharedPreferences execSetting, tlSetting, managerSetting;
-    private MenuItem mExecutives, mManagers, mTeamLeaders;
-
+    private SharedPreferences execSetting, tlSetting, managerSetting, sortsettings;
+    private MenuItem mExecutives, mManagers, mTeamLeaders, mName, mLevel;
+    private ActionMode mActionmode = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
-
         ReportingToCheck();
         FindIds(view);
         query();
         execSetting = setPrefs(true, "executiveSettings");
         tlSetting = setPrefs(true, "tlSettings");
         managerSetting = setPrefs(true, "managerSettings");
-
+        setSortSetting();
         return view;
+    }
+
+    private void setSortSetting() {
+        sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor1 = sortsettings.edit();
+        editor1.putString("key_name", "level");
+        editor1.apply();
     }
 
     private SharedPreferences setPrefs(boolean b, String settingstring) {
@@ -84,7 +91,7 @@ public class LocationListFragment extends Fragment {
     }
 
     private void FilterClick() {
-        if (myProfile.getLevel() == 10) {
+        if (myProfile.getLevel() <= 10) {
             mFilterbtn.setOnClickListener(view -> {
 
                 PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
@@ -102,8 +109,6 @@ public class LocationListFragment extends Fragment {
             mFilterbtn.setClickable(false);
             mFilterbtn.setEnabled(false);
             mFilterbtn.setVisibility(View.INVISIBLE);
-//                mManagers.setVisible(false);
-//                mExecutives.setCheckable(false);
         }
     }
 
@@ -157,8 +162,6 @@ public class LocationListFragment extends Fragment {
         mExecutives = popup.getMenu().findItem(R.id.executives);
         mManagers = popup.getMenu().findItem(R.id.managers);
         mTeamLeaders = popup.getMenu().findItem(R.id.teamLeaders);
-
-
     }
 
     private void filterfunction(MenuItem item, int level, SharedPreferences setting) {
@@ -181,13 +184,13 @@ public class LocationListFragment extends Fragment {
 
     }
 
-
     private void fabclick() {
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.fab.setOnClickListener(v -> {
             isMultiselect = !isMultiselect;
             if (mActionmode == null) {
                 mFilterbtn.setEnabled(false);
+                mSortBtn.setEnabled(false);
                 startActionMode(mainActivity);
             } else {
                 resetActionMode();
@@ -242,12 +245,65 @@ public class LocationListFragment extends Fragment {
         mSortBtn = view.findViewById(R.id.locationlist_sort);
     }
 
+
+    private void sortclick() {
+        mSortBtn.setOnClickListener(view -> {
+            PopupMenu popup = new PopupMenu(getContext(), mSortBtn);
+            FindIds_sort(popup);
+            getSet_Sort();
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.sortby_level:
+                        setsortbtn(item, "level", true);
+                        return false;
+                    case R.id.sortyby_name:
+                        setsortbtn(item, "name", false);
+                        return false;
+                    default:
+                        return false;
+                }
+            });
+            popup.show();
+        });
+    }
+
+    private void setsortbtn(MenuItem item, String key, Boolean bool) {
+        sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = sortsettings.edit();
+        editor.putString("key_name", key);
+        editor.apply();
+        if (item.isChecked())
+            ascending = !ascending;
+
+        sortByLevel = bool;
+        sort(filterlist);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void FindIds_sort(PopupMenu popup) {
+        popup.getMenuInflater().inflate(R.menu.sort_menu, popup.getMenu());
+        mName = popup.getMenu().findItem(R.id.sortyby_name);
+        mLevel = popup.getMenu().findItem(R.id.sortby_level);
+    }
+
+    private void getSet_Sort() {
+        sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
+        String chk = sortsettings.getString("key_name", null);
+        if (chk != null) {
+            if (chk.equals("level")) {
+                mLevel.setChecked(true);
+            }
+            if (chk.equals("name")) {
+                mName.setChecked(true);
+            }
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
             sendToReport();
-
     }
 
     private ValueEventListener valueEventListener = new ValueEventListener() {
@@ -263,7 +319,6 @@ public class LocationListFragment extends Fragment {
 
                 if (mail.equals("superadmin@gmail.com")) {
                     subordinatesList = allsubordinatesList;
-//                    subordinatesList.addAll(allsubordinatesList);
 
                 } else if (myProfile != null) {
                     fetch(mail);
@@ -281,6 +336,7 @@ public class LocationListFragment extends Fragment {
                 shimmerRecycler.hideShimmerAdapter();
                 fabclick();
                 FilterClick();
+                sortclick();
                 itemClick();
             }
         }
@@ -292,8 +348,15 @@ public class LocationListFragment extends Fragment {
     };
 
     private void sort(List<UserProfile> subordinatesList) {
-        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-        Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+        if (ascending)
+            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        else
+            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        if (sortByLevel && ascending)
+            Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+        if (sortByLevel && !ascending)
+            Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
+
     }
 
     private void itemClick() {
@@ -346,7 +409,6 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -377,6 +439,7 @@ public class LocationListFragment extends Fragment {
         isMultiselect = false;
         mActionmode.finish();
         mFilterbtn.setEnabled(true);
+        mSortBtn.setEnabled(true);
         for (UserProfile profile : filterlist)
             profile.setSelected(false);
 
@@ -385,9 +448,9 @@ public class LocationListFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private ActionMode mActionmode = null;
 
     private ActionMode.Callback actionMode = new ActionMode.Callback() {
+
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             MenuInflater inflater = actionMode.getMenuInflater();
@@ -428,6 +491,7 @@ public class LocationListFragment extends Fragment {
     };
 
     private void setActionModeTitle() {
+
         if (multiselect_list.isEmpty())
             mActionmode.setTitle("Select");
         else

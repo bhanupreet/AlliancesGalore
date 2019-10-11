@@ -56,7 +56,7 @@ public class ReportingToActivity extends AppCompatActivity {
     private void query() {
         Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("level").equalTo(level);
         query.keepSynced(true);
-        query.addValueEventListener(valueEventListener);
+        query.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void setToolBar() {
