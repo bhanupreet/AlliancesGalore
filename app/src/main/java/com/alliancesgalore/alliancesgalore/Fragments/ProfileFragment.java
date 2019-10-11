@@ -96,29 +96,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (getFragmentManager().getBackStackEntryCount() != 0)
-                    getFragmentManager().popBackStack();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-
     private void setDetails() {
         LoadImage();
         mDisplayName.setText(Global.myProfile.getDisplay_name());
@@ -137,58 +114,17 @@ public class ProfileFragment extends Fragment {
         mProgress = view.findViewById(R.id.profile_progress);
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
     private void editNameBtn() {
         mChangeNamebtn.setOnClickListener(editnameOnClick);
 
     }
 
-    private View.OnClickListener editnameOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            ChangeNameFragment changeNameFragment = new ChangeNameFragment();
-            getFragmentManager()
-                    .beginTransaction()
-                    .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
-                    .addToBackStack("profile")
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.settings_container, changeNameFragment)
-                    .commit();
-        }
-    };
+    private void mProfileImageClick() {
+        mProfileImage.setOnClickListener(mProfileImageOnClick);
+    }
 
     private void changePhotoClick() {
         mChangePhotobtn.setOnClickListener(changePhotoOnClick);
-    }
-
-    private View.OnClickListener changePhotoOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mProgress.setVisibility(View.VISIBLE);
-            CropImage.activity()
-                    .setAspectRatio(1, 1)
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .start(getContext(), ProfileFragment.this);
-        }
-    };
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                UploadTask uploadTask = uploadToDatabase(resultUri);
-                uploadTask.addOnCompleteListener(uploadOnComplete);
-            } else
-                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
     }
 
     private UploadTask uploadToDatabase(Uri resultUri) {
@@ -212,7 +148,32 @@ public class ProfileFragment extends Fragment {
         return uploadTask;
     }
 
-    OnCompleteListener uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
+    private View.OnClickListener editnameOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ChangeNameFragment changeNameFragment = new ChangeNameFragment();
+            getFragmentManager()
+                    .beginTransaction()
+                    .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
+                    .addToBackStack("profile")
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.settings_container, changeNameFragment)
+                    .commit();
+        }
+    };
+
+    private View.OnClickListener changePhotoOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mProgress.setVisibility(View.VISIBLE);
+            CropImage.activity()
+                    .setAspectRatio(1, 1)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(getContext(), ProfileFragment.this);
+        }
+    };
+
+    private OnCompleteListener uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
 
         @Override
         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -238,6 +199,7 @@ public class ProfileFragment extends Fragment {
             myRef.updateChildren(result).addOnCompleteListener(updateDatabaseOnComplete);
         }
     };
+
     private OnCompleteListener updateDatabaseOnComplete = new OnCompleteListener() {
         @Override
         public void onComplete(@NonNull Task task) {
@@ -249,11 +211,6 @@ public class ProfileFragment extends Fragment {
                 Functions.toast(task);
         }
     };
-
-
-    private void mProfileImageClick() {
-        mProfileImage.setOnClickListener(mProfileImageOnClick);
-    }
 
     private View.OnClickListener mProfileImageOnClick = new View.OnClickListener() {
         @Override
@@ -268,4 +225,46 @@ public class ProfileFragment extends Fragment {
                     .commit();
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                UploadTask uploadTask = uploadToDatabase(resultUri);
+                uploadTask.addOnCompleteListener(uploadOnComplete);
+            } else
+                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (getFragmentManager().getBackStackEntryCount() != 0)
+                    getFragmentManager().popBackStack();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 }

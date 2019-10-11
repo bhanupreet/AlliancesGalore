@@ -62,7 +62,6 @@ public class ChangePasswordFragment extends Fragment {
         mProgress = view.findViewById(R.id.changepassword_prog);
     }
 
-
     private View.OnClickListener ChangePasswordOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -86,7 +85,6 @@ public class ChangePasswordFragment extends Fragment {
         }
     };
 
-
     private OnCompleteListener reauthenticateOnComplete = new OnCompleteListener() {
         @Override
         public void onComplete(@NonNull Task task) {
@@ -97,7 +95,6 @@ public class ChangePasswordFragment extends Fragment {
                 user.updatePassword(Functions.TextOf(mPasswordnew2)).addOnCompleteListener(updateOnComplete);
         }
     };
-
 
     private OnCompleteListener updateOnComplete = new OnCompleteListener() {
         @Override

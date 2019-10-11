@@ -6,10 +6,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
@@ -20,18 +28,27 @@ import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import static com.alliancesgalore.alliancesgalore.Utils.Functions.getCircularBitmap;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
 public class MapActivity extends AppCompatActivity {
@@ -43,7 +60,11 @@ public class MapActivity extends AppCompatActivity {
     private GoogleMap googleMap;
     private SwipeToRefresh mMapsRefresh;
     private LatLng MyLocation;
+    private ArrayList<Marker> markers = new ArrayList<>();
     private int pos;
+    private Boolean isMultiselect = false;
+    private Marker marker2;
+    private HashMap<UserProfile, LatLng> map;
 
 
     @Override
@@ -62,7 +83,15 @@ public class MapActivity extends AppCompatActivity {
         MyLocation = setLatLong(obj);
         LatLng location = MyLocation;
 
-        setdefault(obj, location);
+        isMultiselect = getIntent().getBooleanExtra("ismultiselect", false);
+        if (isMultiselect) {
+            for (UserProfile profile : mMapSelectionList) {
+                LatLng temp = new LatLng(profile.getLatitude(), profile.getLongitude());
+                setdefault(profile, temp);
+            }
+        } else
+            setdefault(obj, location);
+
         setLocation(location);
         setmToolbar();
         setAdapter();
@@ -96,13 +125,15 @@ public class MapActivity extends AppCompatActivity {
     private void setdefault(UserProfile obj, LatLng location) {
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
-            googleMap.clear();
-            SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
-            String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
-            mMap.addMarker(new MarkerOptions()
-                    .position(location)
-                    .snippet("Last Updated: " + time)
-                    .title(obj.getDisplay_name()));
+            if (!isMultiselect)
+                googleMap.clear();
+
+
+//            Marker marker = mMap.addMarker(new MarkerOptions()
+//                    .position(location)
+//                    .snippet("Last Updated: " + time)
+//                    .title(obj.getDisplay_name()));
+            loadMarkerIcon(obj, mMap, location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         });
@@ -115,25 +146,16 @@ public class MapActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return (super.onOptionsItemSelected(item));
-    }
-
     private void RecyclerClick() {
-        adapter.swap(pos, 0);
+        adapter.swap(0, pos);
         adapter.addItemClickListener(pos -> {
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             UserProfile obj = mMapSelectionList.get(pos);
             LatLng Location = setLatLong(obj);
             Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
-            setdefault(obj, Location);
             setLocation(Location);
+            if (!isMultiselect)
+                setdefault(obj, Location);
             adapter.swap(0, pos);
             Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
             sort(mMapSelectionList.subList(1, mMapSelectionList.size()));
@@ -154,13 +176,6 @@ public class MapActivity extends AppCompatActivity {
             mMapsRefresh.setRefreshing(false);
         });
     }
-
-    private SwipeRefreshLayout.OnRefreshListener MapRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            setLocation(MyLocation);
-        }
-    };
 
     private void setBottomSheetBehavior() {
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
@@ -199,5 +214,80 @@ public class MapActivity extends AppCompatActivity {
 
     private ArrayList<UserProfile> ObjectListIntent() {
         return getIntent().getParcelableArrayListExtra("objectlist");
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener MapRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            setLocation(MyLocation);
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return (super.onOptionsItemSelected(item));
+    }
+
+    public static Bitmap createDrawableFromView(Context context, View view) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        if (context != null) {
+            ((Activity) context).getWindowManager().getDefaultDisplay()
+                    .getMetrics(displayMetrics);
+            view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT));
+            view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            view.layout(0, 0, displayMetrics.widthPixels,
+                    displayMetrics.heightPixels);
+            view.buildDrawingCache();
+            Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
+                    view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+            view.draw(canvas);
+            return bitmap;
+        }
+        return null;
+    }
+
+    private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+        String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
+        Picasso.get().load(obj.getImage()).placeholder(R.drawable.defaultprofile).error(R.drawable.defaultprofile).resize(100, 100).into(new Target() {
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Bitmap mBitmap = getCircularBitmap(bitmap);
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(mBitmap);
+                Marker marker2 = mMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .snippet("Last Updated: " + time)
+                        .title(obj.getDisplay_name()));
+//                        .icon(icon));
+                marker2.setTag(obj);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                Marker marker2 = mMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .snippet("Last Updated: " + time)
+                        .title(obj.getDisplay_name()));
+                marker2.setTag(obj);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                marker2 = mMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .snippet("Last Updated: " + time)
+                        .title(obj.getDisplay_name()));
+                marker2.setTag(obj.getEmail());
+            }
+        });
     }
 }

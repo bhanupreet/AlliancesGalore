@@ -67,7 +67,6 @@ public class ChangeNameFragment extends Fragment {
         }
     };
 
-
     private OnCompleteListener changenameOnComplete = task -> {
         if (task.isSuccessful()) {
             Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();

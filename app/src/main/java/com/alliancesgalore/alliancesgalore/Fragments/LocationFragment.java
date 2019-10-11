@@ -70,18 +70,6 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
         });
     }
 
-    private SwipeRefreshLayout.OnRefreshListener MapRefrshListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            setLocation(MyLocation);
-        }
-    };
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
-
     private void setdefult(Boolean marker) {
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
@@ -94,5 +82,17 @@ public class LocationFragment extends Fragment implements GoogleMap.OnMarkerClic
             mMap.moveCamera(CameraUpdateFactory.newLatLng(MyLocation));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
         });
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener MapRefrshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            setLocation(MyLocation);
+        }
+    };
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 }

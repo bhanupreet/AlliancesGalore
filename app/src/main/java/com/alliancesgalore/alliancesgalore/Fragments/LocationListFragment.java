@@ -44,10 +44,9 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
 
 public class LocationListFragment extends Fragment {
+
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
     private List<UserProfile> allsubordinatesList;
@@ -65,6 +64,7 @@ public class LocationListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
+
         ReportingToCheck();
         FindIds(view);
         query();
@@ -72,14 +72,8 @@ public class LocationListFragment extends Fragment {
         tlSetting = setPrefs(true, "tlSettings");
         managerSetting = setPrefs(true, "managerSettings");
         setSortSetting();
-        return view;
-    }
 
-    private void setSortSetting() {
-        sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor1 = sortsettings.edit();
-        editor1.putString("key_name", "level");
-        editor1.apply();
+        return view;
     }
 
     private SharedPreferences setPrefs(boolean b, String settingstring) {
@@ -90,6 +84,29 @@ public class LocationListFragment extends Fragment {
         return settings;
     }
 
+    private Boolean handleMenuItemClicks(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.executives:
+                filterfunction(item, 30, execSetting);
+                return false;
+            case R.id.teamLeaders:
+                filterfunction(item, 20, tlSetting);
+                return false;
+            case R.id.managers:
+                filterfunction(item, 10, managerSetting);
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    private void setSortSetting() {
+        sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor1 = sortsettings.edit();
+        editor1.putString("key_name", "level");
+        editor1.apply();
+    }
+
     private void FilterClick() {
         if (myProfile.getLevel() <= 10) {
             mFilterbtn.setOnClickListener(view -> {
@@ -98,7 +115,8 @@ public class LocationListFragment extends Fragment {
                 FindIds(popup);
                 getSetChecked();
 
-                mManagers.setVisible(false);
+                if (myProfile.getLevel() == 10)
+                    mManagers.setVisible(false);
                 popup.setOnMenuItemClickListener(item -> {
                     FilterSettings(item);
                     return handleMenuItemClicks(item);
@@ -118,34 +136,6 @@ public class LocationListFragment extends Fragment {
         item.setOnActionExpandListener(menuActionExpandListener);
 
     }
-
-    private Boolean handleMenuItemClicks(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.executives:
-                filterfunction(item, 30, execSetting);
-                return false;
-            case R.id.teamLeaders:
-                filterfunction(item, 20, tlSetting);
-                return false;
-            case R.id.managers:
-                filterfunction(item, 10, managerSetting);
-                return false;
-            default:
-                return false;
-        }
-    }
-
-    private MenuItem.OnActionExpandListener menuActionExpandListener = new MenuItem.OnActionExpandListener() {
-        @Override
-        public boolean onMenuItemActionExpand(MenuItem item) {
-            return false;
-        }
-
-        @Override
-        public boolean onMenuItemActionCollapse(MenuItem item) {
-            return false;
-        }
-    };
 
     private void getSetChecked() {
         boolean execCheck = execSetting.getBoolean("checkbox", false);
@@ -245,7 +235,6 @@ public class LocationListFragment extends Fragment {
         mSortBtn = view.findViewById(R.id.locationlist_sort);
     }
 
-
     private void sortclick() {
         mSortBtn.setOnClickListener(view -> {
             PopupMenu popup = new PopupMenu(getContext(), mSortBtn);
@@ -299,12 +288,94 @@ public class LocationListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
-            sendToReport();
+    private void sort(List<UserProfile> subordinatesList) {
+        if (ascending)
+            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        else
+            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        if (sortByLevel && ascending)
+            Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+        if (sortByLevel && !ascending)
+            Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
+
     }
+
+    private void itemClick() {
+        adapter.addItemClickListener(pos -> {
+            UserProfile selectedprofile = filterlist.get(pos);
+            if (isMultiselect) {
+                setSelectedTick(selectedprofile);
+                setActionModeTitle();
+                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
+                adapter.notifyDataSetChanged();
+            }
+            if (!isMultiselect) {
+                sendToMap(selectedprofile, filterlist);
+            }
+        });
+    }
+
+    private void sendToMap(UserProfile selected, List<UserProfile> subordinatesList) {
+        Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+        mapIntent.putExtra("object", selected);
+        mapIntent.putExtra("ismultiselect", isMultiselect);
+        List<UserProfile> temp = new ArrayList<>();
+        temp.clear();
+        temp.addAll(subordinatesList);
+        mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
+        startActivity(mapIntent);
+    }
+
+    private void fetch(String email) {
+        for (UserProfile profile : allsubordinatesList)
+            if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
+                subordinatesList.add(profile);
+
+    }
+
+    private void sendToReport() {
+        Intent startIntent = new Intent(getActivity(), ReportingToActivity.class);
+        startActivity(startIntent);
+        Objects.requireNonNull(getActivity()).finish();
+    }
+
+    private void SetFAB() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+    }
+
+    private void resetActionMode() {
+        isMultiselect = false;
+        mActionmode.finish();
+        mFilterbtn.setEnabled(true);
+        mSortBtn.setEnabled(true);
+        for (UserProfile profile : filterlist)
+            profile.setSelected(false);
+
+        multiselect_list.clear();
+        sort(filterlist);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setActionModeTitle() {
+
+        if (multiselect_list.isEmpty())
+            mActionmode.setTitle("Select");
+        else
+            mActionmode.setTitle("Selected: " + multiselect_list.size());
+    }
+
+    private MenuItem.OnActionExpandListener menuActionExpandListener = new MenuItem.OnActionExpandListener() {
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            return false;
+        }
+    };
 
     private ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
@@ -347,108 +418,6 @@ public class LocationListFragment extends Fragment {
         }
     };
 
-    private void sort(List<UserProfile> subordinatesList) {
-        if (ascending)
-            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-        else
-            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-        if (sortByLevel && ascending)
-            Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
-        if (sortByLevel && !ascending)
-            Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
-
-    }
-
-    private void itemClick() {
-        adapter.addItemClickListener(pos -> {
-            UserProfile selectedprofile = filterlist.get(pos);
-            if (isMultiselect) {
-                setSelectedTick(selectedprofile);
-                setActionModeTitle();
-                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
-                adapter.notifyDataSetChanged();
-            }
-            if (!isMultiselect) {
-                sendToMap(selectedprofile, filterlist);
-            }
-        });
-    }
-
-    private void sendToMap(UserProfile selected, List<UserProfile> subordinatesList) {
-        Intent mapIntent = new Intent(getActivity(), MapActivity.class);
-        mapIntent.putExtra("object", selected);
-        List<UserProfile> temp = new ArrayList<>();
-        temp.clear();
-        temp.addAll(subordinatesList);
-        mapIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) temp);
-        startActivity(mapIntent);
-    }
-
-    private void fetch(String email) {
-        for (UserProfile profile : allsubordinatesList)
-            if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
-                subordinatesList.add(profile);
-
-    }
-
-    private void sendToReport() {
-        Intent startIntent = new Intent(getActivity(), ReportingToActivity.class);
-        startActivity(startIntent);
-        Objects.requireNonNull(getActivity()).finish();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean visible) {
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed()) {
-            onResume();
-        }
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.selection_menu, menu);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mActionmode != null)
-            resetActionMode();
-
-        if (!getUserVisibleHint())
-            return;
-        SetFAB();
-        fabclick();
-    }
-
-    private void SetFAB() {
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
-    }
-
-    private void resetActionMode() {
-        isMultiselect = false;
-        mActionmode.finish();
-        mFilterbtn.setEnabled(true);
-        mSortBtn.setEnabled(true);
-        for (UserProfile profile : filterlist)
-            profile.setSelected(false);
-
-        multiselect_list.clear();
-        sort(filterlist);
-        adapter.notifyDataSetChanged();
-    }
-
-
     private ActionMode.Callback actionMode = new ActionMode.Callback() {
 
         @Override
@@ -490,11 +459,43 @@ public class LocationListFragment extends Fragment {
         }
     };
 
-    private void setActionModeTitle() {
-
-        if (multiselect_list.isEmpty())
-            mActionmode.setTitle("Select");
-        else
-            mActionmode.setTitle("Selected: " + multiselect_list.size());
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
+            sendToReport();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+
+        if (visible && isResumed())
+            onResume();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.selection_menu, menu);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mActionmode != null)
+            resetActionMode();
+
+        if (!getUserVisibleHint())
+            return;
+        SetFAB();
+        fabclick();
+    }
+
 }

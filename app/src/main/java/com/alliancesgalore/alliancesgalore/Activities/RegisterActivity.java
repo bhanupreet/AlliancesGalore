@@ -146,7 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
-
     private OnCompleteListener RegUserOnComplete = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -177,6 +176,7 @@ public class RegisterActivity extends AppCompatActivity {
             updatedatabase(userMap);
         }
     };
+
     private OnCompleteListener UpdateDatabaseOnCompleteListener = new OnCompleteListener<Void>() {
         @Override
         public void onComplete(@NonNull Task<Void> task) {

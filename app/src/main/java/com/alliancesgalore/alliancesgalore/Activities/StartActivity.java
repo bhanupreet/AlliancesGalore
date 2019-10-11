@@ -28,21 +28,21 @@ public class StartActivity extends AppCompatActivity {
         mLoginbtn = findViewById(R.id.start_already_btn);
     }
 
-    private void RegBtnClick() {
-        mRegBtn.setOnClickListener(v -> regIntent());
-    }
-
     private void regIntent() {
         Intent reg_intent = new Intent(StartActivity.this, RegisterActivity.class);
         startActivity(reg_intent);
     }
 
-    private void LoginBtnClick() {
-        mLoginbtn.setOnClickListener(v -> loginIntent());
-    }
-
     private void loginIntent() {
         Intent login_intent = new Intent(StartActivity.this, LoginActivity.class);
         startActivity(login_intent);
+    }
+
+    private void RegBtnClick() {
+        mRegBtn.setOnClickListener(v -> regIntent());
+    }
+
+    private void LoginBtnClick() {
+        mLoginbtn.setOnClickListener(v -> loginIntent());
     }
 }

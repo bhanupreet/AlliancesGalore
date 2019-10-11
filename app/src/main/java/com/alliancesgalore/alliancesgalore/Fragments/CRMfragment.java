@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,18 +43,14 @@ public class CRMfragment extends Fragment {
     private SwipeToRefresh mRefresh;
     private ProgressBar progressBar;
     private String email, decrypted;
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message message) {
-            switch (message.what) {
-                case 1: {
-                    webViewGoBack();
-                }
-                break;
-            }
+            if (message.what == 1)
+                webViewGoBack();
         }
     };
-
 
     @Nullable
     @Override
@@ -111,7 +108,6 @@ public class CRMfragment extends Fragment {
         }
     }
 
-
     private void login() {
         crmweb.getSettings().setSupportZoom(true);
         crmweb.setWebViewClient(new WebViewClient() {
@@ -143,6 +139,73 @@ public class CRMfragment extends Fragment {
             crmweb.loadUrl(url);
         } else
             crmweb.restoreState(savedInstanceState);
+    }
+
+    private void mRefreshFunction() {
+        mRefresh.setOnRefreshListener(mRefreshListener);
+    }
+
+    private Boolean KeyCheck(int keyCode, KeyEvent event) {
+        return keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == MotionEvent.ACTION_UP
+                && crmweb.canGoBack();
+    }
+
+    private View.OnKeyListener crmKeyListener = (v, keyCode, event) -> {
+        if (KeyCheck(keyCode, event)) {
+            handler.sendEmptyMessage(1);
+            return true;
+        }
+        return false;
+    };
+
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+                myProfile = dataSnapshot.getValue(UserProfile.class);
+                login();
+            } else {
+            }
+//                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+    };
+
+    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            crmweb.reload();
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        count = 0;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        crmweb.restoreState(savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        count = 0;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed()) {
+            onResume();
+        }
     }
 
     @Override
@@ -208,72 +271,5 @@ public class CRMfragment extends Fragment {
         });
 
 
-    }
-
-    private View.OnKeyListener crmKeyListener = (v, keyCode, event) -> {
-        if (KeyCheck(keyCode, event)) {
-            handler.sendEmptyMessage(1);
-            return true;
-        }
-        return false;
-    };
-
-    private Boolean KeyCheck(int keyCode, KeyEvent event) {
-        return keyCode == KeyEvent.KEYCODE_BACK
-                && event.getAction() == MotionEvent.ACTION_UP
-                && crmweb.canGoBack();
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        crmweb.restoreState(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        count = 0;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        count = 0;
-    }
-
-    public ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                myProfile = dataSnapshot.getValue(UserProfile.class);
-                login();
-            } else {
-            }
-//                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    };
-
-    private void mRefreshFunction() {
-        mRefresh.setOnRefreshListener(mRefreshListener);
-    }
-
-    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            crmweb.reload();
-        }
-    };
-
-    @Override
-    public void setUserVisibleHint(boolean visible) {
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed()) {
-            onResume();
-        }
     }
 }

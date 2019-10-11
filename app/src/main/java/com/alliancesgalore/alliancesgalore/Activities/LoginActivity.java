@@ -87,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, LoginOnComplete);
     }
 
-
     private OnCompleteListener LoginOnComplete = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -99,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     };
-
 
     private OnSuccessListener successListener = new OnSuccessListener<Void>() {
         @Override
@@ -146,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     };
+
     private View.OnClickListener ForgotOnClickListener = v -> {
         Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
         startActivity(PasswordIntent);

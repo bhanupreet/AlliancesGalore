@@ -16,6 +16,8 @@ import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -26,34 +28,6 @@ public class SettingsFragment extends Fragment {
     private TextView mChangePassword;
     private CircleImageView mProfileImage;
     private ConstraintLayout mView;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
-
-        FindIds(view);
-        viewClick();
-        FragFunctions.setToolBarTitle("Settings", view);
-        setDetails();
-        changepasswordclick();
-        return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 
     private void FindIds(View view) {
         mView = view.findViewById(R.id.settings_view);
@@ -89,9 +63,6 @@ public class SettingsFragment extends Fragment {
                 .commit();
     }
 
-    private View.OnClickListener viewClickListener = view -> setAnimClick();
-
-
     private void setDetails() {
         LoadImage();
         if
@@ -105,17 +76,47 @@ public class SettingsFragment extends Fragment {
         mChangePassword.setOnClickListener(ChangePasswordListener);
     }
 
+    private View.OnClickListener viewClickListener = view -> setAnimClick();
+
     private View.OnClickListener ChangePasswordListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
             getFragmentManager()
                     .beginTransaction()
-                    .addSharedElement(mChangePassword, ViewCompat.getTransitionName(mChangePassword))
+                    .addSharedElement(mChangePassword, Objects.requireNonNull(ViewCompat.getTransitionName(mChangePassword)))
                     .addToBackStack("settings")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.settings_container, changePasswordFragment)
                     .commit();
         }
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        FindIds(view);
+        viewClick();
+        FragFunctions.setToolBarTitle("Settings", view);
+        setDetails();
+        changepasswordclick();
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 }

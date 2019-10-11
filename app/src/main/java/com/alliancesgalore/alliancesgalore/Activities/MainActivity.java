@@ -154,18 +154,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(settingsIntent);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        fabanim();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String uid = FirebaseAuth.getInstance().getUid();
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
-        } else
-            sendToStart();
-    }
-
     private void fabanim() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int state = 0;
@@ -222,6 +210,47 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void sendToReport() {
+        Intent reportIntent = new Intent(MainActivity.this, ReportingToActivity.class);
+        startActivity(reportIntent);
+        finish();
+    }
+
+    private void startTrackerService() {
+        startService(new Intent(this, LocationService.class));
+    }
+
+    private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();
+
+    public ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+                myProfile = dataSnapshot.getValue(UserProfile.class);
+                if (TextUtils.isEmpty(myProfile.getReportingTo())) {
+                    sendToReport();
+                }
+//                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fabanim();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = FirebaseAuth.getInstance().getUid();
+            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+        } else
+            sendToStart();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -259,34 +288,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();
-
-    public ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                myProfile = dataSnapshot.getValue(UserProfile.class);
-                if (TextUtils.isEmpty(myProfile.getReportingTo())) {
-                    sendToReport();
-                }
-//                Toast.makeText(getApplicationContext(),"got details of user",Toast.LENGTH_SHORT);
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    };
-
-    private void sendToReport() {
-        Intent startIntent = new Intent(MainActivity.this, ReportingToActivity.class);
-        startActivity(startIntent);
-        finish();
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]
-            grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startTrackerService();
@@ -295,7 +298,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startTrackerService() {
-        startService(new Intent(this, LocationService.class));
-    }
 }

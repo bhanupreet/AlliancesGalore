@@ -71,22 +71,6 @@ public class ReportingToActivity extends AppCompatActivity {
         mReportingToList = new ArrayList<>();
     }
 
-    private ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            mReportingToList.clear();
-            if (dataSnapshot.exists())
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                    mReportingToList.add(snapshot.getValue(UserProfile.class));
-            Collections.sort(mReportingToList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
-            adapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    };
-
     private void ReportingToSwitch() {
         switch (Global.myProfile.getRole().toLowerCase()) {
             case "team leader":
@@ -112,5 +96,21 @@ public class ReportingToActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            mReportingToList.clear();
+            if (dataSnapshot.exists())
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                    mReportingToList.add(snapshot.getValue(UserProfile.class));
+            Collections.sort(mReportingToList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+    };
 
 }
