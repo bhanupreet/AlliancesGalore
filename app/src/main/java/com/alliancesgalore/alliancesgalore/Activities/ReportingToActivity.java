@@ -104,7 +104,7 @@ public class ReportingToActivity extends AppCompatActivity {
             if (dataSnapshot.exists())
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     mReportingToList.add(snapshot.getValue(UserProfile.class));
-            Collections.sort(mReportingToList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+            Collections.sort(mReportingToList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
             adapter.notifyDataSetChanged();
         }
 

@@ -1,5 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,6 +71,8 @@ public class LocationListFragment extends Fragment {
         ReportingToCheck();
         FindIds(view);
         query();
+        MainActivity mainActivity = (MainActivity) getActivity();
+
         execSetting = setPrefs(true, "executiveSettings");
         tlSetting = setPrefs(true, "tlSettings");
         managerSetting = setPrefs(true, "managerSettings");
@@ -279,25 +284,22 @@ public class LocationListFragment extends Fragment {
         sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
         String chk = sortsettings.getString("key_name", null);
         if (chk != null) {
-            if (chk.equals("level")) {
+            if (chk.equals("level"))
                 mLevel.setChecked(true);
-            }
-            if (chk.equals("name")) {
+            if (chk.equals("name"))
                 mName.setChecked(true);
-            }
         }
     }
 
     private void sort(List<UserProfile> subordinatesList) {
         if (ascending)
-            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         else
-            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         if (sortByLevel && ascending)
             Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
         if (sortByLevel && !ascending)
             Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
-
     }
 
     private void itemClick() {
@@ -309,9 +311,8 @@ public class LocationListFragment extends Fragment {
                 Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
                 adapter.notifyDataSetChanged();
             }
-            if (!isMultiselect) {
+            if (!isMultiselect)
                 sendToMap(selectedprofile, filterlist);
-            }
         });
     }
 
@@ -330,7 +331,6 @@ public class LocationListFragment extends Fragment {
         for (UserProfile profile : allsubordinatesList)
             if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
                 subordinatesList.add(profile);
-
     }
 
     private void sendToReport() {
@@ -358,7 +358,6 @@ public class LocationListFragment extends Fragment {
     }
 
     private void setActionModeTitle() {
-
         if (multiselect_list.isEmpty())
             mActionmode.setTitle("Select");
         else
@@ -426,6 +425,7 @@ public class LocationListFragment extends Fragment {
             inflater.inflate(R.menu.selection_menu, menu);
             mActionmode = actionMode;
             setActionModeTitle();
+            setHasOptionsMenu(true);
             return true;
         }
 
@@ -474,7 +474,6 @@ public class LocationListFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean visible) {
         super.setUserVisibleHint(visible);
-
         if (visible && isResumed())
             onResume();
     }
@@ -491,11 +490,11 @@ public class LocationListFragment extends Fragment {
         super.onResume();
         if (mActionmode != null)
             resetActionMode();
-
         if (!getUserVisibleHint())
             return;
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
         SetFAB();
         fabclick();
     }
-
 }

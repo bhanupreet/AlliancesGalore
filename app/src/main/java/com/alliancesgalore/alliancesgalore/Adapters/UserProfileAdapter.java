@@ -31,6 +31,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
     public void addItemClickListener(ItemClickListener listener) {
         mItemClickListener = listener;
     }
+
     @NonNull
     @Override
     public UserProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -63,7 +64,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         UserProfile aProfile = mUsersList.get(a), bProfile = mUsersList.get(b);
         mUsersList.set(a, bProfile);
         mUsersList.set(b, aProfile);
-        Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getLevel() - t2.getLevel());
     }
 }

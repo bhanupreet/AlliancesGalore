@@ -164,7 +164,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void sort(List<UserProfile> subordinatesList) {
-        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().compareTo(t2.getDisplay_name()));
+        Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
     }
 
