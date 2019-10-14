@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
             email = Functions.TextOf(mLoginEmail);
             password = Functions.TextOf(mLoginPassword);
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                Toast.makeText(LoginActivity.this, "Email or Password cannot be left blank", Toast.LENGTH_SHORT).show();
+                Functions.toast("Email or Password cannot be left blank", LoginActivity.this);
             } else {
                 mprogressBar.setVisibility(View.VISIBLE);
                 Credential credential = new Credential.Builder(email).setPassword(password).build();

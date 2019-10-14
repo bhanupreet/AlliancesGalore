@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         }
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
+
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startTrackerService();
         } else {
@@ -109,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectedTabs(int tab) {
         fab.show();
-
         //a bit animation of popping up.
         fab.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_up);
@@ -125,11 +125,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 tab = 0;
                 fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
-
-
         }
-
-        //you can do more task. for example, change color for each tabs, or custom action for each tabs.
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {

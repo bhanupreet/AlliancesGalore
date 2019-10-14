@@ -86,17 +86,16 @@ public class ProfileFragment extends Fragment {
         editNameBtn();
         return view;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 UploadTask uploadTask = uploadToDatabase(resultUri);
                 uploadTask.addOnCompleteListener(uploadOnComplete);
-            } else
-                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+            }
         } else
             Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
     }

@@ -33,7 +33,7 @@ public class ChangePasswordFragment extends Fragment {
     private TextInputLayout mPasswordOld, mPasswordnew1, mPasswordnew2;
     private Button mChangePasswordbtn;
     private ProgressBar mProgress;
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,6 @@ public class ChangePasswordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_change_password, container, false);
         FindIds(view);
         FragFunctions.setToolBarTitle("Change Password", view);

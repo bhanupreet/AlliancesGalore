@@ -67,6 +67,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private OnCompleteListener resetClickOnComplete = new OnCompleteListener<Void>() {
         @Override
         public void onComplete(@NonNull Task<Void> task) {
+
             if (task.isSuccessful())
                 Functions.toast("Email sent", mCtx);
             else

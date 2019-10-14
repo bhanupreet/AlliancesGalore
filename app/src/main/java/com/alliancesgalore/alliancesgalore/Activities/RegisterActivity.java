@@ -138,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
             Email = Functions.TextOf(mEmail);
             password = Functions.TextOf(mPassword);
             if (EmptyFieldsCheck()) {
-                Toast.makeText(RegisterActivity.this, "Field  cannot be left blank", Toast.LENGTH_SHORT).show();
+                Functions.toast("Field  cannot be left blank", RegisterActivity.this);
             } else {
                 regProgress();
                 registeruser(Email, password);

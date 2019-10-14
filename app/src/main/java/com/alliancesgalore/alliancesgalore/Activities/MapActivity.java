@@ -25,6 +25,7 @@ import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,12 +53,12 @@ import java.util.Objects;
 import static com.alliancesgalore.alliancesgalore.Utils.Functions.getCircularBitmap;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
-public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener {
+public class MapActivity extends AppCompatActivity {
     private BottomSheetBehavior bottomSheetBehavior;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
     private List<UserProfile> mMapSelectionList;
-    MapView mMapView;
+    private MapView mMapView;
     private GoogleMap googleMap;
     private SwipeToRefresh mMapsRefresh;
     private LatLng MyLocation;
@@ -130,12 +131,10 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             if (!isMultiselect)
                 googleMap.clear();
 
-            mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this, obj.getImage()));
-            mMap.setOnMarkerClickListener(this);
+
             loadMarkerIcon(obj, mMap, location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
 
         });
     }
@@ -155,8 +154,10 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             LatLng Location = setLatLong(obj);
             Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
             setLocation(Location);
+
             if (!isMultiselect)
                 setdefault(obj, Location);
+
             adapter.swap(0, pos);
             Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
             sort(mMapSelectionList.subList(1, mMapSelectionList.size()));
@@ -242,13 +243,16 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                 .snippet("Last Updated: " + time)
                 .title(obj.getDisplay_name()));
         marker2.setTag(obj);
+        mMap.setOnMarkerClickListener(marker -> {
+            Functions.toast(marker.getTitle(), MapActivity.this);
+            mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this));
+            marker.showInfoWindow();
+            UserProfile profile = (UserProfile) marker.getTag();
+            int pos = mMapSelectionList.indexOf(profile);
+            adapter.swap(0, pos);
+            adapter.notifyDataSetChanged();
+            return true;
+        });
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        if (marker != null) {
-            marker.showInfoWindow();
-        }
-        return true;
-    }
 }
