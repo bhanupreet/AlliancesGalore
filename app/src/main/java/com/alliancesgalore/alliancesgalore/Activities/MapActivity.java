@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.alliancesgalore.alliancesgalore.Adapters.MapInfoAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.UserProfile;
@@ -51,7 +52,7 @@ import java.util.Objects;
 import static com.alliancesgalore.alliancesgalore.Utils.Functions.getCircularBitmap;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener {
     private BottomSheetBehavior bottomSheetBehavior;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
@@ -65,6 +66,7 @@ public class MapActivity extends AppCompatActivity {
     private Boolean isMultiselect = false;
     private Marker marker2;
     private HashMap<UserProfile, LatLng> map;
+    private MapInfoAdapter mapInfoAdapter;
 
 
     @Override
@@ -133,9 +135,13 @@ public class MapActivity extends AppCompatActivity {
 //                    .position(location)
 //                    .snippet("Last Updated: " + time)
 //                    .title(obj.getDisplay_name()));
+            mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this, obj.getImage()));
+            mMap.setOnMarkerClickListener(this);
             loadMarkerIcon(obj, mMap, location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
         });
     }
 
@@ -255,7 +261,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mma");
         String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
         Picasso.get().load(obj.getImage()).placeholder(R.drawable.defaultprofile).error(R.drawable.defaultprofile).resize(100, 100).into(new Target() {
 
@@ -289,5 +295,13 @@ public class MapActivity extends AppCompatActivity {
                 marker2.setTag(obj.getEmail());
             }
         });
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker != null) {
+            marker.showInfoWindow();
+        }
+        return true;
     }
 }
