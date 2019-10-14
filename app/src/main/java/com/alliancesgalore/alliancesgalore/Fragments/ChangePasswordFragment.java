@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 
 public class ChangePasswordFragment extends Fragment {
     private TextInputLayout mPasswordOld, mPasswordnew1, mPasswordnew2;
@@ -69,16 +71,16 @@ public class ChangePasswordFragment extends Fragment {
             final AuthCredential credential = EmailAuthProvider.getCredential(Global.myProfile.getEmail(), paswrd);
             if (TextUtils.isEmpty(Functions.TextOf(mPasswordOld))
                     || TextUtils.isEmpty(Functions.TextOf(mPasswordnew1))
-                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew2))) {
-                Toast.makeText(getContext(), "Field cannot be left blank", Toast.LENGTH_SHORT).show();
+                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew2)))
+                Functions.toast("Field cannot be left blank", getContext());
 
-            } else if (!Functions.TextOf(mPasswordnew2).equals(Functions.TextOf(mPasswordnew1))) {
-                Toast.makeText(getContext(), "Both new passwords must be same", Toast.LENGTH_SHORT).show();
+            else if (!Functions.TextOf(mPasswordnew2).equals(Functions.TextOf(mPasswordnew1)))
+                Functions.toast("Both new passwords must be same", getContext());
 
-            } else if (Functions.TextOf(mPasswordOld).equals(Functions.TextOf(mPasswordnew1))) {
-                Toast.makeText(getContext(), "New Password cannot be same as old password", Toast.LENGTH_SHORT).show();
+            else if (Functions.TextOf(mPasswordOld).equals(Functions.TextOf(mPasswordnew1)))
+                Functions.toast("New password cannot be same as old password", getContext());
 
-            } else {
+            else {
                 user.reauthenticate(credential).addOnCompleteListener(reauthenticateOnComplete);
                 mProgress.setVisibility(View.VISIBLE);
             }
@@ -119,8 +121,8 @@ public class ChangePasswordFragment extends Fragment {
         @Override
         public void onComplete(@NonNull Task task) {
             if (task.isSuccessful()) {
-                getFragmentManager().popBackStack();
-                Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                Objects.requireNonNull(getFragmentManager()).popBackStack();
+                Functions.toast("Password updated successfully", getContext());
             } else
                 Functions.toast(task);
             mProgress.setVisibility(View.INVISIBLE);

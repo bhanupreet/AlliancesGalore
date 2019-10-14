@@ -61,13 +61,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     private GoogleMap googleMap;
     private SwipeToRefresh mMapsRefresh;
     private LatLng MyLocation;
-    private ArrayList<Marker> markers = new ArrayList<>();
     private int pos;
     private Boolean isMultiselect = false;
-    private Marker marker2;
-    private HashMap<UserProfile, LatLng> map;
-    private MapInfoAdapter mapInfoAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +81,10 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         LatLng location = MyLocation;
 
         isMultiselect = getIntent().getBooleanExtra("ismultiselect", false);
-        if (isMultiselect) {
-            for (UserProfile profile : mMapSelectionList) {
-                LatLng temp = new LatLng(profile.getLatitude(), profile.getLongitude());
-                setdefault(profile, temp);
-            }
-        } else
+
+        if (isMultiselect)
+            setMultiselectMarkers();
+        else
             setdefault(obj, location);
 
         setLocation(location);
@@ -99,6 +92,13 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         setAdapter();
         RecyclerClick();
         setBottomSheetBehavior();
+    }
+
+    private void setMultiselectMarkers() {
+        for (UserProfile profile : mMapSelectionList) {
+            LatLng temp = new LatLng(profile.getLatitude(), profile.getLongitude());
+            setdefault(profile, temp);
+        }
     }
 
     private void setMapRefreshListener() {
@@ -130,11 +130,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             if (!isMultiselect)
                 googleMap.clear();
 
-
-//            Marker marker = mMap.addMarker(new MarkerOptions()
-//                    .position(location)
-//                    .snippet("Last Updated: " + time)
-//                    .title(obj.getDisplay_name()));
             mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this, obj.getImage()));
             mMap.setOnMarkerClickListener(this);
             loadMarkerIcon(obj, mMap, location);
@@ -239,62 +234,14 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         return (super.onOptionsItemSelected(item));
     }
 
-    public static Bitmap createDrawableFromView(Context context, View view) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        if (context != null) {
-            ((Activity) context).getWindowManager().getDefaultDisplay()
-                    .getMetrics(displayMetrics);
-            view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT));
-            view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
-            view.layout(0, 0, displayMetrics.widthPixels,
-                    displayMetrics.heightPixels);
-            view.buildDrawingCache();
-            Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
-                    view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
-            Canvas canvas = new Canvas(bitmap);
-            view.draw(canvas);
-            return bitmap;
-        }
-        return null;
-    }
-
     private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mma");
         String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
-        Picasso.get().load(obj.getImage()).placeholder(R.drawable.defaultprofile).error(R.drawable.defaultprofile).resize(100, 100).into(new Target() {
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Bitmap mBitmap = getCircularBitmap(bitmap);
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(mBitmap);
-                Marker marker2 = mMap.addMarker(new MarkerOptions()
-                        .position(location)
-                        .snippet("Last Updated: " + time)
-                        .title(obj.getDisplay_name()));
-//                        .icon(icon));
-                marker2.setTag(obj);
-            }
-
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                Marker marker2 = mMap.addMarker(new MarkerOptions()
-                        .position(location)
-                        .snippet("Last Updated: " + time)
-                        .title(obj.getDisplay_name()));
-                marker2.setTag(obj);
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                marker2 = mMap.addMarker(new MarkerOptions()
-                        .position(location)
-                        .snippet("Last Updated: " + time)
-                        .title(obj.getDisplay_name()));
-                marker2.setTag(obj.getEmail());
-            }
-        });
+        Marker marker2 = mMap.addMarker(new MarkerOptions()
+                .position(location)
+                .snippet("Last Updated: " + time)
+                .title(obj.getDisplay_name()));
+        marker2.setTag(obj);
     }
 
     @Override

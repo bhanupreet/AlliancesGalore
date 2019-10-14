@@ -86,6 +86,47 @@ public class ProfileFragment extends Fragment {
         editNameBtn();
         return view;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                UploadTask uploadTask = uploadToDatabase(resultUri);
+                uploadTask.addOnCompleteListener(uploadOnComplete);
+            } else
+                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (getFragmentManager().getBackStackEntryCount() != 0)
+                    getFragmentManager().popBackStack();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 
     private void LoadImage() {
         if (Global.myProfile.getImage() != null) {
@@ -226,45 +267,4 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Toast.makeText(getContext(), "uri got successfully", Toast.LENGTH_SHORT).show();
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                UploadTask uploadTask = uploadToDatabase(resultUri);
-                uploadTask.addOnCompleteListener(uploadOnComplete);
-            } else
-                Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (getFragmentManager().getBackStackEntryCount() != 0)
-                    getFragmentManager().popBackStack();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }

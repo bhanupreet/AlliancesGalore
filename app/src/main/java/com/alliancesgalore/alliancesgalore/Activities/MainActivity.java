@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
                 if (isFloatButtonHidden == false && state == 1 && positionOffset != 0.0) {
                     isFloatButtonHidden = true;
                     //hide floating action button
+                    if (LocationListFragment.mActionmode != null) {
+                        LocationListFragment.mActionmode.finish();
+                        LocationListFragment.isMultiselect = false;
+                    }
                     swappingAway();
 //                    fab.hide();
                 }
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid = FirebaseAuth.getInstance().getUid();
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addListenerForSingleValueEvent(valueEventListener);
         } else
             sendToStart();
     }

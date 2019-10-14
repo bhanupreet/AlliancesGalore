@@ -17,13 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
@@ -57,12 +57,14 @@ public class LocationListFragment extends Fragment {
     private List<UserProfile> multiselect_list, filterlist;
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
-    private Boolean isMultiselect = false, sortByLevel = true, ascending = true;
+    private boolean sortByLevel = true, ascending = true;
     private ArrayList<UserProfile> temp;
+    public static boolean isMultiselect = false;
     private LinearLayout mFilterbtn, mSortBtn;
     private SharedPreferences execSetting, tlSetting, managerSetting, sortsettings;
     private MenuItem mExecutives, mManagers, mTeamLeaders, mName, mLevel;
-    private ActionMode mActionmode = null;
+    public static ActionMode mActionmode = null;
+    private SwipeRefreshLayout mSwipeResfresh;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class LocationListFragment extends Fragment {
         ReportingToCheck();
         FindIds(view);
         query();
-        MainActivity mainActivity = (MainActivity) getActivity();
+        setmSwipeResfresh();
 
         execSetting = setPrefs(true, "executiveSettings");
         tlSetting = setPrefs(true, "tlSettings");
@@ -79,6 +81,47 @@ public class LocationListFragment extends Fragment {
         setSortSetting();
 
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        resetActionMode();
+        super.onPause();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed())
+            onResume();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.selection_menu, menu);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mActionmode != null)
+            resetActionMode();
+        if (!getUserVisibleHint())
+            return;
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
+        query();
+        SetFAB();
+        fabclick();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
+            sendToReport();
     }
 
     private SharedPreferences setPrefs(boolean b, String settingstring) {
@@ -238,6 +281,14 @@ public class LocationListFragment extends Fragment {
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         mFilterbtn = view.findViewById(R.id.locationlist_filter);
         mSortBtn = view.findViewById(R.id.locationlist_sort);
+        mSwipeResfresh = view.findViewById(R.id.locationlist_refresh);
+    }
+
+    private void setmSwipeResfresh() {
+        mSwipeResfresh.setOnRefreshListener(() -> {
+            query();
+            mSwipeResfresh.setRefreshing(false);
+        });
     }
 
     private void sortclick() {
@@ -302,6 +353,18 @@ public class LocationListFragment extends Fragment {
             Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        resetActionMode();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        resetActionMode();
+    }
+
     private void itemClick() {
         adapter.addItemClickListener(pos -> {
             UserProfile selectedprofile = filterlist.get(pos);
@@ -346,7 +409,8 @@ public class LocationListFragment extends Fragment {
 
     private void resetActionMode() {
         isMultiselect = false;
-        mActionmode.finish();
+        if (mActionmode != null)
+            mActionmode.finish();
         mFilterbtn.setEnabled(true);
         mSortBtn.setEnabled(true);
         for (UserProfile profile : filterlist)
@@ -458,43 +522,4 @@ public class LocationListFragment extends Fragment {
             mActionmode = null;
         }
     };
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
-            sendToReport();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean visible) {
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed())
-            onResume();
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.selection_menu, menu);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mActionmode != null)
-            resetActionMode();
-        if (!getUserVisibleHint())
-            return;
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
-        SetFAB();
-        fabclick();
-    }
 }

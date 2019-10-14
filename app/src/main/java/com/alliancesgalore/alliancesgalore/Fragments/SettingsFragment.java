@@ -29,6 +29,34 @@ public class SettingsFragment extends Fragment {
     private CircleImageView mProfileImage;
     private ConstraintLayout mView;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        FindIds(view);
+        viewClick();
+        FragFunctions.setToolBarTitle("Settings", view);
+        setDetails();
+        changepasswordclick();
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
     private void FindIds(View view) {
         mView = view.findViewById(R.id.settings_view);
         mDisplayName = view.findViewById(R.id.settings_displayname);
@@ -91,32 +119,4 @@ public class SettingsFragment extends Fragment {
                     .commit();
         }
     };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
-
-        FindIds(view);
-        viewClick();
-        FragFunctions.setToolBarTitle("Settings", view);
-        setDetails();
-        changepasswordclick();
-
-        return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }

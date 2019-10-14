@@ -102,7 +102,7 @@ public class CRMfragment extends Fragment {
     private void getemailpass() {
         String uid = FirebaseAuth.getInstance().getUid();
         try {
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addListenerForSingleValueEvent(valueEventListener);
         } catch (Exception e) {
 
         }
