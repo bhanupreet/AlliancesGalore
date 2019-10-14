@@ -8,18 +8,18 @@ import androidx.annotation.Nullable;
 import java.util.Comparator;
 
 public class UserProfile implements Parcelable {
-    String TokenID;
-    String display_name;
-    String email;
-    String image;
-    String password;
-    String role;
-    int level;
-    double Latitude;
-    double Longitude;
-    String ReportingTo;
-    Long LastUpdated;
-    Boolean isSelected = false;
+    private String TokenID;
+    private String display_name;
+    private String email;
+    private String image;
+    private String password;
+    private String role;
+    private int level;
+    private double Latitude;
+    private double Longitude;
+    private String ReportingTo;
+    private Long LastUpdated;
+    private Boolean isSelected = false;
 
     protected UserProfile(Parcel in) {
         TokenID = in.readString();

@@ -343,12 +343,15 @@ public class LocationListFragment extends Fragment {
     }
 
     private void sort(List<UserProfile> subordinatesList) {
+
         if (ascending)
             Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         else
             Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
+
         if (sortByLevel && ascending)
             Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+
         if (sortByLevel && !ascending)
             Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
     }
@@ -390,11 +393,19 @@ public class LocationListFragment extends Fragment {
         startActivity(mapIntent);
     }
 
+
+    //IMPORTANT FUNCTION
+
     private void fetch(String email) {
         for (UserProfile profile : allsubordinatesList)
-            if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email) && !subordinatesList.contains(profile))
+            if (!TextUtils.isEmpty(profile.getReportingTo()) && profile.getReportingTo().equals(email)
+                    && !subordinatesList.contains(profile))
+
                 subordinatesList.add(profile);
     }
+
+    //IMPORANT FUCNTION ENDS
+
 
     private void sendToReport() {
         Intent startIntent = new Intent(getActivity(), ReportingToActivity.class);

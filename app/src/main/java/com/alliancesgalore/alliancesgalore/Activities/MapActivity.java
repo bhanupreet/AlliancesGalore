@@ -53,7 +53,7 @@ import java.util.Objects;
 import static com.alliancesgalore.alliancesgalore.Utils.Functions.getCircularBitmap;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener {
     private BottomSheetBehavior bottomSheetBehavior;
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
@@ -131,7 +131,7 @@ public class MapActivity extends AppCompatActivity {
             if (!isMultiselect)
                 googleMap.clear();
 
-
+            mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this));
             loadMarkerIcon(obj, mMap, location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -243,16 +243,18 @@ public class MapActivity extends AppCompatActivity {
                 .snippet("Last Updated: " + time)
                 .title(obj.getDisplay_name()));
         marker2.setTag(obj);
-        mMap.setOnMarkerClickListener(marker -> {
-            Functions.toast(marker.getTitle(), MapActivity.this);
-            mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this));
-            marker.showInfoWindow();
-            UserProfile profile = (UserProfile) marker.getTag();
-            int pos = mMapSelectionList.indexOf(profile);
-            adapter.swap(0, pos);
-            adapter.notifyDataSetChanged();
-            return true;
-        });
+        mMap.setOnMarkerClickListener(this);
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Functions.toast(marker.getTitle(), MapActivity.this);
+
+        marker.showInfoWindow();
+        UserProfile profile = (UserProfile) marker.getTag();
+        int pos = mMapSelectionList.indexOf(profile);
+        adapter.swap(0, pos);
+        adapter.notifyDataSetChanged();
+        return true;
+    }
 }
