@@ -63,6 +63,9 @@ dependencies {
     implementation 'dev.ahamed.mva2:ext-diffutil-rx:2.0.0-beta01'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
+    implementation 'com.github.tibolte:agendacalendarview:1.0.4'
+    compile project(path: ':agendacalendar')
+
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {
