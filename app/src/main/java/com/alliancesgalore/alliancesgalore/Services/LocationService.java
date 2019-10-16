@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
@@ -49,9 +50,12 @@ public class LocationService extends Service {
 
     private void requestLocationUpdates() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        SharedPreferences settings = getSharedPreferences("location", 0);
+        String silent = settings.getString("locationservice", "off");
+
+        if (user != null && silent.equals("on")) {
             LocationRequest request = new LocationRequest();
-            request.setInterval(10000);
+            request.setInterval(5000);
             request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
             int permission = ContextCompat.checkSelfPermission(this,
@@ -60,6 +64,9 @@ public class LocationService extends Service {
                 client.requestLocationUpdates(request, locationCallback, null);
             }
         }
+        if (silent.equals("off")) {
+            stopSelf();
+        }
 
     }
 
@@ -67,7 +74,9 @@ public class LocationService extends Service {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location location = locationResult.getLastLocation();
-            if (location != null) {
+            SharedPreferences settings = getSharedPreferences("location", 0);
+            String silent = settings.getString("locationservice", "off");
+            if (location != null && silent.equals("on")) {
                 Log.d(TAG, "location update " + location);
                 HashMap<String, Object> userMap = new HashMap<>();
                 userMap.put("Latitude", location.getLatitude());
@@ -76,6 +85,9 @@ public class LocationService extends Service {
                 String uid = FirebaseAuth.getInstance().getUid();
                 if (uid != null)
                     FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(userMap);
+            }
+            if (silent.equals("off")) {
+                stopSelf();
             }
         }
     };

@@ -1,7 +1,10 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -22,6 +25,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public final class Functions {
     public static UserProfile myProfile;
+    public static final String myPref = "preferenceName";
 
     @SuppressLint("RestrictedApi")
     public static void toast(Task task) {
@@ -57,6 +61,7 @@ public final class Functions {
     public static void toast(String text, Context mCtx) {
         Toast.makeText(mCtx, text, Toast.LENGTH_SHORT).show();
     }
+
     public static Bitmap getCircularBitmap(Bitmap bitmap) {
         Bitmap output;
 
@@ -87,5 +92,19 @@ public final class Functions {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
+    }
+
+    public static String getPreferenceValue(Activity activity) {
+        SharedPreferences sp = activity.getSharedPreferences(myPref, 0);
+        Toast.makeText(activity, sp.getString("locationservice", "off"), Toast.LENGTH_SHORT).show();
+        return sp.getString("locationservice", "off");
+    }
+
+    public static void writeToPreference(String thePreference, Activity activity) {
+        SharedPreferences.Editor editor = activity.getSharedPreferences(myPref, 0).edit();
+        editor.putString("locationservice", thePreference);
+        Toast.makeText(activity, thePreference, Toast.LENGTH_SHORT).show();
+
+        editor.apply();
     }
 }

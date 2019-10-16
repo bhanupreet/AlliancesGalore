@@ -1,47 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize">
-
-        <CheckedTextView
-            android:id="@+id/currentMonth"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:checked="true"
-            android:textColor="#ffffff"
-            android:backgroundTint="#ffffff"
-            android:drawableEnd="@drawable/ic_arrow_drop_down"
-            android:drawableRight="@drawable/ic_arrow_drop_down"
-            android:drawablePadding="5dp"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            tools:ignore="RtlHardcoded"
-            tools:text="Apr" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <com.jaiselrahman.agendacalendar.view.AgendaCalendar
-        android:id="@+id/calendar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:compactCalendarBackgroundColor="@color/colorPrimary"
-        app:compactCalendarCurrentDayBackgroundColor="@color/colorAccent"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimaryDark"
-        app:compactCalendarDisplayOtherMonthDays="true"
-        app:compactCalendarOtherMonthDaysTextColor="#D5D5D5"
-        app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="false"
-        app:compactCalendarTargetHeight="200dp"
-        app:compactCalendarTextColor="@android:color/white"
-        app:compactCalendarTextSize="14sp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    xmlns:android="http://schemas.android.com/apk/res/android" />

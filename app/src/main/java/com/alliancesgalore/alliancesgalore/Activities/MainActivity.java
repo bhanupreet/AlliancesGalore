@@ -9,9 +9,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,9 +26,9 @@ import com.alliancesgalore.alliancesgalore.Adapters.MainActivityAdapter;
 import com.alliancesgalore.alliancesgalore.Fragments.LocationListFragment;
 import com.alliancesgalore.alliancesgalore.Fragments.testfragment;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.UserProfile;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,6 +40,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.function.Function;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void LocationService() {
+
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             finish();
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startTrackerService();
+
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -264,6 +270,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -290,6 +301,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        LocationService();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -297,6 +314,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Please enable location services to allow GPS tracking", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void StopTrackerService() {
+        Functions.toast("location service stopped", MainActivity.this);
+        stopService((new Intent(this, LocationService.class)));
+
     }
 
 }

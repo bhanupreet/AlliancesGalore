@@ -28,16 +28,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:tabMaxWidth="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@android:color/white"
         android:backgroundTint="@android:color/white"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior=".Utils.KeepWithinParentBoundsScrollingBehavior" />
 
     <FrameLayout
         android:id="@+id/simpleFrameLayout"

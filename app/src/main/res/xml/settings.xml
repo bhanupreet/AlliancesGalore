@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:padding="http://schemas.android.com/tools">
+
+<!--    <SwitchPreferenceCompat-->
+<!--        android:textSize="22sp"-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key=""-->
+<!--        app:title="Enable Location Service" />-->
+
+</PreferenceScreen>

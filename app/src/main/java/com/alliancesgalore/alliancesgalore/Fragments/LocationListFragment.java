@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
@@ -85,7 +87,6 @@ public class LocationListFragment extends Fragment {
 
     @Override
     public void onPause() {
-        resetActionMode();
         super.onPause();
     }
 
@@ -224,9 +225,14 @@ public class LocationListFragment extends Fragment {
 
     private void fabclick() {
         MainActivity mainActivity = (MainActivity) getActivity();
+
         mainActivity.fab.setOnClickListener(v -> {
             isMultiselect = !isMultiselect;
             if (mActionmode == null) {
+               mainActivity.fab.clearAnimation();
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.pop_up);
+                mainActivity.fab.startAnimation(animation);
+                mainActivity.fab.setImageResource(R.drawable.ic_close_white_24dp);
                 mFilterbtn.setEnabled(false);
                 mSortBtn.setEnabled(false);
                 startActionMode(mainActivity);
@@ -419,6 +425,7 @@ public class LocationListFragment extends Fragment {
     }
 
     private void resetActionMode() {
+        SetFAB();
         isMultiselect = false;
         if (mActionmode != null)
             mActionmode.finish();
@@ -533,4 +540,5 @@ public class LocationListFragment extends Fragment {
             mActionmode = null;
         }
     };
+
 }
