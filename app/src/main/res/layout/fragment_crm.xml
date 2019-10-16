@@ -9,7 +9,7 @@
     <com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh
         android:id="@+id/crm_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <com.alliancesgalore.alliancesgalore.Utils.NestedScrollWebView
             android:id="@+id/crm_web"

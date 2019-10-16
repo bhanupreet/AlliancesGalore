@@ -1,20 +1,29 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
+import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.github.tibolte.agendacalendarview.AgendaCalendarView;
 import com.github.tibolte.agendacalendarview.CalendarPickerController;
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
 import com.github.tibolte.agendacalendarview.models.CalendarEvent;
 import com.github.tibolte.agendacalendarview.models.DayItem;
+import com.google.android.gms.maps.GoogleMap;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +47,7 @@ public class testfragment extends Fragment implements CalendarPickerController {
         minDate.add(Calendar.MONTH, -2);
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
+
 
         List<CalendarEvent> eventList = new ArrayList<>();
         mockList(eventList);
@@ -81,5 +91,30 @@ public class testfragment extends Fragment implements CalendarPickerController {
         // Example on how to provide your own layout
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SetFAB();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        SetFAB();
+    }
+
+    private void SetFAB() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity.getcurrenttabposition() == 2) {
+            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add, getContext().getTheme()));
+            Functions.toast("set in OnResume", getContext());
+            mainActivity.fab.setOnClickListener(view -> {
+                Intent addIntent = new Intent(getContext(), AddEventActivity.class);
+                startActivity(addIntent);
+            });
+        }
+    }
+
 }
 

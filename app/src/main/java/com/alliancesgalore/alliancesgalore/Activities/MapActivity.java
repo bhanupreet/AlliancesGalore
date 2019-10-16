@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -63,7 +64,10 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     private SwipeToRefresh mMapsRefresh;
     private LatLng MyLocation;
     private int pos;
+    private LatLngBounds.Builder builder;
     private Boolean isMultiselect = false;
+    private boolean isinitial = true;
+    private LatLngBounds bounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +87,13 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 
         isMultiselect = getIntent().getBooleanExtra("ismultiselect", false);
 
-        if (isMultiselect)
+        if (isMultiselect) {
             setMultiselectMarkers();
-        else
+
+        } else
             setdefault(obj, location);
 
-        setLocation(location);
+//        setLocation(location);
         setmToolbar();
         setAdapter();
         RecyclerClick();
@@ -96,10 +101,15 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private void setMultiselectMarkers() {
+        builder = new LatLngBounds.Builder();
         for (UserProfile profile : mMapSelectionList) {
             LatLng temp = new LatLng(profile.getLatitude(), profile.getLongitude());
             setdefault(profile, temp);
+            builder.include(temp);
         }
+
+        isinitial = true;
+
     }
 
     private void setMapRefreshListener() {
@@ -128,13 +138,19 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     private void setdefault(UserProfile obj, LatLng location) {
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
-            if (!isMultiselect)
-                googleMap.clear();
 
+            if (isMultiselect && isinitial) {
+                bounds = builder.build();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 30));
+
+            } else if (!isMultiselect ) {
+                googleMap.clear();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
             mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this));
             loadMarkerIcon(obj, mMap, location);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
 
         });
     }
@@ -157,6 +173,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 
             if (!isMultiselect)
                 setdefault(obj, Location);
+            isinitial = false;
 
             adapter.swap(0, pos);
             Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
@@ -171,6 +188,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private void setLocation(LatLng location) {
+
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
             CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(17).build();

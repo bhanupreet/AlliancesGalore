@@ -62,6 +62,7 @@ public class CRMfragment extends Fragment {
         getemailpass();
         login();
         mRefreshFunction();
+        setFAB();
         SavedStateCheck(savedInstanceState);
         return view;
     }
@@ -234,6 +235,7 @@ public class CRMfragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         count = 0;
+        setFAB();
     }
 
     @Override
@@ -242,24 +244,26 @@ public class CRMfragment extends Fragment {
         count = 0;
         getemailpass();
         login();
+        setFAB();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        setFAB();
         count = 0;
         getemailpass();
         login();
-        if (savedInstanceStateout != null)
+        if (savedInstanceStateout != null) {
             crmweb.restoreState(savedInstanceStateout);
+        }
+    }
 
-
+    private void setFAB() {
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.fab.show();
         mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, getContext().getTheme()));
-
+        Functions.toast("set in CRM onResume", getContext());
         mainActivity.fab.setOnClickListener(v -> {
-
             Intent launchIntent = mainActivity.getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
             try {
                 launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
@@ -269,7 +273,5 @@ public class CRMfragment extends Fragment {
             }
 
         });
-
-
     }
 }

@@ -421,6 +421,7 @@ public class LocationListFragment extends Fragment {
 
     private void SetFAB() {
         MainActivity mainActivity = (MainActivity) getActivity();
+        Functions.toast("set in locationlist OnResume", getContext());
         mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
     }
 

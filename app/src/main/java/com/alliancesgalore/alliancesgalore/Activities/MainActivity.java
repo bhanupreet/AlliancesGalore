@@ -17,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     public Toolbar mToolbar;
+    int position;
     public FloatingActionButton fab;
 
     @Override
@@ -116,23 +118,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectedTabs(int tab) {
-        fab.show();
         //a bit animation of popping up.
         fab.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_up);
         fab.startAnimation(animation);
-        switch (tab) {
-            case 0:
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_chat_white_24dp));
-                break;
-            case 1:
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_playlist_add_check_black_24dp));
-
-                break;
-            default:
-                tab = 0;
-                fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
-        }
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
@@ -157,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(settingsIntent);
     }
 
-    private void fabanim() {
+    public void fabanim() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int state = 0;
             private boolean isFloatButtonHidden = false;
@@ -185,15 +174,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, MainActivity.this.getTheme()));
+                        Functions.toast("set using onpageselected", MainActivity.this);
                         break;
                     case 1:
                         fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
+                        Functions.toast("set using onpageselected", MainActivity.this);
                         break;
-                    default:
-                        position = 1;
-                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
-
+                    case 2:
+                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add, MainActivity.this.getTheme()));
+                        Functions.toast("set using onpageselected", MainActivity.this);
+                        fab.setOnClickListener(view -> {
+                            Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class);
+                            startActivity(addIntent);
+                        });
+                        break;
                 }
+
                 if (state == 2) {
                     //have end in selected tab
                     isFloatButtonHidden = false;
@@ -301,9 +297,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        fabanim();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         LocationService();
+        fabanim();
     }
 
     @Override
@@ -322,4 +325,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public int getcurrenttabposition() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                position = tab.getPosition();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        return position;
+    }
 }
