@@ -113,9 +113,8 @@ public class LocationListFragment extends Fragment {
             return;
         if (adapter != null)
             adapter.notifyDataSetChanged();
-        query();
         SetFAB();
-        fabclick();
+        query();
     }
 
     @Override
@@ -420,9 +419,12 @@ public class LocationListFragment extends Fragment {
     }
 
     private void SetFAB() {
+
         MainActivity mainActivity = (MainActivity) getActivity();
-        Functions.toast("set in locationlist OnResume", getContext());
-        mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+        if (mainActivity.getcurrenttabposition() == 1) {
+            Functions.toast("set in locationlist OnResume", getContext());
+            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+        }
     }
 
     private void resetActionMode() {
