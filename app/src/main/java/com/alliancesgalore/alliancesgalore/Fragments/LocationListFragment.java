@@ -229,10 +229,10 @@ public class LocationListFragment extends Fragment {
         mainActivity.fab.setOnClickListener(v -> {
             isMultiselect = !isMultiselect;
             if (mActionmode == null) {
-               mainActivity.fab.clearAnimation();
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.pop_up);
-                mainActivity.fab.startAnimation(animation);
+                mainActivity.fab.clearAnimation();
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_clockwise);
                 mainActivity.fab.setImageResource(R.drawable.ic_close_white_24dp);
+                mainActivity.fab.startAnimation(animation);
                 mFilterbtn.setEnabled(false);
                 mSortBtn.setEnabled(false);
                 startActionMode(mainActivity);
@@ -425,6 +425,11 @@ public class LocationListFragment extends Fragment {
     }
 
     private void resetActionMode() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        mainActivity.fab.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_anticlockwise);
+        mainActivity.fab.startAnimation(animation);
         SetFAB();
         isMultiselect = false;
         if (mActionmode != null)
