@@ -272,7 +272,6 @@ public class CRMfragment extends Fragment {
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
                 }
-
             });
         }
     }

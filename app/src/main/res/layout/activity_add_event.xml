@@ -5,8 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.AddEventActivity">
-    <include layout="@layout/custom_app_bar"
-        android:id="@+id/addEvent_toolbar"/>
 
+    <include
+        android:id="@+id/addEvent_toolbar"
+        layout="@layout/custom_app_bar" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/addEvent_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add Title"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/addEvent_startDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Start Date"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

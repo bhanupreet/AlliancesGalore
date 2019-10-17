@@ -68,6 +68,8 @@ dependencies {
 
     // Java
     implementation "androidx.preference:preference:$preference_version"
+    implementation 'com.code-troopers.betterpickers:library:3.1.0'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

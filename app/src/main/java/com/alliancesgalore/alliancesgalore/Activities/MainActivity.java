@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
     public Toolbar mToolbar;
     int position;
     public FloatingActionButton fab;
+    protected OnBackPressedListener onBackPressedListener;
+
+    public interface OnBackPressedListener {
+        void doBack();
+    }
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        this.onBackPressedListener = onBackPressedListener;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        onBackPressedListener = null;
+        super.onDestroy();
+    }
+
     private void startTrackerService() {
         startService(new Intent(this, LocationService.class));
     }
@@ -325,6 +339,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (onBackPressedListener != null)
+            onBackPressedListener.doBack();
+        else
+            super.onBackPressed();
+    }
+
     public int getcurrenttabposition() {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -339,9 +362,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                position = tab.getPosition();
             }
         });
         return position;
+    }
+    public interface OnBackPressed {
+        void onBackpressed();
+    }
+    public void onBackpressed() {
+        super.onBackPressed();
     }
 }

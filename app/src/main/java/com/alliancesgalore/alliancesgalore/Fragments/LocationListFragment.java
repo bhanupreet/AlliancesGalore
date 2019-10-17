@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
-public class LocationListFragment extends Fragment {
+public class LocationListFragment extends Fragment implements MainActivity.OnBackPressedListener {
 
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
@@ -71,7 +73,7 @@ public class LocationListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
-
+        ((MainActivity) getActivity()).setOnBackPressedListener(this);
         ReportingToCheck();
         FindIds(view);
         query();
@@ -115,6 +117,21 @@ public class LocationListFragment extends Fragment {
             adapter.notifyDataSetChanged();
         SetFAB();
         query();
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener((v, keyCode, event) -> {
+
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                isMultiselect = false;
+                resetActionMode();
+
+                return true;
+
+            }
+
+            return false;
+        });
     }
 
     @Override
@@ -381,9 +398,7 @@ public class LocationListFragment extends Fragment {
                 setActionModeTitle();
                 Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
                 adapter.notifyDataSetChanged();
-            }
-            if (!isMultiselect)
-                sendToMap(selectedprofile, filterlist);
+            } else sendToMap(selectedprofile, filterlist);
         });
     }
 
@@ -427,7 +442,7 @@ public class LocationListFragment extends Fragment {
         }
     }
 
-    private void resetActionMode() {
+    public void resetActionMode() {
         MainActivity mainActivity = (MainActivity) getActivity();
 
         mainActivity.fab.clearAnimation();
@@ -448,10 +463,12 @@ public class LocationListFragment extends Fragment {
     }
 
     private void setActionModeTitle() {
-        if (multiselect_list.isEmpty())
-            mActionmode.setTitle("Select");
-        else
-            mActionmode.setTitle("Selected: " + multiselect_list.size());
+        if (mActionmode != null) {
+            if (multiselect_list.isEmpty())
+                mActionmode.setTitle("Select");
+            else
+                mActionmode.setTitle("Selected: " + multiselect_list.size());
+        }
     }
 
     private MenuItem.OnActionExpandListener menuActionExpandListener = new MenuItem.OnActionExpandListener() {
@@ -546,7 +563,14 @@ public class LocationListFragment extends Fragment {
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mActionmode = null;
+            doBack();
         }
     };
 
+    @Override
+    public void doBack() {
+        Toast.makeText(getActivity(), "OnBackpress Click", Toast.LENGTH_LONG).show();
+        resetActionMode();
+        SetFAB();
+    }
 }
