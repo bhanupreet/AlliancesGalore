@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.UserProfile;
+import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.bumptech.glide.Glide;
 
 import java.util.Collections;

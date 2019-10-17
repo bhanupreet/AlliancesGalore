@@ -1,4 +1,4 @@
-package com.alliancesgalore.alliancesgalore.Activities;
+package com.alliancesgalore.alliancesgalore.Models;
 
 public class Event {
     private int Color;
@@ -79,6 +79,8 @@ public class Event {
      * @param endTime     The end time of the event.
      * @param allDay      Indicates if the event lasts the whole day.
      */
+
+
     public Event(String title, String description, String location, int color, long startTime, long endTime, boolean allDay) {
         this.Title = title;
         this.Description = description;

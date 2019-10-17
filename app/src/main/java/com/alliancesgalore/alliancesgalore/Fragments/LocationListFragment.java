@@ -1,7 +1,5 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,7 +32,7 @@ import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
 import com.alliancesgalore.alliancesgalore.Activities.ReportingToActivity;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.UserProfile;
+import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;

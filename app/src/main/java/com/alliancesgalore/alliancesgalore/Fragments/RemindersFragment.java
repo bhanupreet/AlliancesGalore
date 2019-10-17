@@ -18,7 +18,7 @@
 //import android.widget.CheckedTextView;
 //import android.widget.Toast;
 //
-//import com.alliancesgalore.alliancesgalore.Event;
+//import com.alliancesgalore.alliancesgalore.Models.Event;
 //import com.alliancesgalore.alliancesgalore.R;
 //import com.alliancesgalore.alliancesgalore.Utils.Functions;
 //import com.jaiselrahman.agendacalendar.view.AgendaCalendar;
