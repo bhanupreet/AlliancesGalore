@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".Activities.AddEventActivity">
 
     <include
@@ -15,20 +16,95 @@
         android:id="@+id/addEvent_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@id/addEvent_toolbar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Add Title"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColor="#212121"
+            android:textSize="20sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/addEvent_startDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Enter Start Date"
+        android:textColor="#212121"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
+
+    <TextView
+        android:id="@+id/addEvent_endDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Enter End Date"
+        android:textColor="#212121"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_startDate" />
+
+    <TextView
+        android:id="@+id/addEvent_endTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Enter End Time"
+        android:textColor="#212121"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_startDate" />
+    <TextView
+        android:id="@+id/addEvent_startTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:hint="Enter Start Time"
+        android:textColor="#212121"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
+
+    <Button
+        android:id="@+id/setEventbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="setEvent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addEvent_endDate" />
+
+    <Button
+        android:id="@+id/geteventbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="getEvent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addEvent_endTime" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Start Date"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
+        android:textSize="36sp"
+        app:layout_constraintTop_toBottomOf="@id/geteventbtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/getEventText"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
