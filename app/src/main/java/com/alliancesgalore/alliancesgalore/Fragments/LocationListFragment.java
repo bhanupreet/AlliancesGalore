@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -286,30 +287,48 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
 
     private void startActionMode(MainActivity mainActivity) {
         mainActivity.mToolbar.startActionMode(actionMode);
-        ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
-        getActivity().findViewById(R.id.action_mode_close_button).setOnClickListener(view -> {
-            if (!isSelectAll) {
-                for (UserProfile profile : filterlist) {
-                    profile.setSelected(true);
-                    if (!multiselect_list.contains(profile))
-                        multiselect_list.add(profile);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        lp.setMargins(dpFromPx(getContext(), 10), 0, 0, 0);
 
-                }
-                adapter.notifyDataSetChanged();
-                isSelectAll = true;
-                ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.checked));
-            } else {
-                for (UserProfile profile : filterlist) {
-                    profile.setSelected(false);
-                    multiselect_list.clear();
-                }
-                adapter.notifyDataSetChanged();
-                isSelectAll = false;
-                ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
-            }
-            setActionModeTitle();
+        ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+        getActivity().findViewById(R.id.action_mode_close_button).setLayoutParams(lp);
+        getActivity().findViewById(R.id.action_mode_close_button).setPadding(dpFromPx(getContext(), 10), 0, dpFromPx(getContext(), 5), 0);
+
+//        mainActivity.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                actionmodeSelectAll();
+//            }
+//        });
+
+        getActivity().findViewById(R.id.action_mode_close_button).setOnClickListener(view -> {
+            actionmodeSelectAll();
         });
 
+
+    }
+
+    private void actionmodeSelectAll() {
+        if (!isSelectAll) {
+            for (UserProfile profile : filterlist) {
+                profile.setSelected(true);
+                if (!multiselect_list.contains(profile))
+                    multiselect_list.add(profile);
+
+            }
+            adapter.notifyDataSetChanged();
+            isSelectAll = true;
+            ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.checked));
+        } else {
+            for (UserProfile profile : filterlist) {
+                profile.setSelected(false);
+                multiselect_list.clear();
+            }
+            adapter.notifyDataSetChanged();
+            isSelectAll = false;
+            ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+        }
+        setActionModeTitle();
     }
 
     private void setSelectedTick(UserProfile selectedprofile) {
@@ -669,4 +688,9 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
         resetActionMode();
 //        SetFAB();
     }
+
+    public static int dpFromPx(final Context context, final float px) {
+        return (int) (px / context.getResources().getDisplayMetrics().density);
+    }
+
 }
