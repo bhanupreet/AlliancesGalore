@@ -18,6 +18,7 @@ import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -124,9 +125,13 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 
             if (isMultiselect && isinitial) {
                 bounds = builder.build();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 30));
+//                mMap.setLatLngBoundsForCameraTarget(bounds);
+                mMap.setPadding(150, 150, 150, 150);
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+                mMap.animateCamera(cu);
+//                mMap.animateCamera(CameraUpdateFactory.zoomBy(-2));
 
-            } else if (!isMultiselect ) {
+            } else if (!isMultiselect) {
                 googleMap.clear();
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -254,6 +259,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         marker.showInfoWindow();
         UserProfile profile = (UserProfile) marker.getTag();
         int pos = mMapSelectionList.indexOf(profile);
+        LatLng Location = setLatLong(profile);
+        setLocation(Location);
         adapter.swap(0, pos);
         adapter.notifyDataSetChanged();
         return true;

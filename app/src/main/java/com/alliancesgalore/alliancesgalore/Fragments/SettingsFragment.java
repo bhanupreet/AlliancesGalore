@@ -77,7 +77,7 @@ public class SettingsFragment extends Fragment {
         mToggle = view.findViewById(R.id.locationToggle);
         mToggleBtn = view.findViewById(R.id.locationTogglebtn);
         SharedPreferences settings = getActivity().getSharedPreferences("location", 0);
-        String silent = settings.getString("locationservice", "off");
+        String silent = settings.getString("locationservice", "on");
         if (silent.equals("off"))
             mToggleBtn.setChecked(false);
         else

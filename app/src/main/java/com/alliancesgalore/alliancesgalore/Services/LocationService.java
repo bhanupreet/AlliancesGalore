@@ -51,7 +51,7 @@ public class LocationService extends Service {
     private void requestLocationUpdates() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         SharedPreferences settings = getSharedPreferences("location", 0);
-        String silent = settings.getString("locationservice", "off");
+        String silent = settings.getString("locationservice", "on");
 
         if (user != null && silent.equals("on")) {
             LocationRequest request = new LocationRequest();
@@ -75,7 +75,7 @@ public class LocationService extends Service {
         public void onLocationResult(LocationResult locationResult) {
             Location location = locationResult.getLastLocation();
             SharedPreferences settings = getSharedPreferences("location", 0);
-            String silent = settings.getString("locationservice", "off");
+            String silent = settings.getString("locationservice", "on");
             if (location != null && silent.equals("on")) {
                 Log.d(TAG, "location update " + location);
                 HashMap<String, Object> userMap = new HashMap<>();

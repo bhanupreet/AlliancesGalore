@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     public interface OnBackPressedListener {
         void doBack();
     }
+
     public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
         this.onBackPressedListener = onBackPressedListener;
     }
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         fab.startAnimation(animation);
     }
 
-    private void selectedTabs(int tab) {
+    private void selectedTabs() {
         //a bit animation of popping up.
         fab.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_up);
@@ -173,29 +175,12 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 //reset floating
                 this.position = position;
-                switch (position) {
-                    case 0:
-                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, MainActivity.this.getTheme()));
-                        Functions.toast("set using onpageselected", MainActivity.this);
-                        break;
-                    case 1:
-                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, MainActivity.this.getTheme()));
-                        Functions.toast("set using onpageselected", MainActivity.this);
-                        break;
-                    case 2:
-                        fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add, MainActivity.this.getTheme()));
-                        Functions.toast("set using onpageselected", MainActivity.this);
-                        fab.setOnClickListener(view -> {
-                            Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class);
-                            startActivity(addIntent);
-                        });
-                        break;
-                }
+                setTab(position);
 
                 if (state == 2) {
                     //have end in selected tab
                     isFloatButtonHidden = false;
-                    selectedTabs(position);
+                    selectedTabs();
 
                 }
             }
@@ -208,11 +193,40 @@ public class MainActivity extends AppCompatActivity {
                     isFloatButtonHidden = false;
                 } else if (state == 2 && isFloatButtonHidden) {
                     //this only happen if user is swapping but swap back to current tab (cancel to change tab)
-                    selectedTabs(position);
+                    selectedTabs();
                 }
 
             }
         });
+    }
+
+    private void setTab(int position) {
+        switch (position) {
+            case 0:
+            case 1:
+                selectedTabs();
+                fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, MainActivity.this.getTheme()));
+                fab.setOnClickListener(v -> {
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+                    try {
+                        launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
+                        startActivity(launchIntent);
+                    } catch (Exception e) {
+                        Functions.toast("AG-Chat Not Available", MainActivity.this);
+                    }
+                });
+
+                break;
+            case 2:
+                selectedTabs();
+                fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add, MainActivity.this.getTheme()));
+                Functions.toast("set using onpageselected", MainActivity.this);
+                fab.setOnClickListener(view -> {
+                    Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class);
+                    startActivity(addIntent);
+                });
+                break;
+        }
     }
 
     private void sendToReport() {
@@ -347,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 position = tab.getPosition();
+                setTab(tab.getPosition());
             }
 
             @Override
@@ -361,9 +376,11 @@ public class MainActivity extends AppCompatActivity {
         });
         return position;
     }
+
     public interface OnBackPressed {
         void onBackpressed();
     }
+
     public void onBackpressed() {
         super.onBackPressed();
     }

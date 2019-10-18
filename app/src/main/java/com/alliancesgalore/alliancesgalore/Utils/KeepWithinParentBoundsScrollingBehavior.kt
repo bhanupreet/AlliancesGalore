@@ -1,4 +1,5 @@
 package com.alliancesgalore.alliancesgalore.Utils
+
 import android.app.Activity
 import android.content.Context
 import android.graphics.Point
@@ -23,11 +24,12 @@ class KeepWithinParentBoundsScrollingBehavior : AppBarLayout.ScrollingViewBehavi
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         if (dependency !is AppBarLayout) {
             return super.onDependentViewChanged(parent, child, dependency)
+        } else {
+            val layoutParams = child.layoutParams as CoordinatorLayout.LayoutParams
+            layoutParams.height = parent.height - dependency.bottom
+            child.layoutParams = layoutParams
+            return super.onDependentViewChanged(parent, child, dependency)
         }
 
-        val layoutParams = child.layoutParams as CoordinatorLayout.LayoutParams
-        layoutParams.height = parent.height - dependency.bottom
-        child.layoutParams = layoutParams
-        return super.onDependentViewChanged(parent, child, dependency)
     }
 }

@@ -67,6 +67,7 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
 
+
         }
     };
 
@@ -76,6 +77,7 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_add_event);
         FindIds();
         SetmToolBar();
+
 
         mStartDate.setOnClickListener(this);
         mEndDate.setOnClickListener(this);
@@ -127,7 +129,7 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
 
-        if (mStartDate == (view)) {
+        if (view == mStartDate) {
             setDate(mStartDate);
         }
         if (view == mEndDate) {
@@ -146,7 +148,6 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
             map.put("Color", 3);
             map.put("StartTime", cStartDate.getTimeInMillis());
             map.put("EndTime", cEndDate.getTimeInMillis());
-
             map.put("AllDay", true);
 
             ref.setValue(map).addOnSuccessListener(aVoid -> Log.d("data upload", "success"));

@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
 import android.content.Context;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
     private Context mCtx;
     private List<UserProfile> mUsersList;
     private ItemClickListener mItemClickListener;
+    private ItemLongClickListner mItemLongClickListner;
 
     public UserProfileAdapter(Context mCtx, List<UserProfile> mUsersList) {
         this.mCtx = mCtx;
@@ -30,6 +32,10 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
 
     public void addItemClickListener(ItemClickListener listener) {
         mItemClickListener = listener;
+    }
+
+    public void addItemLongClickListener(ItemLongClickListner listner) {
+        mItemLongClickListner = listner;
     }
 
     @NonNull
@@ -48,10 +54,18 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         holder.mDisplayName.setText(userProfile.getDisplay_name());
         Glide.with(mCtx).load(userProfile.getImage()).placeholder(R.drawable.defaultprofile).into(holder.mProfileImage);
         holder.mTick.setVisibility(userProfile.getSelected() ? View.VISIBLE : View.INVISIBLE);
+        holder.itemView.setOnLongClickListener(view -> {
+            if (mItemLongClickListner != null) {
+                mItemLongClickListner.onItemLongClick(position);
+            }
+            return false;
+        });
+
         holder.itemView.setOnClickListener(view1 -> {
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(position);
             }
+
         });
     }
 

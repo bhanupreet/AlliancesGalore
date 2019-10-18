@@ -1,9 +1,12 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,7 +63,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     private List<UserProfile> multiselect_list, filterlist;
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
-    private boolean sortByLevel = true, ascending = true;
+    private boolean sortByLevel = true, ascending = true, isSelectAll = false;
     private ArrayList<UserProfile> temp;
     public static boolean isMultiselect = false;
     private LinearLayout mFilterbtn, mSortBtn;
@@ -67,6 +71,21 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     private MenuItem mExecutives, mManagers, mTeamLeaders, mName, mLevel;
     public static ActionMode mActionmode = null;
     private SwipeRefreshLayout mSwipeResfresh;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                selectallbtn(item);
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(hasMenu);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,11 +117,20 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     }
 
     @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        return super.onContextItemSelected(item);
+
+    }
+
+    @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.selection_menu, menu);
+
+
     }
+
 
     @Override
     public void onResume() {
@@ -113,7 +141,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
             return;
         if (adapter != null)
             adapter.notifyDataSetChanged();
-        SetFAB();
+//        SetFAB();
         query();
 
         getView().setFocusableInTouchMode(true);
@@ -258,6 +286,29 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
 
     private void startActionMode(MainActivity mainActivity) {
         mainActivity.mToolbar.startActionMode(actionMode);
+        ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+        getActivity().findViewById(R.id.action_mode_close_button).setOnClickListener(view -> {
+            if (!isSelectAll) {
+                for (UserProfile profile : filterlist) {
+                    profile.setSelected(true);
+                    if (!multiselect_list.contains(profile))
+                        multiselect_list.add(profile);
+
+                }
+                adapter.notifyDataSetChanged();
+                isSelectAll = true;
+                ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.checked));
+            } else {
+                for (UserProfile profile : filterlist) {
+                    profile.setSelected(false);
+                    multiselect_list.clear();
+                }
+                adapter.notifyDataSetChanged();
+                isSelectAll = false;
+                ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+            }
+            setActionModeTitle();
+        });
 
     }
 
@@ -389,14 +440,37 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     }
 
     private void itemClick() {
+
+
         adapter.addItemClickListener(pos -> {
             UserProfile selectedprofile = filterlist.get(pos);
             if (isMultiselect) {
                 setSelectedTick(selectedprofile);
                 setActionModeTitle();
+                if (multiselect_list.isEmpty()) {
+                    resetActionMode();
+                }
                 Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
                 adapter.notifyDataSetChanged();
             } else sendToMap(selectedprofile, filterlist);
+        });
+    }
+
+    private void itemLongClick() {
+        Vibrator vibe = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+        adapter.addItemLongClickListener(position -> {
+            if (!isMultiselect) {
+                vibe.vibrate(50);
+                isMultiselect = true;
+                if (mActionmode == null) {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mFilterbtn.setEnabled(false);
+                    mSortBtn.setEnabled(false);
+                    startActionMode(mainActivity);
+                    itemClick();
+                }
+            }
         });
     }
 
@@ -435,18 +509,19 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
 
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity.getcurrenttabposition() == 1) {
+//            mainActivity.fab.hide();
             Functions.toast("set in locationlist OnResume", getContext());
-            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp, getContext().getTheme()));
+            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_item, getContext().getTheme()));
         }
     }
 
     public void resetActionMode() {
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        mainActivity.fab.clearAnimation();
-        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_anticlockwise);
-        mainActivity.fab.startAnimation(animation);
-        SetFAB();
+//        MainActivity mainActivity = (MainActivity) getActivity();
+//
+//        mainActivity.fab.clearAnimation();
+//        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_anticlockwise);
+//        mainActivity.fab.startAnimation(animation);
+//        SetFAB();
         isMultiselect = false;
         if (mActionmode != null)
             mActionmode.finish();
@@ -509,10 +584,11 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                 settingadapter(filterlist);
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
-                fabclick();
+//                fabclick();
                 FilterClick();
                 sortclick();
                 itemClick();
+                itemLongClick();
             }
         }
 
@@ -545,7 +621,6 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                 case R.id.action_cancel:
                     resetActionMode();
                     break;
-
                 case R.id.action_select:
                     if (filterlist.isEmpty())
                         Functions.toast("List cannot be empty", getContext());
@@ -565,10 +640,33 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
         }
     };
 
+    private void selectallbtn(MenuItem menuItem) {
+        if (!isSelectAll) {
+            for (UserProfile profile : filterlist) {
+                profile.setSelected(true);
+                if (!multiselect_list.contains(profile))
+                    multiselect_list.add(profile);
+
+            }
+            adapter.notifyDataSetChanged();
+            isSelectAll = true;
+            menuItem.setIcon(R.drawable.ic_cancel_black_24dp);
+        } else {
+            for (UserProfile profile : filterlist) {
+                profile.setSelected(false);
+                multiselect_list.clear();
+            }
+            adapter.notifyDataSetChanged();
+            isSelectAll = false;
+            menuItem.setIcon(R.drawable.ic_selectall);
+        }
+        setActionModeTitle();
+    }
+
     @Override
     public void doBack() {
         Toast.makeText(getActivity(), "OnBackpress Click", Toast.LENGTH_LONG).show();
         resetActionMode();
-        SetFAB();
+//        SetFAB();
     }
 }

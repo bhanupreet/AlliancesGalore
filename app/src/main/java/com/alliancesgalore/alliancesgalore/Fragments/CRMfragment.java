@@ -262,17 +262,8 @@ public class CRMfragment extends Fragment {
     private void setFAB() {
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity.getcurrenttabposition() == 0) {
-            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_white_24dp, getContext().getTheme()));
-            Functions.toast("set in CRM onResume", getContext());
-            mainActivity.fab.setOnClickListener(v -> {
-                Intent launchIntent = mainActivity.getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
-                try {
-                    launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
-                    startActivity(launchIntent);
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), "Ag-Chat not available", Toast.LENGTH_SHORT).show();
-                }
-            });
+//            mainActivity.fab.show();
+
         }
     }
 }

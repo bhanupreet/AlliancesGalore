@@ -93,17 +93,4 @@ public final class Functions {
         return output;
     }
 
-    public static String getPreferenceValue(Activity activity) {
-        SharedPreferences sp = activity.getSharedPreferences(myPref, 0);
-        Toast.makeText(activity, sp.getString("locationservice", "off"), Toast.LENGTH_SHORT).show();
-        return sp.getString("locationservice", "off");
-    }
-
-    public static void writeToPreference(String thePreference, Activity activity) {
-        SharedPreferences.Editor editor = activity.getSharedPreferences(myPref, 0).edit();
-        editor.putString("locationservice", thePreference);
-        Toast.makeText(activity, thePreference, Toast.LENGTH_SHORT).show();
-
-        editor.apply();
-    }
 }
