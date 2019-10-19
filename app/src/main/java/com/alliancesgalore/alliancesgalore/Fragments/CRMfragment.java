@@ -1,10 +1,12 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -69,6 +73,7 @@ public class CRMfragment extends Fragment {
         @Override
         public void handleMessage(Message message) {
             if (message.what == 1)
+
                 webViewGoBack();
         }
     };
@@ -94,6 +99,19 @@ public class CRMfragment extends Fragment {
         mRefresh = view.findViewById(R.id.crm_refresh);
     }
 
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    int PERMISSION_ALL = 1;
+
     private void websettings(WebView crmweb) {
         crmweb.clearHistory();
         crmweb.clearFormData();
@@ -114,54 +132,70 @@ public class CRMfragment extends Fragment {
         crmweb.getSettings().setUseWideViewPort(true);
         crmweb.setWebChromeClient(new WebChromeClient() {
 
+
             //For Android 5.0+
             public boolean onShowFileChooser(
                     WebView webView, ValueCallback<Uri[]> filePathCallback,
                     WebChromeClient.FileChooserParams fileChooserParams) {
-                if (mUMA != null) {
-                    mUMA.onReceiveValue(null);
-                }
-                mUMA = filePathCallback;
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                        takePictureIntent.putExtra("PhotoPath", mCM);
-                    } catch (IOException ex) {
-                        Log.e("tag", "Image file creation failed", ex);
-                    }
-                    if (photoFile != null) {
-                        mCM = "file:" + photoFile.getAbsolutePath();
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                    } else {
-                        takePictureIntent = null;
-                    }
-                }
-                Intent contentSelectionIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                contentSelectionIntent.setType("*/*");
-                Intent[] intentArray;
-                if (takePictureIntent != null) {
-                    intentArray = new Intent[]{takePictureIntent};
-                } else {
-                    intentArray = new Intent[0];
-                }
 
-                Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-                chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-                startActivityForResult(chooserIntent, FCR);
+                String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                if (!hasPermissions(getContext(), permissions)) {
+                    ActivityCompat.requestPermissions(getActivity(), permissions, PERMISSION_ALL);
+                } else {
+                    if (mUMA != null)
+                        mUMA.onReceiveValue(null);
+
+                    mUMA = filePathCallback;
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                            takePictureIntent.putExtra("PhotoPath", mCM);
+                        } catch (IOException ex) {
+                            Log.e("tag", "Image file creation failed", ex);
+                        }
+                        if (photoFile != null) {
+                            mCM = "file:" + photoFile.getAbsolutePath();
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        } else {
+                            takePictureIntent = null;
+                        }
+                    }
+
+                    Intent contentSelectionIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//
+                    contentSelectionIntent.setType("*/*");
+                    Intent[] intentArray;
+                    if (takePictureIntent != null) {
+                        intentArray = new Intent[]{takePictureIntent};
+                    } else {
+                        intentArray = new Intent[0];
+                    }
+
+                    Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+                    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+                    startActivityForResult(chooserIntent, FCR);
+                    return true;
+                }
                 return true;
             }
 
             @Override
             public void onPermissionRequest(PermissionRequest request) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    request.grant(request.getResources());
+                String permission = Manifest.permission.CAMERA;
+                requestPermissions(new String[]{
+                                Manifest.permission.READ_CONTACTS,
+                                Manifest.permission.ACCESS_FINE_LOCATION},
+                        101);
+                int grant = ContextCompat.checkSelfPermission(getContext(), permission);
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    String[] permission_list = new String[1];
+                    permission_list[0] = permission;
+                    ActivityCompat.requestPermissions(getActivity(), permission_list, 1);
                 }
-                super.onPermissionRequest(request);
             }
 
             @Override
@@ -227,6 +261,22 @@ public class CRMfragment extends Fragment {
 
     private void webViewGoBack() {
         crmweb.goBack();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_ALL) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "permission granted", Toast.LENGTH_SHORT).show();
+                // perform your action here
+
+            } else {
+                Toast.makeText(getContext(), "permission not granted", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void SavedStateCheck(@Nullable Bundle savedInstanceState) {
