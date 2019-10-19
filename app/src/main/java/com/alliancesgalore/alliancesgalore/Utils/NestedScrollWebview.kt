@@ -8,7 +8,7 @@ import android.webkit.WebView
 import androidx.core.view.NestedScrollingChild2
 import androidx.core.view.NestedScrollingChildHelper
 
-class NestedScrollWebView constructor(
+open class NestedScrollWebView constructor(
         context: Context,
         attrs: AttributeSet) : WebView(context, attrs), NestedScrollingChild2 {
 

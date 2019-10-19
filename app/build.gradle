@@ -68,8 +68,7 @@ dependencies {
     // Java
     implementation "androidx.preference:preference:$preference_version"
     implementation 'com.code-troopers.betterpickers:library:3.1.0'
-    compile project(path: ':agendacalendarview')
-
+    implementation 'dev.ahamed.mva2:adapter:2.0.0-beta01'
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -665,20 +665,24 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                 profile.setSelected(true);
                 if (!multiselect_list.contains(profile))
                     multiselect_list.add(profile);
-
             }
+
             adapter.notifyDataSetChanged();
             isSelectAll = true;
             menuItem.setIcon(R.drawable.ic_cancel_black_24dp);
+
         } else {
+
             for (UserProfile profile : filterlist) {
                 profile.setSelected(false);
                 multiselect_list.clear();
             }
+
             adapter.notifyDataSetChanged();
             isSelectAll = false;
             menuItem.setIcon(R.drawable.ic_selectall);
         }
+
         setActionModeTitle();
     }
 
@@ -692,5 +696,4 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     public static int dpFromPx(final Context context, final float px) {
         return (int) (px / context.getResources().getDisplayMetrics().density);
     }
-
 }
