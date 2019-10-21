@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Models;
 
 public class Event {
+    private int Repetition;
     private int Color;
     private boolean AllDay;
     private long StartTime;
@@ -10,6 +11,20 @@ public class Event {
     private String Description;
 
     public Event() {
+    }
+
+    //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
+    //start time is time in milliseconds,
+
+    public Event(String title, String description, String location, int color, long startTime, long endTime, boolean allDay, int Repetition) {
+        this.Title = title;
+        this.Description = description;
+        this.Location = location;
+        this.Color = color;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
+        this.AllDay = allDay;
+        this.Repetition = Repetition;
     }
 
 
@@ -69,25 +84,11 @@ public class Event {
         Description = description;
     }
 
-    /**
-     * Initializes the event
-     *  @param title       The title of the event.
-     * @param description The description of the event.
-     * @param location    The location of the event.
-     * @param color       The color of the event (for display in the app).
-     * @param startTime   The start time of the event.
-     * @param endTime     The end time of the event.
-     * @param allDay      Indicates if the event lasts the whole day.
-     */
+    public int getRepetition() {
+        return Repetition;
+    }
 
-
-    public Event(String title, String description, String location, int color, long startTime, long endTime, boolean allDay) {
-        this.Title = title;
-        this.Description = description;
-        this.Location = location;
-        this.Color = color;
-        this.StartTime = startTime;
-        this.EndTime = endTime;
-        this.AllDay = allDay;
+    public void setRepetition(int repetition) {
+        Repetition = repetition;
     }
 }

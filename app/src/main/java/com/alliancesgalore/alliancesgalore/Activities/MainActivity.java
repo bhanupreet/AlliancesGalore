@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
 import com.alliancesgalore.alliancesgalore.Adapters.MainActivityAdapter;
 import com.alliancesgalore.alliancesgalore.Fragments.LocationListFragment;
-import com.alliancesgalore.alliancesgalore.Fragments.testfragment;
+import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
         adapter.addFragment(new CRMfragment(), "CRM");
         adapter.addFragment(new LocationListFragment(), "Location");
-        adapter.addFragment(new testfragment(), "Reminders");
+        adapter.addFragment(new RemindersFragment(), "Reminders");
 
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 

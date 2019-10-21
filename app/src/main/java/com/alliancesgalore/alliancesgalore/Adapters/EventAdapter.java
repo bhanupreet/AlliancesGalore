@@ -49,13 +49,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.mEvent_title.setText(event.getTitle());
         holder.mEvent_date.setText(Long.toString(event.getStartTime()));
 
+//        if (position == 0) {
+//            holder.top.setVisibility(View.GONE);
+//        } else if (position == mEventList.size()) {
+//            holder.bottom.setVisibility(View.VISIBLE);
+//        } else {
+//            holder.bottom.setVisibility(View.GONE);
+//            holder.top.setVisibility(View.VISIBLE);
+//        }
+
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
             if (mEventList.get(position - 1).getStartTime() == mEventList.get(position).getStartTime()) {
                 holder.mEventDatelayout.setVisibility(View.GONE);
+
+            } else {
+                holder.mEventDatelayout.setVisibility(View.VISIBLE);
             }
+        }
+
+        if (position == 0) {
+            holder.top.setVisibility(View.GONE);
+        } else {
+            holder.top.setVisibility(View.VISIBLE);
         }
 
         //END

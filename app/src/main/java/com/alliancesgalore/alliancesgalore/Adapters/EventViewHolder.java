@@ -14,6 +14,7 @@ class EventViewHolder extends RecyclerView.ViewHolder {
     ConstraintLayout mEventDatelayout;
     TextView mEvent_date;
     TextView mEvent_day, mEvent_title;
+    View top, bottom;
 
     public EventViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -22,5 +23,6 @@ class EventViewHolder extends RecyclerView.ViewHolder {
         mEvent_date = itemView.findViewById(R.id.event_date);
         mEvent_day = itemView.findViewById(R.id.event_day);
         mEvent_title = itemView.findViewById(R.id.event_title);
+        top = itemView.findViewById(R.id.event_top_view);
     }
 }
