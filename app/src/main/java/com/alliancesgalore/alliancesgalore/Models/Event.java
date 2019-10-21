@@ -1,6 +1,9 @@
 package com.alliancesgalore.alliancesgalore.Models;
 
-public class Event {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Event implements Parcelable {
     private int Repetition;
     private int Color;
     private boolean AllDay;
@@ -27,6 +30,29 @@ public class Event {
         this.Repetition = Repetition;
     }
 
+
+    protected Event(Parcel in) {
+        Repetition = in.readInt();
+        Color = in.readInt();
+        AllDay = in.readByte() != 0;
+        StartTime = in.readLong();
+        EndTime = in.readLong();
+        Location = in.readString();
+        Title = in.readString();
+        Description = in.readString();
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 
     public String getLocation() {
         return Location;
@@ -90,5 +116,22 @@ public class Event {
 
     public void setRepetition(int repetition) {
         Repetition = repetition;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(Repetition);
+        parcel.writeInt(Color);
+        parcel.writeByte((byte) (AllDay ? 1 : 0));
+        parcel.writeLong(StartTime);
+        parcel.writeLong(EndTime);
+        parcel.writeString(Location);
+        parcel.writeString(Title);
+        parcel.writeString(Description);
     }
 }

@@ -11,12 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.Models.Event;
 import com.alliancesgalore.alliancesgalore.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private Context mCtx;
-    private List<Event> mEventList = new ArrayList<>();
+    private List<Event> mEventList;
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
@@ -49,26 +48,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.mEvent_title.setText(event.getTitle());
         holder.mEvent_date.setText(Long.toString(event.getStartTime()));
 
-//        if (position == 0) {
-//            holder.top.setVisibility(View.GONE);
-//        } else if (position == mEventList.size()) {
-//            holder.bottom.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.bottom.setVisibility(View.GONE);
-//            holder.top.setVisibility(View.VISIBLE);
-//        }
-
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
             if (mEventList.get(position - 1).getStartTime() == mEventList.get(position).getStartTime()) {
                 holder.mEventDatelayout.setVisibility(View.GONE);
-
             } else {
                 holder.mEventDatelayout.setVisibility(View.VISIBLE);
             }
         }
+        //END
 
         if (position == 0) {
             holder.top.setVisibility(View.GONE);
@@ -76,12 +66,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             holder.top.setVisibility(View.VISIBLE);
         }
 
-        //END
 
         holder.itemView.setOnLongClickListener(view -> {
             if (mItemLongClickListener != null) {
                 mItemLongClickListener.onItemLongClick(position);
             }
+
             return false;
         });
 
@@ -89,12 +79,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(position);
             }
-
         });
     }
 
     @Override
     public int getItemCount() {
         return mEventList.size();
+
     }
+
 }

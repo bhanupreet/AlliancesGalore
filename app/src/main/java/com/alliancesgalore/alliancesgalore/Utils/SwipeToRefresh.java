@@ -28,7 +28,6 @@ public class SwipeToRefresh extends SwipeRefreshLayout {
                 mDownY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                return doRefresh(ev);
             case MotionEvent.ACTION_UP:
                 return doRefresh(ev);
         }
