@@ -13,9 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
+import com.alliancesgalore.alliancesgalore.Adapters.EventAdapter;
+import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.Event;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
@@ -41,42 +45,37 @@ import java.util.Locale;
 public class testfragment extends Fragment {
     private CheckedTextView currentMonth;
     private List<Date> dateList = new ArrayList<>();
+    private EventAdapter adapter;
+    private RecyclerView mRecycler;
+    private List<Event> mList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_test, container, false);
-        String str_date = "1/1/2019";
-        String end_date = "1/1/2020";
-
-        DateFormat formatter;
-
-        formatter = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date startDate = formatter.parse(str_date);
-            Date endDate = formatter.parse(end_date);
-            dateList = getDaysBetweenDates(startDate, endDate);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        FindIds(view);
 
 
+        Event item1 = new Event("My Title1", "Description", "Location", 2, 1234, 1234, true);
+        Event item2 = new Event("My Title2", "Description", "Location", 2, 1234, 1234, true);
+        Event item3 = new Event("My Title3", "Description", "Location", 2, 1235, 1234, true);
+        mList.add(item1);
+        mList.add(item2);
+        mList.add(item3);
+
+        adapter = new EventAdapter(getContext(), mList);
+        mRecycler.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRecycler.setLayoutManager(layoutManager);
+        mRecycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         return view;
     }
 
-    public static List<Date> getDaysBetweenDates(Date startdate, Date enddate) {
-        List<Date> dates = new ArrayList<Date>();
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(startdate);
+    private void FindIds(View view) {
+        mRecycler = view.findViewById(R.id.event_recycler);
 
-        while (calendar.getTime().before(enddate)) {
-            Date result = calendar.getTime();
-            dates.add(result);
-            calendar.add(Calendar.DATE, 1);
-        }
-        return dates;
     }
 }
 

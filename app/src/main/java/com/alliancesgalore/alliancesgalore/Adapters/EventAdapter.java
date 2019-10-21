@@ -9,16 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.Models.Event;
-import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private Context mCtx;
-    private List<Event> mEventList;
+    private List<Event> mEventList = new ArrayList<>();
     private ItemClickListener mItemClickListener;
-    private ItemLongClickListner mItemLongClickListner;
+    private ItemLongClickListner mItemLongClickListener;
 
     public EventAdapter(Context mCtx, List<Event> mEventList) {
         this.mCtx = mCtx;
@@ -30,7 +30,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     }
 
     public void addItemLongClickListener(ItemLongClickListner listener) {
-        mItemLongClickListner = listener;
+        mItemLongClickListener = listener;
     }
 
     @NonNull
@@ -47,15 +47,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
         final Event event = mEventList.get(position);
         holder.mEvent_title.setText(event.getTitle());
-        holder.mEvent_date.setText((int) event.getStartTime());
+        holder.mEvent_date.setText(Long.toString(event.getStartTime()));
 
-        if (position + 1 < mEventList.size() && mEventList.get(position).getStartTime() == mEventList.get(position + 1).getStartTime()) {
-            holder.mEventDatelayout.setVisibility(View.GONE);
+        //IT WORKS DON'T TOUCH IT
+        //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
+
+        if (position > 0) {
+            if (mEventList.get(position - 1).getStartTime() == mEventList.get(position).getStartTime()) {
+                holder.mEventDatelayout.setVisibility(View.GONE);
+            }
         }
 
+        //END
+
         holder.itemView.setOnLongClickListener(view -> {
-            if (mItemLongClickListner != null) {
-                mItemLongClickListner.onItemLongClick(position);
+            if (mItemLongClickListener != null) {
+                mItemLongClickListener.onItemLongClick(position);
             }
             return false;
         });
