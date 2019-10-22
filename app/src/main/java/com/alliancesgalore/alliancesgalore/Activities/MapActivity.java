@@ -116,7 +116,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         mRecycler.setAdapter(adapter);
         mRecycler.addItemDecoration(new DividerItemDecorator(this));
 //        adapter.swap(pos, 0);
-        adapter.notifyDataSetChanged();
     }
 
     private void setdefault(UserProfile obj, LatLng location) {
@@ -194,12 +193,17 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                 switch (newState) {
                     case STATE_COLLAPSED:
                     case BottomSheetBehavior.STATE_DRAGGING:
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                    case BottomSheetBehavior.STATE_SETTLING:
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
                         break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        mRecycler.smoothScrollToPosition(0);
+                        mRecycler.setNestedScrollingEnabled(false);
+                        mRecycler.setEnabled(false);
+                        break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        adapter.notifyDataSetChanged();
+                        mRecycler.setNestedScrollingEnabled(true);
+                        mRecycler.setEnabled(true);
                         break;
                 }
             }

@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     public Toolbar mToolbar;
     int position;
+    public CRMfragment crmFragment;
     public FloatingActionButton fab;
     protected OnBackPressedListener onBackPressedListener;
 
@@ -102,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Tabadapter() {
+
         MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CRMfragment(), "CRM");
+        crmFragment = new CRMfragment();
+        adapter.addFragment(crmFragment, "CRM");
         adapter.addFragment(new LocationListFragment(), "Location");
         adapter.addFragment(new RemindersFragment(), "Reminders");
 
