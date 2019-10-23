@@ -1,45 +1,45 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
-import com.alliancesgalore.alliancesgalore.Models.Event;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.material.textfield.TextInputEditText;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 public class AddEventActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar mToolBar;
-    private TextInputLayout mTitle;
-    private TextView mStartDate, mEndDate, mStartTime, mEndTime, getEventText;
-    private Calendar cStartDate = Calendar.getInstance(), cEndDate = Calendar.getInstance();
+    private TextInputEditText mTitle;
+    private SwitchCompat mAllDaySwitch;
+    private ConstraintLayout mAlldayLayout, mDateTimeLayout;
+    private long mDateTime = 0;
+    private TextView mStartDate, mStartTime;
+    private Button materialButton;
+    private Calendar cStartDate = Calendar.getInstance();
     private int mYear, mMonth, mDay;
     private Context mCtx = AddEventActivity.this;
-    private Button getevent, setevent;
+    private Date date;
+    private TimePickerDialog myTimePicker;
+    private Date time;
+    private Date temptime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +49,33 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
         SetmToolBar();
 
         mStartDate.setOnClickListener(this);
-        mEndDate.setOnClickListener(this);
-        getevent.setOnClickListener(this);
-        setevent.setOnClickListener(this);
+        mAlldayLayout.setOnClickListener(this);
+        mAllDaySwitch.setOnClickListener(this);
+        mStartTime.setOnClickListener(this);
 
+        materialButton.setOnClickListener(view -> {
+
+
+
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm a");
+
+            if (!mAllDaySwitch.isChecked()) {
+                time = temptime;
+            } else {
+
+                Calendar newTime = Calendar.getInstance();
+                newTime.set(Calendar.HOUR_OF_DAY, 0);
+                newTime.set(Calendar.MINUTE, 0);
+                time = newTime.getTime();
+            }
+
+
+            Date datetime = combineDateTime(date, time);
+            mDateTime = datetime.getTime();
+
+            mTitle.setText(simple.format(mDateTime));
+
+        });
     }
 
 
@@ -60,11 +83,12 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
         mToolBar = findViewById(R.id.addEvent_toolbar);
         mStartDate = findViewById(R.id.addEvent_startDate);
         mTitle = findViewById(R.id.addEvent_title);
-        mEndDate = findViewById(R.id.addEvent_endDate);
-        getevent = findViewById(R.id.geteventbtn);
-        setevent = findViewById(R.id.setEventbtn);
-        getEventText = findViewById(R.id.getEventText);
+        mAlldayLayout = findViewById(R.id.addEvent_allday_layout);
+        mAllDaySwitch = findViewById(R.id.addEvent_allday_switch);
+        mStartTime = findViewById(R.id.addEvent_startTime);
+        materialButton = findViewById(R.id.setbtn);
     }
+
 
     private void SetmToolBar() {
         setSupportActionBar(mToolBar);
@@ -82,44 +106,44 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Initializes the event
-     *
-     * @param title       The title of the event.
-     * @param description The description of the event.
-     * @param location    The location of the event.
-     * @param color       The color of the event (for display in the app).
-     * @param startTime   The start time of the event.
-     * @param endTime     The end time of the event.
-     * @param allDay      Indicates if the event lasts the whole day.
-     */
     @Override
     public void onClick(View view) {
 
         if (view == mStartDate) {
             setDate(mStartDate);
         }
-        if (view == mEndDate) {
-            setDate(mEndDate);
-        }
-        if (view == getevent) {
-//            FirebaseDatabase.getInstance().getReference().child("CalendarEvents").addValueEventListener(valueEventListener);
-        }
-        if (view == setevent) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
-            ref.getKey();
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("Title", Functions.TextOf(mTitle));
-            map.put("Description", "default");
-            map.put("Location", "default");
-            map.put("Color", 3);
-            map.put("StartTime", cStartDate.getTimeInMillis());
-            map.put("EndTime", cEndDate.getTimeInMillis());
-            map.put("AllDay", true);
-
-            ref.setValue(map).addOnSuccessListener(aVoid -> Log.d("data upload", "success"));
+        if (view == mAllDaySwitch) {
+            if (mAllDaySwitch.isChecked()) {
+                mStartTime.setVisibility(View.GONE);
+            } else
+                mStartTime.setVisibility(View.VISIBLE);
         }
 
+        if (view == mStartTime) {
+            Calendar calender = Calendar.getInstance();
+            myTimePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+
+                    Calendar newTime = Calendar.getInstance();
+
+                    //newTime.set(hourOfDay, minute); // remove this line
+
+                    //Add these two line
+                    newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    newTime.set(Calendar.MINUTE, minute);
+//                    mStartDate.setText(hourOfDay + minute);
+                    time = newTime.getTime();
+                    temptime = time;
+
+                    DateFormat simple = new SimpleDateFormat("hh:mm a");
+                    mStartTime.setText(simple.format(time));
+
+                }
+            }, calender.get((Calendar.HOUR_OF_DAY)), calender.get(Calendar.MINUTE), false);
+            myTimePicker.show();
+        }
     }
 
     private void setDate(TextView dateview) {
@@ -132,10 +156,26 @@ public class AddEventActivity extends AppCompatActivity implements View.OnClickL
                 (view1, year, monthOfYear, dayOfMonth) -> {
                     dateview.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                     calendar.set(year, monthOfYear, dayOfMonth);
-                    Date date = calendar.getTime();
+                    date = calendar.getTime();
                     String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
                     Functions.toast(full, mCtx);
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
     }
+
+    private Date combineDateTime(Date date, Date time) {
+        Calendar calendarA = Calendar.getInstance();
+        calendarA.setTime(date);
+        Calendar calendarB = Calendar.getInstance();
+        calendarB.setTime(time);
+
+        calendarA.set(Calendar.HOUR_OF_DAY, calendarB.get(Calendar.HOUR_OF_DAY));
+        calendarA.set(Calendar.MINUTE, calendarB.get(Calendar.MINUTE));
+        calendarA.set(Calendar.SECOND, calendarB.get(Calendar.SECOND));
+        calendarA.set(Calendar.MILLISECOND, calendarB.get(Calendar.MILLISECOND));
+
+        Date result = calendarA.getTime();
+        return result;
+    }
+
 }

@@ -11,100 +11,101 @@
         android:id="@+id/addEvent_toolbar"
         layout="@layout/custom_app_bar" />
 
-
-    <com.google.android.material.textfield.TextInputLayout
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/addEvent_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_toolbar">
+        android:inputType="text"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:text="Add Title"
+        android:gravity="center"
+        android:textColor="#696969"
+        android:textSize="26sp"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_toolbar" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Add Title"
-            android:inputType="text"
-            android:textColor="#212121"
-            android:textSize="20sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/addEvent_startDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Enter Start Date"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
-
-    <TextView
-        android:id="@+id/addEvent_endDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Enter End Date"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_startDate" />
-
-    <TextView
-        android:id="@+id/addEvent_endTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Enter End Time"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_startDate" />
-    <TextView
-        android:id="@+id/addEvent_startTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Enter Start Time"
-        android:textColor="#212121"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addEvent_title" />
-
-    <Button
-        android:id="@+id/setEventbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="setEvent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addEvent_endDate" />
-
-    <Button
-        android:id="@+id/geteventbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="getEvent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addEvent_endTime" />
-
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addEvent_allday_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="36sp"
-        app:layout_constraintTop_toBottomOf="@id/geteventbtn"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_title">
+
+        <TextView
+            android:id="@+id/addEvent_allday_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="All-day"
+            android:textColor="#696969"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/event_allday_img"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/event_allday_img"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_access_time_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/addEvent_allday_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addEvent_allday_text" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/addEvent_allday_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/addEvent_allday_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addEvent_allday_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addEvent_DateTime_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/addEvent_allday_layout">
+
+        <TextView
+            android:id="@+id/addEvent_startDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:text="Date"
+            android:textColor="#696969"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/addEvent_startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="Time"
+            android:textColor="#696969"
+            android:textSize="22sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/addEvent_startDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addEvent_startDate" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/setbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/getEventText"/>
+        app:layout_constraintTop_toBottomOf="@id/addEvent_DateTime_layout" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

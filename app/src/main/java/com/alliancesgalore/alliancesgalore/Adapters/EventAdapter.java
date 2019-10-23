@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.Models.Event;
 import com.alliancesgalore.alliancesgalore.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
@@ -52,7 +54,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
-            if (mEventList.get(position - 1).getStartTime() == mEventList.get(position).getStartTime()) {
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
+            String date1 = simple.format(mEventList.get(position - 1).getStartTime());
+            String date2 = simple.format(mEventList.get(position).getStartTime());
+            if (date1.equals(date2)) {
                 holder.mEventDatelayout.setVisibility(View.GONE);
             } else {
                 holder.mEventDatelayout.setVisibility(View.VISIBLE);

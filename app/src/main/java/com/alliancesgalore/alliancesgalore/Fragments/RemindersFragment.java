@@ -57,20 +57,30 @@ public class RemindersFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_test, container, false);
         FindIds(view);
+        Query query = FirebaseDatabase.getInstance().getReference().child("CalendarEvent").orderByChild("StartTime");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mList.clear();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        mList.add(snapshot.getValue(Event.class));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        setAdapter();
 
 
-        Event item1 = new Event("My Title1", "Description", "Location", 2, 1234, 1234, true, 1);
-        Event item2 = new Event("My Title2", "Description", "Location", 2, 1234, 1234, true, 1);
-        Event item3 = new Event("My Title3", "Description", "Location", 2, 1235, 1234, true, 1);
-        Event item4 = new Event("My Title4", "Description", "Location", 2, 1236, 1234, true, 1);
-        Event item5 = new Event("My Title5", "Description", "Location", 2, 1236, 1234, true, 1);
+        return view;
+    }
 
-        mList.add(item1);
-        mList.add(item2);
-        mList.add(item3);
-        mList.add(item4);
-        mList.add(item5);
-
+    private void setAdapter() {
         adapter = new EventAdapter(getContext(), mList);
         mRecycler.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -79,7 +89,6 @@ public class RemindersFragment extends Fragment {
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerItemDecorator_Event(getContext());
         mRecycler.addItemDecoration(dividerItemDecoration);
         adapter.notifyDataSetChanged();
-        return view;
     }
 
     private void FindIds(View view) {

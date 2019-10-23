@@ -3,12 +3,10 @@ package com.alliancesgalore.alliancesgalore.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -36,8 +34,8 @@ import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MapActivity;
 import com.alliancesgalore.alliancesgalore.Activities.ReportingToActivity;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -681,6 +679,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
             adapter.notifyDataSetChanged();
             isSelectAll = false;
             menuItem.setIcon(R.drawable.ic_selectall);
+
         }
 
         setActionModeTitle();
@@ -694,6 +693,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     }
 
     public static int dpFromPx(final Context context, final float px) {
+
         return (int) (px / context.getResources().getDisplayMetrics().density);
     }
 }
