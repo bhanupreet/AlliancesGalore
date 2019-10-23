@@ -1,12 +1,5 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -20,13 +13,20 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
-import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import com.alliancesgalore.alliancesgalore.Adapters.MainActivityAdapter;
+import com.alliancesgalore.alliancesgalore.Fragments.CRMfragment;
 import com.alliancesgalore.alliancesgalore.Fragments.LocationListFragment;
 import com.alliancesgalore.alliancesgalore.Fragments.RemindersFragment;
+import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
-import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.WebViewPager;
 import com.firebase.ui.auth.AuthUI;

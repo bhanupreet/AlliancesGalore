@@ -1,9 +1,12 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
+
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import com.alliancesgalore.alliancesgalore.R;
+
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mva2.adapter.ItemViewHolder;

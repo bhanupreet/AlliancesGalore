@@ -1,17 +1,17 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

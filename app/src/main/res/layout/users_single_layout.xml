@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
@@ -36,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="Display Name"
-        android:textColor="#212121"
+        android:textColor="#696969"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/users_single_profile_image"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +51,7 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/users_single_profile_image"
         android:text="Designation"
-        android:textColor="#212121"
+        android:textColor="#696969"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/users_single_profile_image"
         app:layout_constraintTop_toBottomOf="@+id/users_single_displayname" />

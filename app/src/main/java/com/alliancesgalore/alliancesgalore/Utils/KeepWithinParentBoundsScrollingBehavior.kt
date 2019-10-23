@@ -1,12 +1,8 @@
 package com.alliancesgalore.alliancesgalore.Utils
 
-import android.app.Activity
 import android.content.Context
-import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 

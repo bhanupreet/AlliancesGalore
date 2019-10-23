@@ -1,8 +1,5 @@
 package com.alliancesgalore.alliancesgalore.Models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 public class Event {
     private int Repetition;
     private int Color;

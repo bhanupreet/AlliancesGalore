@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.squareup.picasso.Picasso;

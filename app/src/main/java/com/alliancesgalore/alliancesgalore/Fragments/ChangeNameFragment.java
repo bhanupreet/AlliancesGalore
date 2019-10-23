@@ -11,8 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
@@ -83,6 +83,7 @@ public class ChangeNameFragment extends Fragment {
         public void onCancelled(@NonNull DatabaseError databaseError) {
         }
     };
+
     private OnCompleteListener changenameOnComplete = task -> {
         if (task.isSuccessful()) {
             Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();

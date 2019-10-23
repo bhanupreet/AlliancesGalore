@@ -2,8 +2,6 @@ package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,8 +35,8 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.ExtendedWebview;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;

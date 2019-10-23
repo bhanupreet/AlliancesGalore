@@ -1,15 +1,14 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Bundle;
-import android.view.MenuItem;
-
 import com.alliancesgalore.alliancesgalore.Fragments.SettingsFragment;
-import com.alliancesgalore.alliancesgalore.Fragments.SettingsPrefFragment;
 import com.alliancesgalore.alliancesgalore.R;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -33,7 +32,6 @@ public class SettingsActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.settings_container, new SettingsFragment());
-        ft.add(R.id.settings_container_pref,new SettingsPrefFragment());
         ft.commit();
     }
 

@@ -1,20 +1,20 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
 import com.alliancesgalore.alliancesgalore.Adapters.MapInfoAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
-import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
+import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;

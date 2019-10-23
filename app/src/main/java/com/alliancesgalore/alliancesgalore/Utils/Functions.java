@@ -1,9 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,7 +10,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.Log;
 import android.widget.Toast;
-
 
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.google.android.gms.tasks.Task;

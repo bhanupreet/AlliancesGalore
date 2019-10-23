@@ -7,16 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
-import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Services.LocationService;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
@@ -27,8 +24,6 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class SettingsFragment extends Fragment {
