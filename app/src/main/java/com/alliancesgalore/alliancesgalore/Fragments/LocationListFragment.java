@@ -468,7 +468,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                     resetActionMode();
                 }
                 Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemChanged(pos);
             } else sendToMap(selectedprofile, filterlist);
         });
     }

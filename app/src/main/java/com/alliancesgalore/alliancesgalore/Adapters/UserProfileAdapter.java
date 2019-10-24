@@ -46,6 +46,14 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         return holder;
     }
 
+    public void onMove(RecyclerView recyclerView, int firstPos, int secondPos) {
+        /*Do your stuff what you want
+          Notify your adapter about change in positions using notifyItemMoved method
+          Shift element e.g. insertion sort*/
+        swap(secondPos, firstPos);
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull UserProfileViewHolder holder, int position) {
         final UserProfile userProfile = mUsersList.get(position);
@@ -79,5 +87,14 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         mUsersList.set(b, aProfile);
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getLevel() - t2.getLevel());
+    }
+
+    public void swapSelected(int a, int b) {
+        notifyItemMoved(a, b);
+        UserProfile aProfile = mUsersList.get(a), bProfile = mUsersList.get(b);
+        mUsersList.set(a, bProfile);
+        mUsersList.set(b, aProfile);
+        Collections.sort(mUsersList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
+        Collections.sort(mUsersList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
     }
 }

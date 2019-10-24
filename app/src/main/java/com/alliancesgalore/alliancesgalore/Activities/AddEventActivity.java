@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.icu.lang.UScript;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -8,11 +9,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.alliancesgalore.alliancesgalore.Fragments.AddEventBaseFragment;
+import com.alliancesgalore.alliancesgalore.Fragments.AddEventFragment;
+import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 
-public class AddEventActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
+public class AddEventActivity extends AppCompatActivity {
+    private static List<UserProfile> selectedlist = new ArrayList<>();
 
     private Toolbar mToolBar;
 
@@ -28,7 +33,7 @@ public class AddEventActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.AddEvent_container, new AddEventBaseFragment());
+        ft.add(R.id.AddEvent_container, new AddEventFragment());
         ft.commit();
     }
 
@@ -51,4 +56,11 @@ public class AddEventActivity extends AppCompatActivity {
     }
 
 
+    public static List<UserProfile> getList() {
+        return selectedlist;
+    }
+
+    public static void setSelectedlist(List<UserProfile> selectedlist1) {
+        selectedlist = selectedlist1;
+    }
 }
