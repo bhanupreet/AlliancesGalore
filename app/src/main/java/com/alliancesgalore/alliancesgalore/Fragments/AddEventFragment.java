@@ -35,7 +35,7 @@ import java.util.List;
 public class AddEventFragment extends Fragment implements View.OnClickListener {
     private TextInputEditText mTitle;
     private SwitchCompat mAllDaySwitch;
-    private int mrepeat = 0;
+    private int mrepeat = 0, mnotify = 0;
     private ConstraintLayout mAlldayLayout;
     private long mDateTime = 0;
     private TextView mDate, mTime, mDescription, mRepition, mNotify, mLocation, mAddPeople;
@@ -47,6 +47,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private TimePickerDialog myTimePicker;
     private Date time;
     private Date temptime;
+    private ConstraintLayout mRepeatLayout, mAddPeopleLayout, mDescriptionLayout, mNotifyLayout, mLocationLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,34 +64,26 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         mCtx = getContext();
         mDate.setOnClickListener(this);
-        mAlldayLayout.setOnClickListener(this);
         mAllDaySwitch.setOnClickListener(this);
         mTime.setOnClickListener(this);
         mSaveBtn.setOnClickListener(this);
-        mRepition.setOnClickListener(this);
-        mAddPeople.setOnClickListener(this);
-        mDescription.setOnClickListener(this);
-        mNotify.setOnClickListener(this);
-        mLocation.setOnClickListener(this);
+        mRepeatLayout.setOnClickListener(this);
+        mAddPeopleLayout.setOnClickListener(this);
+        mDescriptionLayout.setOnClickListener(this);
+        mNotifyLayout.setOnClickListener(this);
+        mLocationLayout.setOnClickListener(this);
+
         return view;
     }
 
-    private void setTitle() {
-
-        DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm a");
-
-        if (!mAllDaySwitch.isChecked()) {
-            time = temptime;
-        } else {
-            Calendar newTime = Calendar.getInstance();
-            newTime.set(Calendar.HOUR_OF_DAY, 0);
-            newTime.set(Calendar.MINUTE, 0);
-            time = newTime.getTime();
+    @Override
+    public void onResume() {
+        super.onResume();
+        List<UserProfile> selectedlist = AddEventActivity.getList();
+        if (!selectedlist.isEmpty()) {
+            Functions.toast(selectedlist.get(0).getDisplay_name(), mCtx);
+            mAddPeople.setText(selectedlist.get(0).getDisplay_name());
         }
-
-        Date datetime = combineDateTime(date, time);
-        mDateTime = datetime.getTime();
-        mDescription.setText(simple.format(mDateTime));
     }
 
     @Override
@@ -109,80 +102,51 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 setTimeVisibility();
                 break;
 
-            case R.id.addEvent_repeat_text:
+            case R.id.addEvent_repeat_layout:
                 setRepetition();
+                break;
+
+            case R.id.addEvent_AddPeople_layout:
+                setAddPeople();
+                break;
+
+            case R.id.addEvent_Description_layout:
+                break;
+
+            case R.id.addEvent_Notify_layout:
+                setNotify();
+                break;
+
+            case R.id.addEvent_Location_layout:
                 break;
 
             case R.id.addEvent_savebtn:
                 saveBtnClick();
                 break;
 
-            case R.id.addEvent_AddPeople_text:
-                setAddPeople();
-                break;
-
-            case R.id.addEvent_description_text:
-            case R.id.addEvent_Notify_text:
-            case R.id.addEvent_Location_text:
-                break;
-
         }
     }
 
-    private void saveBtnClick() {
-        if (TextUtils.isEmpty(mTitle.getText())) {
-            Functions.toast("Please add a title to event", mCtx);
-        } else if (mDate.getText().equals("Date")) {
-            Functions.toast("Please add Date", mCtx);
-        } else if (!mAllDaySwitch.isChecked()) {
-            if (mTime.getText().equals("Time"))
-                Functions.toast("Please add time", mCtx);
-            else
-                setTitle();
-        } else {
-            setTitle();
-        }
-    }
+    private void FindIds(View view) {
+        mTitle = view.findViewById(R.id.addEvent_title);
 
-    private void setRepetition() {
-        final CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
-        AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
-        alert.setSingleChoiceItems(repeat, mrepeat, (dialog, which) -> {
-            if (repeat[which] == "Every day") {
-                mrepeat = 1;
-            } else if (repeat[which] == "Every week") {
-                mrepeat = 2;
-            } else if (repeat[which] == "Every month") {
-                mrepeat = 3;
-            } else
-                mrepeat = 0;
+        mAllDaySwitch = view.findViewById(R.id.addEvent_allday_switch);
+        mDate = view.findViewById(R.id.addEvent_startDate);
+        mTime = view.findViewById(R.id.addEvent_startTime);
 
-            mRepition.setText(repeat[which]);
-            dialog.dismiss();
-        });
-        alert.show();
-    }
+        mSaveBtn = view.findViewById(R.id.addEvent_savebtn);
 
-    private void setTimeVisibility() {
-        if (mAllDaySwitch.isChecked()) {
-            mTime.setVisibility(View.GONE);
-        } else {
-            mTime.setVisibility(View.VISIBLE);
-        }
-    }
+        mRepition = view.findViewById(R.id.addEvent_repeat_text);
+        mAddPeople = view.findViewById(R.id.addEvent_AddPeople_text);
+        mDescription = view.findViewById(R.id.addEvent_description_text);
+        mNotify = view.findViewById(R.id.addEvent_Notify_text);
+        mLocation = view.findViewById(R.id.addEvent_Location_text);
 
-    private void setTime() {
-        Calendar calender = Calendar.getInstance();
-        myTimePicker = new TimePickerDialog(mCtx, (view1, hourOfDay, minute) -> {
-            Calendar newTime = Calendar.getInstance();
-            newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            newTime.set(Calendar.MINUTE, minute);
-            time = newTime.getTime();
-            temptime = time;
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
-            mTime.setText(simple.format(time));
-        }, calender.get((Calendar.HOUR_OF_DAY)), calender.get(Calendar.MINUTE), false);
-        myTimePicker.show();
+        mRepeatLayout = view.findViewById(R.id.addEvent_repeat_layout);
+        mAddPeopleLayout = view.findViewById(R.id.addEvent_AddPeople_layout);
+        mDescriptionLayout = view.findViewById(R.id.addEvent_Description_layout);
+        mNotifyLayout = view.findViewById(R.id.addEvent_Notify_layout);
+        mLocationLayout = view.findViewById(R.id.addEvent_Location_layout);
     }
 
     private void setDate() {
@@ -201,6 +165,75 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         datePickerDialog.show();
     }
 
+    private void setTime() {
+        Calendar calender = Calendar.getInstance();
+        myTimePicker = new TimePickerDialog(mCtx, (view1, hourOfDay, minute) -> {
+            Calendar newTime = Calendar.getInstance();
+            newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            newTime.set(Calendar.MINUTE, minute);
+            time = newTime.getTime();
+            temptime = time;
+            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            mTime.setText(simple.format(time));
+        }, calender.get((Calendar.HOUR_OF_DAY)), calender.get(Calendar.MINUTE), false);
+        myTimePicker.show();
+    }
+
+    private void setTimeVisibility() {
+        if (mAllDaySwitch.isChecked()) {
+            mTime.setVisibility(View.GONE);
+        } else {
+            mTime.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setRepetition() {
+        final CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
+        AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
+        alert.setSingleChoiceItems(repeat, mrepeat, (dialog, which) -> {
+            mrepeat = which;
+            mRepition.setText(repeat[which]);
+            dialog.dismiss();
+        });
+        alert.show();
+    }
+
+    private void setAddPeople() {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.addSharedElement(mAddPeople, ViewCompat.getTransitionName(mAddPeople))
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.AddEvent_container, new AddPeopleFragment())
+                .addToBackStack("addPeople")
+                .commit();
+    }
+
+    private void setNotify() {
+        final CharSequence[] notify = {"5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"};
+        AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
+        alert.setSingleChoiceItems(notify, mnotify, (dialog, which) -> {
+            mnotify = which;
+            mNotify.setText(notify[which]);
+            dialog.dismiss();
+        });
+        alert.show();
+    }
+
+    private void saveBtnClick() {
+        if (TextUtils.isEmpty(mTitle.getText())) {
+            Functions.toast("Please add a title to event", mCtx);
+        } else if (mDate.getText().equals("Date")) {
+            Functions.toast("Please add Date", mCtx);
+        } else if (!mAllDaySwitch.isChecked()) {
+            if (mTime.getText().equals("Time"))
+                Functions.toast("Please add time", mCtx);
+            else
+                setTitle();
+        } else {
+            setTitle();
+        }
+    }
+
     private Date combineDateTime(Date date, Date time) {
         Calendar calendarA = Calendar.getInstance();
         calendarA.setTime(date);
@@ -215,38 +248,23 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return calendarA.getTime();
     }
 
-    private void setAddPeople() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.addSharedElement(mAddPeople, ViewCompat.getTransitionName(mAddPeople))
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.AddEvent_container, new AddPeopleFragment())
-                .addToBackStack("addPeople")
-                .commit();
-    }
 
-    private void FindIds(View view) {
-        mDate = view.findViewById(R.id.addEvent_startDate);
-        mTitle = view.findViewById(R.id.addEvent_title);
-        mAlldayLayout = view.findViewById(R.id.addEvent_allday_layout);
-        mAllDaySwitch = view.findViewById(R.id.addEvent_allday_switch);
-        mTime = view.findViewById(R.id.addEvent_startTime);
-        mSaveBtn = view.findViewById(R.id.addEvent_savebtn);
-        mDescription = view.findViewById(R.id.addEvent_description_text);
-        mAddPeople = view.findViewById(R.id.addEvent_AddPeople_text);
-        mDescription = view.findViewById(R.id.addEvent_description_text);
-        mNotify = view.findViewById(R.id.addEvent_Notify_text);
-        mLocation = view.findViewById(R.id.addEvent_Location_text);
-        mRepition = view.findViewById(R.id.addEvent_repeat_text);
-    }
+    //TO - DO
+    private void setTitle() {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        List<UserProfile> selectedlist = AddEventActivity.getList();
-        if (!selectedlist.isEmpty()) {
-            Functions.toast(selectedlist.get(0).getDisplay_name(), mCtx);
-            mAddPeople.setText(selectedlist.get(0).getDisplay_name());
+        DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm a");
+
+        if (!mAllDaySwitch.isChecked()) {
+            time = temptime;
+        } else {
+            Calendar newTime = Calendar.getInstance();
+            newTime.set(Calendar.HOUR_OF_DAY, 0);
+            newTime.set(Calendar.MINUTE, 0);
+            time = newTime.getTime();
         }
+
+        Date datetime = combineDateTime(date, time);
+        mDateTime = datetime.getTime();
+        mDescription.setText(simple.format(mDateTime));
     }
 }
