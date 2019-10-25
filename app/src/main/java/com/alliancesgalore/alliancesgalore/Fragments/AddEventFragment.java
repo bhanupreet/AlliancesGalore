@@ -299,7 +299,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             Functions.toast("Please enter Description", mCtx);
         } else if (mLocation.getText().equals("Location")) {
             Functions.toast("Please enter Location", mCtx);
-        } else if (mTime.getText().equals("time") && !mAllDaySwitch.isChecked()) {
+        } else if (mTime.getText().equals("Time") && !mAllDaySwitch.isChecked()) {
             Functions.toast("Please add time", mCtx);
         } else {
             save();
@@ -320,6 +320,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return calendarA.getTime();
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AddEventActivity.setmTitle(mTitle.getText().toString());
+    }
 
     //TO - DO
     private void save() {
@@ -342,7 +348,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         Functions.toast(key, mCtx);
         map.put("title", mTitle.getText().toString());
         map.put("allDay", mAllDaySwitch.isChecked());
-        map.put("dateTime", simple.format(mDateTime));
+        map.put("dateTime", mDateTime);
         map.put("repetition", mrepeat);
         map.put("description", mDescription.getText().toString());
         map.put("notify", mnotify);
@@ -391,8 +397,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 Intent mainIntent = new Intent(getContext(), MainActivity.class);
                 startActivity(mainIntent);
                 getActivity().finish();
+
             });
         }
-
     }
 }

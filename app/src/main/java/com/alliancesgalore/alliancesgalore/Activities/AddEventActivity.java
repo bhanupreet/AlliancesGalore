@@ -113,4 +113,15 @@ public class AddEventActivity extends AppCompatActivity {
     public static void setmTitle(String title) {
         mTitle = title;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try{
+            Runtime.getRuntime().gc();
+            finish();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
