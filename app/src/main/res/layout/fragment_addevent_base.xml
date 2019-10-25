@@ -195,6 +195,7 @@
         android:id="@+id/addEvent_Description_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:transitionName="addDescLocAnimation"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         app:layout_constraintTop_toBottomOf="@id/addEvent_view2">
@@ -273,6 +274,8 @@
         android:id="@+id/addEvent_Location_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:transitionName="addDescLocAnimation"
+
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         app:layout_constraintTop_toBottomOf="@id/addEvent_view4">

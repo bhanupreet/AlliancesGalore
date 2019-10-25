@@ -15,18 +15,16 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
-import com.alliancesgalore.alliancesgalore.Adapters.ItemClickListener;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +34,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class AddPeopleFragment extends Fragment implements View.OnClickListener {
@@ -92,6 +89,8 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
                     }
                     Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
                     Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
+
+                    mList.remove(Global.myProfile);
 
                     adapter.notifyDataSetChanged();
                     shimmerRecycler.hideShimmerAdapter();

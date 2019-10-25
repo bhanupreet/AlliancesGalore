@@ -90,4 +90,11 @@ public final class Functions {
         return output;
     }
 
+    public static String encodeUserEmail(String userEmail) {
+        return userEmail.replace(".", ",");
+    }
+
+    public static String decodeUserEmail(String userEmail) {
+        return userEmail.replace(",", ".");
+    }
 }

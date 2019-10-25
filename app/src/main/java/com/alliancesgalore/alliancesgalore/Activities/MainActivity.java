@@ -361,24 +361,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int getcurrenttabposition() {
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                position = tab.getPosition();
-                setTab(tab.getPosition());
-            }
+        if (mTabLayout != null) {
+            mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    position = tab.getPosition();
+                    setTab(tab.getPosition());
+                }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            }
+                }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                position = tab.getPosition();
-            }
-        });
-        return position;
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    position = tab.getPosition();
+                }
+            });
+            return position;
+        } else
+            return 0;
     }
 
     public interface OnBackPressed {

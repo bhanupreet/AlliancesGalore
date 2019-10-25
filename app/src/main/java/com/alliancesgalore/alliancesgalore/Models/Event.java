@@ -1,96 +1,136 @@
 package com.alliancesgalore.alliancesgalore.Models;
 
-public class Event {
-    private int Repetition;
-    private int Color;
-    private boolean AllDay;
-    private long StartTime;
-    private String Location;
-    private String Title;
-    private String Description;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private String CreatedBy;
+public class Event implements Parcelable {
+    private String title;
+    private boolean allDay;
+    private long dateTime;
+    private int repetition;
+    private String description;
+    private int notify;
+    private String location;
+    private String createdBy;
 
     public Event() {
     }
+    //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
+    //start time is time in milliseconds,
 
 
-    public int getRepetition() {
-        return Repetition;
+    public Event(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy) {
+        this.title = title;
+        this.allDay = allDay;
+        this.dateTime = dateTime;
+        this.repetition = repetition;
+        this.description = description;
+        this.notify = notify;
+        this.location = location;
+        this.createdBy = createdBy;
     }
 
-    public void setRepetition(int repetition) {
-        Repetition = repetition;
+    protected Event(Parcel in) {
+        title = in.readString();
+        allDay = in.readByte() != 0;
+        dateTime = in.readLong();
+        repetition = in.readInt();
+        description = in.readString();
+        notify = in.readInt();
+        location = in.readString();
+        createdBy = in.readString();
     }
 
-    public int getColor() {
-        return Color;
-    }
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
 
-    public void setColor(int color) {
-        Color = color;
-    }
-
-    public boolean isAllDay() {
-        return AllDay;
-    }
-
-    public void setAllDay(boolean allDay) {
-        AllDay = allDay;
-    }
-
-    public long getStartTime() {
-        return StartTime;
-    }
-
-    public void setStartTime(long startTime) {
-        StartTime = startTime;
-    }
-
-    public String getLocation() {
-        return Location;
-    }
-
-    public void setLocation(String location) {
-        Location = location;
-    }
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
+    }
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
+    }
+
+    public long getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public int getRepetition() {
+        return repetition;
+    }
+
+    public void setRepetition(int repetition) {
+        this.repetition = repetition;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
+    }
+
+    public int getNotify() {
+        return notify;
+    }
+
+    public void setNotify(int notify) {
+        this.notify = notify;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getCreatedBy() {
-        return CreatedBy;
+        return createdBy;
     }
 
     public void setCreatedBy(String createdBy) {
-        CreatedBy = createdBy;
+        this.createdBy = createdBy;
     }
 
-    //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
-    //start time is time in milliseconds,
-    public Event(String title, String description, String location, int color, long startTime, long endTime, boolean allDay, int Repetition, String CreatedBy) {
-        this.Title = title;
-        this.Description = description;
-        this.Location = location;
-        this.Color = color;
-        this.StartTime = startTime;
-        this.AllDay = allDay;
-        this.Repetition = Repetition;
-        this.CreatedBy = CreatedBy;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeByte((byte) (allDay ? 1 : 0));
+        parcel.writeLong(dateTime);
+        parcel.writeInt(repetition);
+        parcel.writeString(description);
+        parcel.writeInt(notify);
+        parcel.writeString(location);
+        parcel.writeString(createdBy);
+    }
 }

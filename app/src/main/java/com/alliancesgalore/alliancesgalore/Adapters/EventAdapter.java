@@ -48,15 +48,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
         final Event event = mEventList.get(position);
         holder.mEvent_title.setText(event.getTitle());
-        holder.mEvent_date.setText(Long.toString(event.getStartTime()));
+        holder.mEvent_date.setText(Long.toString(event.getDateTime()));
 
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
             DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
-            String date1 = simple.format(mEventList.get(position - 1).getStartTime());
-            String date2 = simple.format(mEventList.get(position).getStartTime());
+            String date1 = simple.format(mEventList.get(position - 1).getDateTime());
+            String date2 = simple.format(mEventList.get(position).getDateTime());
             if (date1.equals(date2)) {
                 holder.mEventDatelayout.setVisibility(View.GONE);
             } else {
