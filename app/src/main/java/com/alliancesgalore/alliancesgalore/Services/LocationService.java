@@ -13,6 +13,7 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -23,6 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class LocationService extends Service {
@@ -73,10 +77,30 @@ public class LocationService extends Service {
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Calendar.HOUR_OF_DAY, 18);
+            endTime.set(Calendar.MINUTE, 30);
+
+            Calendar startTime = Calendar.getInstance();
+            endTime.set(Calendar.HOUR_OF_DAY, 10);
+            endTime.set(Calendar.MINUTE, 1);
+
+
             Location location = locationResult.getLastLocation();
             SharedPreferences settings = getSharedPreferences("location", 0);
             String silent = settings.getString("locationservice", "on");
-            if (location != null && silent.equals("on")) {
+            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().getTime().getHours());
+            cal.set(Calendar.MINUTE, Calendar.getInstance().getTime().getMinutes());
+
+            if (location != null
+                    && (cal.getTimeInMillis() > endTime.getTimeInMillis()
+
+                    || cal.getTimeInMillis() < startTime.getTimeInMillis())) {
+
+                Functions.toast(simple.format(cal.getTimeInMillis()), getApplicationContext());
                 Log.d(TAG, "location update " + location);
                 HashMap<String, Object> userMap = new HashMap<>();
                 userMap.put("Latitude", location.getLatitude());
@@ -86,7 +110,10 @@ public class LocationService extends Service {
                 if (uid != null)
                     FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(userMap);
             }
-            if (silent.equals("off")) {
+            if (location != null
+                    && (cal.getTimeInMillis() < endTime.getTimeInMillis()
+//
+                    || cal.getTimeInMillis() > startTime.getTimeInMillis())) {
                 stopSelf();
             }
         }

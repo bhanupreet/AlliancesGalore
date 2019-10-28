@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void FindIds() {
+
         mForgotPasswordbtn = findViewById(R.id.forgotpasswordbtn);
         mLoginToolbar = findViewById(R.id.login_toolbar);
         mLoginBtn = findViewById(R.id.login_login_btn);
@@ -62,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void SetmToolbar() {
+
         setSupportActionBar(mLoginToolbar);
         getSupportActionBar().setTitle("Login");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -80,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void LogIn(final String email, final String password) {
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -95,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                 mprogressBar.setVisibility(View.GONE);
                 Functions.toast(task);
             }
+
         }
     };
 

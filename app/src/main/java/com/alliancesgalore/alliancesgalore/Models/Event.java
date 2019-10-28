@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Event implements Parcelable {
+
     private String title;
     private boolean allDay;
     private long dateTime;

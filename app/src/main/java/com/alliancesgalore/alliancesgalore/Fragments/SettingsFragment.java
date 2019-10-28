@@ -139,6 +139,7 @@ public class SettingsFragment extends Fragment {
     private View.OnClickListener ChangePasswordListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
             ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
 
             getFragmentManager()
@@ -153,12 +154,14 @@ public class SettingsFragment extends Fragment {
     };
 
     private void StopTrackerService() {
+
         Functions.toast("location service stopped", getContext());
         getActivity().stopService((new Intent(getContext(), LocationService.class)));
 
     }
 
     private void StartTrackerService() {
+
         Functions.toast("location service started", getContext());
         getActivity().startService((new Intent(getContext(), LocationService.class)));
 

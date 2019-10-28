@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
+
     private TextInputLayout mEmail;
     private Button mResetButton;
     private Toolbar mToolBar;
@@ -29,12 +30,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+
         FindIds();
         setToolbar();
         resetclick();
     }
 
     private void setToolbar() {
+
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("Forgot password");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -42,6 +45,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void FindIds() {
+
         mprogressBar = findViewById(R.id.forgotpasswordprogress);
         mEmail = findViewById(R.id.forgotpswrdemail);
         mToolBar = findViewById(R.id.forgotpasswordappbar);
@@ -49,6 +53,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void resetclick() {
+
         mResetButton.setOnClickListener(v -> {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             String emailAddress = Functions.TextOf(mEmail);
@@ -62,6 +67,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 Functions.toast("Email cannot be left blank.", mCtx);
             }
         });
+
     }
 
     private OnCompleteListener resetClickOnComplete = new OnCompleteListener<Void>() {

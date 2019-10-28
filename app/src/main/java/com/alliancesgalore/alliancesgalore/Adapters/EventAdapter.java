@@ -16,12 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
+
     private Context mCtx;
     private List<Event> mEventList;
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
     public EventAdapter(Context mCtx, List<Event> mEventList) {
+
         this.mCtx = mCtx;
         this.mEventList = mEventList;
     }

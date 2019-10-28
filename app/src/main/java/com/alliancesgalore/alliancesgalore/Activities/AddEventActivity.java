@@ -116,6 +116,7 @@ public class AddEventActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
         try{
             Runtime.getRuntime().gc();

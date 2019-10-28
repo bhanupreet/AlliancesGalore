@@ -16,6 +16,7 @@ public class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
     CircleImageView mProfileImage,mTick;
 
     public UserProfileViewHolder(@NonNull View itemView) {
+
         super(itemView);
         mDisplayName = itemView.findViewById(R.id.users_single_displayname);
         mDesignation = itemView.findViewById(R.id.users_Single_designation);

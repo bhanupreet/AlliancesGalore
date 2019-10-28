@@ -80,6 +80,7 @@ public class CRMfragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crm, container, false);
+
         FindIds(view);
         websettings(crmweb);
         webclicklistener(crmweb);
@@ -88,16 +89,19 @@ public class CRMfragment extends Fragment {
         mRefreshFunction();
         setFAB();
         SavedStateCheck(savedInstanceState);
+
         return view;
     }
 
     private void FindIds(View view) {
+
         crmweb = view.findViewById(R.id.crm_web);
         progressBar = view.findViewById(R.id.crm_prog);
         mRefresh = view.findViewById(R.id.crm_refresh);
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
+
         if (context != null && permissions != null) {
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -111,6 +115,7 @@ public class CRMfragment extends Fragment {
     int PERMISSION_ALL = 1;
 
     private void websettings(WebView crmweb) {
+
         crmweb.clearHistory();
         crmweb.clearFormData();
         crmweb.clearCache(true);

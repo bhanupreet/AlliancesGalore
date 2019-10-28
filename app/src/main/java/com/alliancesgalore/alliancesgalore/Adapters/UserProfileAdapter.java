@@ -88,13 +88,4 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getLevel() - t2.getLevel());
     }
-
-    public void swapSelected(int a, int b) {
-        notifyItemMoved(a, b);
-        UserProfile aProfile = mUsersList.get(a), bProfile = mUsersList.get(b);
-        mUsersList.set(a, bProfile);
-        mUsersList.set(b, aProfile);
-        Collections.sort(mUsersList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-        Collections.sort(mUsersList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
-    }
 }

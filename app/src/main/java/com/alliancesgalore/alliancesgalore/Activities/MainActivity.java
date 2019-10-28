@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void FindIds() {
+
         mViewPager = findViewById(R.id.main_viewpager);
         mTabLayout = findViewById(R.id.main_tablayout);
         mToolbar = findViewById(R.id.main_app_bar);
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
         crmFragment = new CRMfragment();
+
         adapter.addFragment(crmFragment, "CRM");
         adapter.addFragment(new LocationListFragment(), "Location");
         adapter.addFragment(new RemindersFragment(), "Reminders");
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void swappingAway() {
+
         fab.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_down);
         fab.startAnimation(animation);
@@ -127,34 +130,40 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectedTabs() {
         //a bit animation of popping up.
+
         fab.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pop_up);
         fab.startAnimation(animation);
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setLogo(Resid);
     }
 
     private void sendToStart() {
+
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();
     }
 
     private void logout() {
+
         AuthUI.getInstance().signOut(this).addOnCompleteListener(SignOutonComplete);
     }
 
     private void settings() {
+
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         settingsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(settingsIntent);
     }
 
     public void fabanim() {
+
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int state = 0;
             private boolean isFloatButtonHidden = false;
@@ -205,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTab(int position) {
+
         switch (position) {
             case 0:
             case 1:
@@ -234,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendToReport() {
+
         Intent reportIntent = new Intent(MainActivity.this, ReportingToActivity.class);
         startActivity(reportIntent);
         finish();
@@ -241,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+
         onBackPressedListener = null;
         super.onDestroy();
     }

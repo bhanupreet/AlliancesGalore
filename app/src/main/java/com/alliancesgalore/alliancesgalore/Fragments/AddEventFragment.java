@@ -64,6 +64,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+
     }
 
     @Override
@@ -71,8 +72,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_addevent_base, container, false);
+
         FindIds(view);
         SetViews();
+
         mCtx = getContext();
         mDate.setOnClickListener(this);
         mAllDaySwitch.setOnClickListener(this);
@@ -88,15 +91,18 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void SetViews() {
+
         if (TextUtils.isEmpty(AddEventActivity.getLocation())) {
             mLocation.setText("Location");
         } else
             mLocation.setText(AddEventActivity.getLocation().trim());
 
+
         if (TextUtils.isEmpty(AddEventActivity.getDescription()))
             mDescription.setText("Description");
         else
             mDescription.setText(AddEventActivity.getDescription().trim());
+
 
         if (AddEventActivity.getDate() == 0) {
             mDate.setText("Date");
@@ -105,6 +111,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
             mDate.setText(full);
         }
+
 
         if (AddEventActivity.getTime() == 0) {
             mTime.setText("Time");
@@ -125,11 +132,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
+
         super.onResume();
         List<UserProfile> selectedlist = AddEventActivity.getList();
         if (!selectedlist.isEmpty()) {
             Functions.toast(selectedlist.get(0).getDisplay_name(), mCtx);
-            String addpeopletext = "You and " + selectedlist.get(0).getDisplay_name() + " + " + (selectedlist.size()) + " others";
+            String addpeopletext;
+            if (selectedlist.size() > 1)
+                addpeopletext = "You and " + selectedlist.get(0).getDisplay_name() + " + " + (selectedlist.size()) + " others";
+            else
+                addpeopletext = "Add people";
             mAddPeople.setText(addpeopletext);
         }
         SetViews();
@@ -139,6 +151,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view1) {
 
         switch (view1.getId()) {
+
             case R.id.addEvent_startDate:
                 setDate();
                 break;
@@ -179,6 +192,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setDescriptionLocation(String key, ConstraintLayout layout) {
+
         Bundle bundl = new Bundle();
         bundl.putString("desc_loc", key);
 
@@ -194,6 +208,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void FindIds(View view) {
+
         mTitle = view.findViewById(R.id.addEvent_title);
 
         mAllDaySwitch = view.findViewById(R.id.addEvent_allday_switch);
@@ -216,6 +231,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setDate() {
+
         Calendar calendar = Calendar.getInstance();
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
@@ -230,9 +246,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             Functions.toast(full, mCtx);
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
+
     }
 
     private void setTime() {
+
         Calendar calender = Calendar.getInstance();
         myTimePicker = new TimePickerDialog(mCtx, (view1, hourOfDay, minute) -> {
             Calendar newTime = Calendar.getInstance();
@@ -246,9 +264,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             AddEventActivity.setTime(time.getTime());
         }, calender.get((Calendar.HOUR_OF_DAY)), calender.get(Calendar.MINUTE), false);
         myTimePicker.show();
+
     }
 
     private void setTimeVisibility() {
+
         if (mAllDaySwitch.isChecked()) {
             mTime.setVisibility(View.GONE);
             timeText = "time";
@@ -256,6 +276,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             mTime.setVisibility(View.VISIBLE);
             timeText = mTime.getText().toString();
         }
+
         AddEventActivity.setmAlldaySwitch(mAllDaySwitch.isChecked());
     }
 
@@ -271,6 +292,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setAddPeople() {
+
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.addSharedElement(mAddPeople, ViewCompat.getTransitionName(mAddPeople))
@@ -281,6 +303,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setNotify() {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
         alert.setSingleChoiceItems(notify, mnotify, (dialog, which) -> {
             mnotify = which;
@@ -291,6 +314,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void saveBtnClick() {
+
         if (TextUtils.isEmpty(mTitle.getText())) {
             Functions.toast("Please add a title to event", mCtx);
         } else if (mDate.getText().equals("Date")) {
@@ -320,7 +344,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return calendarA.getTime();
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -329,7 +352,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     //TO - DO
     private void save() {
-        DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm a");
+
         if (!mAllDaySwitch.isChecked()) {
             time = temptime;
         } else {
@@ -354,9 +377,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("notify", mnotify);
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", Global.myProfile.getEmail());
-        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> {
-            Functions.toast("Data added", mCtx);
-        });
+        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> Functions.toast("Data added", mCtx));
 
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
@@ -377,13 +398,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child("EventParticipants")
                 .child(key);
 
-        eventParticipantsref.setValue(eventParticipants).addOnSuccessListener(aVoid12 -> {
-            Functions.toast("part1 updated", mCtx);
-        });
+        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> Functions.toast("part1 updated", mCtx));
 
         HashMap<String, Object> myEvents = new HashMap<>();
         myEvents.put(key, true);
-
 
         for (UserProfile profile : myList) {
             DatabaseReference myEventsref = FirebaseDatabase
