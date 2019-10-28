@@ -121,7 +121,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
 //            adapter.notifyItemMoved(j, i);
 //            adapter.notifyItemChanged(j);
             adapter.notifyDataSetChanged();
-            mRecycler.smoothScrollToPosition(0);
+//            mRecycler.smoothScrollToPosition(0);
             if (selectedlist.isEmpty())
                 mSaveBtn.setVisibility(View.GONE);
             else

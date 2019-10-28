@@ -47,16 +47,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-
+        DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
+        DateFormat dayformat = new SimpleDateFormat("EEEE");
         final Event event = mEventList.get(position);
         holder.mEvent_title.setText(event.getTitle());
-        holder.mEvent_date.setText(Long.toString(event.getDateTime()));
+        holder.mEvent_date.setText(simple.format(event.getDateTime()));
+        holder.mEvent_day.setText(dayformat.format(event.getDateTime()));
+        holder.mEventDescription.setText(event.getDescription());
 
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
-            DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
+
             String date1 = simple.format(mEventList.get(position - 1).getDateTime());
             String date2 = simple.format(mEventList.get(position).getDateTime());
             if (date1.equals(date2)) {

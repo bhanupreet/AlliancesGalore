@@ -1,80 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/locationlist_refresh"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/locationlist_filter"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:id="@+id/locationlist_filter"
-                android:layout_width="100dp"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_filter_list_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_scrollFlags="scroll">
+                android:layout_marginStart="5dp"
+                android:text="Filter"
+                android:textSize="23sp" />
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_filter_list_black_24dp" />
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="Filter"
-                    android:textSize="23sp" />
+        <LinearLayout
+            android:id="@+id/locationlist_sort"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            </LinearLayout>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_sort_black_24dp" />
 
-            <LinearLayout
-                android:id="@+id/locationlist_sort"
-                android:layout_width="100dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_scrollFlags="scroll">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_sort_black_24dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="Sort"
-                    android:textSize="23sp" />
+                android:layout_marginStart="5dp"
+                android:text="Sort"
+                android:textSize="23sp" />
 
 
-            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationlist_sort">
 
             <com.cooltechworks.views.shimmer.ShimmerRecyclerView
                 android:id="@+id/locationlist_recyclershimmer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="40dp"
-                app:layout_constraintTop_toBottomOf="@id/locationlist_filter"
+                app:layout_constraintBottom_toBottomOf="@id/locationlist_recycler"
+                app:layout_constraintEnd_toEndOf="@id/locationlist_recycler"
+                app:layout_constraintStart_toStartOf="@id/locationlist_recycler"
+                app:layout_constraintTop_toTopOf="@id/locationlist_recycler"
                 app:shimmer_demo_angle="20"
                 app:shimmer_demo_child_count="10"
+                android:paddingBottom="40dp"
                 app:shimmer_demo_layout="@layout/users_single_layout_shimmer"
                 app:shimmer_demo_shimmer_color="#fafafa"
                 app:shimmer_demo_view_holder_item_background="#ffffff" />
@@ -83,9 +86,11 @@
                 android:id="@+id/locationlist_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="40dp"
-                app:layout_constraintTop_toBottomOf="@id/locationlist_filter" />
+                android:nestedScrollingEnabled="true"
+                android:paddingBottom="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh>

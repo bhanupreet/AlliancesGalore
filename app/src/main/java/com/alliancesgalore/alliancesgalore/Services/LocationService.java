@@ -13,7 +13,6 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -100,7 +99,7 @@ public class LocationService extends Service {
 
                     || cal.getTimeInMillis() < startTime.getTimeInMillis())) {
 
-                Functions.toast(simple.format(cal.getTimeInMillis()), getApplicationContext());
+//                Functions.toast(simple.format(cal.getTimeInMillis()), getApplicationContext());
                 Log.d(TAG, "location update " + location);
                 HashMap<String, Object> userMap = new HashMap<>();
                 userMap.put("Latitude", location.getLatitude());

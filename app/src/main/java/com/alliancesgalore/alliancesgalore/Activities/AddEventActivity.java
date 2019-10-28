@@ -122,6 +122,14 @@ public class AddEventActivity extends AppCompatActivity {
         try {
             Runtime.getRuntime().gc();
             finish();
+            setmTitle("");
+            setmAlldaySwitch(false);
+            setTime(0);
+            setDate(0);
+            setLocation("");
+            setDescription("");
+            selectedlist.clear();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -212,11 +212,19 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                     return handleMenuItemClicks(item);
                 });
                 popup.show();
+
             });
+            mFilterbtn.setVisibility(View.VISIBLE);
+            mSortBtn.setVisibility(View.VISIBLE);
+            mSwipeResfresh.setEnabled(true);
+        } else if (myProfile.getLevel() == 30) {
+            mFilterbtn.setVisibility(View.GONE);
+            mSortBtn.setVisibility(View.GONE);
+            mSwipeResfresh.setEnabled(false);
         } else {
             mFilterbtn.setClickable(false);
             mFilterbtn.setEnabled(false);
-            mFilterbtn.setVisibility(View.INVISIBLE);
+            mFilterbtn.setVisibility(View.GONE);
         }
     }
 
