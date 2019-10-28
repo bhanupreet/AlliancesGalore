@@ -71,6 +71,8 @@ dependencies {
     implementation 'com.code-troopers.betterpickers:library:3.1.0'
     implementation 'dev.ahamed.mva2:adapter:2.0.0-beta01'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'android.arch.paging:runtime:1.x.x'
+    implementation 'com.firebaseui:firebase-ui-database:6.0.2'
 }
 apply plugin: 'com.google.gms.google-services'
 repositories {

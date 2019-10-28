@@ -33,6 +33,8 @@ import java.util.Objects;
 
 public class RemindersFragment extends Fragment {
     private EventAdapter adapter;
+    private static final int TOTAL_ITEM_EACH_LOAD = 10;
+    private int currentPage = 0;
     private RecyclerView mRecycler;
     private List<Event> mList = new ArrayList<>();
     private Context mCtx;
@@ -50,6 +52,8 @@ public class RemindersFragment extends Fragment {
         mCtx = getContext();
         setAdapter();
         String myemail = Functions.encodeUserEmail(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+
+
         query = FirebaseDatabase.getInstance().getReference().child("MyEvents").child(myemail);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -60,8 +64,8 @@ public class RemindersFragment extends Fragment {
                         myEvents.add(snapshot.getKey());
 
                     }
-
-                    Query q2 = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").orderByChild("dateTime");
+                    Calendar currentTime = Calendar.getInstance();
+                    Query q2 = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").orderByChild("dateTime").startAt(currentTime.getTimeInMillis());
                     q2.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -72,7 +76,6 @@ public class RemindersFragment extends Fragment {
                                     String key = snapshot.getKey();
                                     if (myEvents.contains(key)) {
                                         DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
-                                        Calendar currentTime = Calendar.getInstance();
 
 
                                         mList.add(myEvent);
@@ -114,6 +117,7 @@ public class RemindersFragment extends Fragment {
 
         return view;
     }
+
 
     private void setAdapter() {
         adapter = new EventAdapter(getContext(), mList);

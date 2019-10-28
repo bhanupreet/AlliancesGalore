@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.R;
 
-class EventViewHolder extends RecyclerView.ViewHolder {
+public class EventViewHolder extends RecyclerView.ViewHolder {
 
     ConstraintLayout mEventDatelayout;
     TextView mEvent_date;
