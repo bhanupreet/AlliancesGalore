@@ -92,6 +92,8 @@ public class SettingsFragment extends Fragment {
                 editor.apply();
             }
         });
+
+        mToggle.setVisibility(View.GONE);
     }
 
     private void viewClick() {

@@ -26,7 +26,6 @@ import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -37,6 +36,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
+import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 
 public class AddEventFragment extends Fragment implements View.OnClickListener {
@@ -128,22 +130,40 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         setTimeVisibility();
         mRepition.setText(repeat[mrepeat]);
         mNotify.setText(notify[mnotify]);
+        setAddPeopleview();
+    }
+
+    private void setAddPeopleview() {
+
+        if (!selectedlist.isEmpty()) {
+            Functions.toast(String.valueOf(selectedlist.size()), mCtx);
+            if (!selectedlist.contains(myProfile)) {
+                selectedlist.add(myProfile);
+            }
+            if (selectedlist.get(0).equals(myProfile)) {
+                UserProfile profile0 = selectedlist.get(selectedlist.size()-1);
+                selectedlist.set(selectedlist.size() - 1, myProfile);
+                selectedlist.set(0, profile0);
+
+            }
+
+            String addpeopletext = "Add People";
+            if (selectedlist.size() == 2) {
+                addpeopletext = "You and " + selectedlist.get(0).getDisplay_name();
+            } else if (selectedlist.size() > 2)
+                addpeopletext = "You and " + selectedlist.get(0).getDisplay_name() + " + " + (selectedlist.size() - 2) + " others";
+            mAddPeople.setText(addpeopletext);
+
+        } else
+            mAddPeople.setText("Add people");
+
+        Functions.toast(String.valueOf(selectedlist.size()), getContext());
     }
 
     @Override
     public void onResume() {
 
         super.onResume();
-        List<UserProfile> selectedlist = AddEventActivity.getList();
-        if (!selectedlist.isEmpty()) {
-            Functions.toast(selectedlist.get(0).getDisplay_name(), mCtx);
-            String addpeopletext;
-            if (selectedlist.size() > 1)
-                addpeopletext = "You and " + selectedlist.get(0).getDisplay_name() + " + " + (selectedlist.size()) + " others";
-            else
-                addpeopletext = "Add people";
-            mAddPeople.setText(addpeopletext);
-        }
         SetViews();
     }
 
@@ -376,21 +396,21 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("description", mDescription.getText().toString());
         map.put("notify", mnotify);
         map.put("location", mLocation.getText().toString());
-        map.put("createdBy", Global.myProfile.getEmail());
+        map.put("createdBy", myProfile.getEmail());
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> Functions.toast("Data added", mCtx));
 
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
         List<UserProfile> myList = AddEventActivity.getList();
-        if (!myList.contains(Global.myProfile)) {
-            myList.add(Global.myProfile);
+        if (!myList.contains(myProfile)) {
+            myList.add(myProfile);
         }
 
         for (UserProfile profile : myList) {
             eventParticipants.put(Functions.encodeUserEmail(profile.getEmail()), true);
         }
 
-        eventParticipants.put(Functions.encodeUserEmail(Global.myProfile.getEmail()), true);
+        eventParticipants.put(Functions.encodeUserEmail(myProfile.getEmail()), true);
 
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()

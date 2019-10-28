@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddEventActivity extends AppCompatActivity {
-    private static List<UserProfile> selectedlist = new ArrayList<>();
+    public static List<UserProfile> selectedlist = new ArrayList<>();
 
     private Toolbar mToolBar;
     private static String mDescription = "", mLocation = "", mTitle = "";
@@ -29,6 +29,7 @@ public class AddEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_event);
         SetmToolBar();
         SetFragment();
+        selectedlist.clear();
     }
 
     private void SetFragment() {
@@ -118,10 +119,10 @@ public class AddEventActivity extends AppCompatActivity {
     public void onDestroy() {
 
         super.onDestroy();
-        try{
+        try {
             Runtime.getRuntime().gc();
             finish();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

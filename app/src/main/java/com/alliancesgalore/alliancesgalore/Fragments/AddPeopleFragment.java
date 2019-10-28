@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
@@ -36,11 +35,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
+
 public class AddPeopleFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
-    private List<UserProfile> mList, mSelectedList, mSearchList = new ArrayList<>(), mAllList = new ArrayList<>();
+    private List<UserProfile> mList, mSearchList = new ArrayList<>(), mAllList = new ArrayList<>();
     private Context mCtx;
     private ShimmerRecyclerView shimmerRecycler;
     private Button mSaveBtn;
@@ -60,13 +61,11 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         mCtx = getContext();
         mList = new ArrayList<>();
         mList.clear();
-        mSelectedList = new ArrayList<>();
-        mSelectedList.clear();
-        mSelectedList = AddEventActivity.getList();
+
         mRecycler = view.findViewById(R.id.addpeople_recycler);
         shimmerRecycler = view.findViewById(R.id.addPeople_recyclershimmer);
         mSaveBtn = view.findViewById(R.id.addPeople_savebtn);
-        if (mSelectedList.isEmpty()) {
+        if (selectedlist.isEmpty()) {
             mSaveBtn.setVisibility(View.GONE);
         } else
             mSaveBtn.setVisibility(View.VISIBLE);
@@ -82,7 +81,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
                         mList.add(snapshot.getValue(UserProfile.class));
 
                     Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-                    for (UserProfile profile : mSelectedList) {
+                    for (UserProfile profile : selectedlist) {
                         int i = mList.indexOf(profile);
                         mList.get(i).setSelected(true);
 
@@ -109,13 +108,12 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
 //            adapter.notifyItemChanged(i);
             UserProfile profile = mList.get(i);
 
-            if (mSelectedList.contains(profile))
-                mSelectedList.remove(profile);
+            if (selectedlist.contains(profile))
+                selectedlist.remove(profile);
             else
-                mSelectedList.add(profile);
+                selectedlist.add(profile);
             Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
             Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
-            int j = mList.indexOf(profile);
 //            adapter.notifyItemChanged(i);
 //            adapter.notifyItemMoved(i, j);
 //            adapter.notifyItemChanged(i);
@@ -124,7 +122,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
 //            adapter.notifyItemChanged(j);
             adapter.notifyDataSetChanged();
             mRecycler.smoothScrollToPosition(0);
-            if (mSelectedList.isEmpty())
+            if (selectedlist.isEmpty())
                 mSaveBtn.setVisibility(View.GONE);
             else
                 mSaveBtn.setVisibility(View.VISIBLE);
@@ -208,7 +206,6 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view == mSaveBtn) {
-            AddEventActivity.setSelectedlist(mSelectedList);
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.popBackStack();
         }
