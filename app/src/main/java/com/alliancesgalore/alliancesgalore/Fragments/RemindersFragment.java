@@ -23,8 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -42,6 +40,14 @@ public class RemindersFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private Query query;
     private int pos = 0;
+    private Calendar currentTime = Calendar.getInstance();
+
+    private Calendar calendar = Calendar.getInstance();
+    private int mYear = calendar.get(Calendar.YEAR);
+    private int mMonth = calendar.get(Calendar.MONTH);
+    private int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+    private long today;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,64 +61,7 @@ public class RemindersFragment extends Fragment {
 
 
         query = FirebaseDatabase.getInstance().getReference().child("MyEvents").child(myemail);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        myEvents.add(snapshot.getKey());
-
-                    }
-                    Calendar currentTime = Calendar.getInstance();
-                    Query q2 = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").orderByChild("dateTime").startAt(currentTime.getTimeInMillis());
-                    q2.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            mList.clear();
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    Event myEvent = snapshot.getValue(Event.class);
-                                    String key = snapshot.getKey();
-                                    if (myEvents.contains(key)) {
-                                        DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
-
-
-                                        mList.add(myEvent);
-                                        if (simple.format(myEvent.getDateTime()).equals(simple.format(currentTime.getTimeInMillis()))) {
-                                            pos = mList.indexOf(myEvent);
-
-                                        }
-                                        Functions.toast(simple.format(currentTime.getTimeInMillis()), mCtx);
-                                    }
-                                }
-                            }
-                            adapter.notifyDataSetChanged();
-                            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(mCtx) {
-                                @Override
-                                protected int getVerticalSnapPreference() {
-                                    return LinearSmoothScroller.SNAP_TO_START;
-                                }
-                            };
-                            smoothScroller.setTargetPosition(pos);
-                            layoutManager.startSmoothScroll(smoothScroller);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        query.addListenerForSingleValueEvent(q1ValueEventListener);
 
 
         return view;
@@ -134,6 +83,92 @@ public class RemindersFragment extends Fragment {
     private void FindIds(View view) {
         mRecycler = view.findViewById(R.id.event_recycler);
 
+    }
+
+    private ValueEventListener q1ValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    myEvents.add(snapshot.getKey());
+
+                }
+
+                currentTime.set(mYear, mMonth, mDay, 0, 0, 0);
+                today = currentTime.getTimeInMillis();
+
+                Query q2 = FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("CalendarEvents")
+                        .orderByChild("dateTime")
+                        .startAt(today);
+
+                q2.addListenerForSingleValueEvent(q2ValueEventListener);
+
+
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+    private ValueEventListener q2ValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            mList.clear();
+            if (dataSnapshot.exists()) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Event myEvent = snapshot.getValue(Event.class);
+
+                    String key = snapshot.getKey();
+
+                    if (myEvents.contains(key))
+                        mList.add(myEvent);
+
+                    Calendar calDate = Calendar.getInstance();
+                    calDate.setTimeInMillis(myEvent.getDateTime());
+                    calDate.set(
+                            calDate.get(Calendar.YEAR),
+                            calDate.get(Calendar.MONTH),
+                            calDate.get(Calendar.DATE),
+                            0,
+                            0,
+                            0);
+
+                    if (today == calDate.getTimeInMillis())
+                        pos = mList.indexOf(myEvent);
+
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+
+            RecyclerView.SmoothScroller smoothScroller = setSmoothScroller(mCtx);
+
+
+            smoothScroller.setTargetPosition(pos);
+            layoutManager.startSmoothScroll(smoothScroller);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+    private RecyclerView.SmoothScroller setSmoothScroller(Context mCtx) {
+        return new LinearSmoothScroller(mCtx) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
     }
 }
 
