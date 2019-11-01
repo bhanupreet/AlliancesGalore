@@ -107,8 +107,9 @@ public class ProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (getFragmentManager().getBackStackEntryCount() != 0)
+                if (getFragmentManager().getBackStackEntryCount() != 0) {
                     getFragmentManager().popBackStack();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -22,16 +22,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
-import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,6 +94,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mNotifyLayout.setOnClickListener(this);
         mLocationLayout.setOnClickListener(this);
 
+
         return view;
     }
 
@@ -141,7 +147,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 selectedlist.add(myProfile);
             }
             if (selectedlist.get(0).equals(myProfile)) {
-                UserProfile profile0 = selectedlist.get(selectedlist.size()-1);
+                UserProfile profile0 = selectedlist.get(selectedlist.size() - 1);
                 selectedlist.set(selectedlist.size() - 1, myProfile);
                 selectedlist.set(0, profile0);
 
@@ -276,6 +282,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             Calendar newTime = Calendar.getInstance();
             newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
             newTime.set(Calendar.MINUTE, minute);
+            newTime.set(Calendar.SECOND, 0);
             time = newTime.getTime();
             temptime = time;
             DateFormat simple = new SimpleDateFormat("hh:mm a");
@@ -379,6 +386,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             Calendar newTime = Calendar.getInstance();
             newTime.set(Calendar.HOUR_OF_DAY, 0);
             newTime.set(Calendar.MINUTE, 0);
+            newTime.set(Calendar.SECOND, 0);
             time = newTime.getTime();
         }
         Date datetime = combineDateTime(date, time);
@@ -397,7 +405,45 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("notify", mnotify);
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
-        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> Functions.toast("Data added", mCtx));
+//        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> Functions.toast("Data added", mCtx));
+
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra("beginTime", mDateTime);
+        intent.putExtra("allDay", mAllDaySwitch.isChecked());
+        intent.putExtra("rrule", "FREQ=YEARLY");
+        intent.putExtra("endTime", mDateTime);
+        intent.putExtra("title", mTitle.getText().toString());
+        startActivity(intent);
+
+        Event event = new Event()
+                .setSummary("Google I/O 2015")
+                .setLocation("800 Howard St., San Francisco, CA 94103")
+                .setDescription("A chance to hear more about Google's developer products.");
+
+        DateTime startDateTime = new DateTime(mDateTime);
+        EventDateTime start = new EventDateTime()
+                .setDateTime(startDateTime)
+                .setTimeZone("Asia/Kolkata");
+        event.setStart(start);
+
+        DateTime endDateTime = new DateTime(mDateTime);
+        EventDateTime end = new EventDateTime()
+                .setDateTime(endDateTime)
+                .setTimeZone("Asia/Kolkata");
+        event.setEnd(end);
+
+        String[] recurrence = new String[]{"RRULE:FREQ=DAILY;COUNT=2"};
+        event.setRecurrence(Arrays.asList(recurrence));
+
+        List<EventAttendee> attendees = new ArrayList<>();
+
+        for (UserProfile profile : selectedlist) {
+            attendees.add(new EventAttendee().setEmail(profile.getEmail()));
+        }
+
+        event.setAttendees(attendees);
+
 
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
@@ -418,7 +464,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child("EventParticipants")
                 .child(key);
 
-        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> Functions.toast("part1 updated", mCtx));
+//        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> Functions.toast("part1 updated", mCtx));
 
         HashMap<String, Object> myEvents = new HashMap<>();
         myEvents.put(key, true);
@@ -430,13 +476,13 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     .child("MyEvents")
                     .child(Functions.encodeUserEmail(profile.getEmail()));
 
-            myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
-                Functions.toast("Data updated successfully", mCtx);
-                Intent mainIntent = new Intent(getContext(), MainActivity.class);
-                startActivity(mainIntent);
-                getActivity().finish();
-
-            });
+//            myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
+//                Functions.toast("Data updated successfully", mCtx);
+//                Intent mainIntent = new Intent(getContext(), MainActivity.class);
+//                startActivity(mainIntent);
+//                getActivity().finish();
+//
+//            });
         }
     }
 }

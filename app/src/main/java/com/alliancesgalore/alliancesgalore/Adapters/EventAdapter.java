@@ -22,10 +22,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
-    public EventAdapter(Context mCtx, List<Event> mEventList) {
-
+    public EventAdapter(Context mCtx) {
         this.mCtx = mCtx;
-        this.mEventList = mEventList;
     }
 
     public void addItemClickListener(ItemClickListener listener) {
@@ -49,12 +47,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
         DateFormat dayformat = new SimpleDateFormat("EEEE");
+        DateFormat time = new SimpleDateFormat("hh:mm:ss a");
         final Event event = mEventList.get(position);
         holder.mEvent_title.setText(event.getTitle());
         holder.mEvent_date.setText(simple.format(event.getDateTime()));
         holder.mEvent_day.setText(dayformat.format(event.getDateTime()));
         holder.mEventDescription.setText(event.getDescription());
 
+        if (event.isAllDay()) {
+            holder.mAllDay.setText("All day");
+        } else
+            holder.mAllDay.setText(time.format(event.getDateTime()));
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
@@ -69,7 +72,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             }
         }
         //END
-
+//
         if (position == 0) {
             holder.top.setVisibility(View.GONE);
         } else {
@@ -98,4 +101,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     }
 
+    public void addAll(List<Event> newEvents) {
+        int initialSize = mEventList.size();
+        for (Event event : newEvents) {
+            if (!mEventList.contains(event)) {
+                mEventList.add(event);
+            }
+        }
+        notifyItemRangeInserted(initialSize, mEventList.size());
+    }
+
+    public long getLastItemDateTime() {
+        return mEventList.get(mEventList.size() - 1).getDateTime();
+    }
+
+    public void setData(List<Event> mList) {
+        this.mEventList.addAll(mList);
+    }
 }

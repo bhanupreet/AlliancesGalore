@@ -8,6 +8,7 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
+import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class AddPeopleFragment extends Fragment implements View.OnClickListener {
 
@@ -66,31 +68,31 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         shimmerRecycler = view.findViewById(R.id.addPeople_recyclershimmer);
         mSaveBtn = view.findViewById(R.id.addPeople_savebtn);
         if (selectedlist.isEmpty()) {
-            mSaveBtn.setVisibility(View.GONE);
+            mSaveBtn.setVisibility(View.INVISIBLE);
         } else
             mSaveBtn.setVisibility(View.VISIBLE);
         mSaveBtn.setOnClickListener(this);
-        shimmerRecycler.showShimmerAdapter();
+//        shimmerRecycler.showShimmerAdapter();
         setAdapter();
         Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         mList.add(snapshot.getValue(UserProfile.class));
 
+                    }
+
                     Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
+                    Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
+
                     for (UserProfile profile : selectedlist) {
                         int i = mList.indexOf(profile);
                         mList.get(i).setSelected(true);
 
                     }
-                    Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-                    Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
-
-                    mList.remove(Global.myProfile);
-
+                    mList.remove(myProfile);
                     adapter.notifyDataSetChanged();
                     shimmerRecycler.hideShimmerAdapter();
                     mAllList.addAll(mList);
@@ -112,16 +114,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
                 selectedlist.remove(profile);
             else
                 selectedlist.add(profile);
-            Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-            Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
-//            adapter.notifyItemChanged(i);
-//            adapter.notifyItemMoved(i, j);
-//            adapter.notifyItemChanged(i);
-
-//            adapter.notifyItemMoved(j, i);
-//            adapter.notifyItemChanged(j);
-            adapter.notifyDataSetChanged();
-//            mRecycler.smoothScrollToPosition(0);
+            adapter.notifyItemChanged(i);
             if (selectedlist.isEmpty())
                 mSaveBtn.setVisibility(View.GONE);
             else
@@ -139,6 +132,18 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         adapter = new UserProfileAdapter(mCtx, mList);
         mRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                selectedlist.clear();
+                Functions.toast("backbutton press", getContext());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -166,7 +171,8 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
                     mSearchList.clear();
                     for (UserProfile profile : mAllList)
                         if (!TextUtils.isEmpty(profile.getDisplay_name())
-                                && profile.getDisplay_name().toLowerCase().contains(newText.toLowerCase()) && !mSearchList.contains(profile))
+                                && profile.getDisplay_name().toLowerCase().contains(newText.toLowerCase())
+                                && !mSearchList.contains(profile))
                             mSearchList.add(profile);
 
                     mList.clear();

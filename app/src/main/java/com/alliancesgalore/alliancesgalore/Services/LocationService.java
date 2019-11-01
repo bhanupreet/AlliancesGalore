@@ -11,7 +11,6 @@ import android.os.IBinder;
 
 import androidx.core.content.ContextCompat;
 
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -85,7 +84,7 @@ public class LocationService extends Service {
             long cal = System.currentTimeMillis();
 
             if (location != null && cal > startTime.getTimeInMillis() && cal < endTime.getTimeInMillis()) {
-                Functions.toast("during work hours", getApplicationContext());
+//                Functions.toast("during work hours", getApplicationContext());
                 HashMap<String, Object> userMap = new HashMap<>();
                 userMap.put("Latitude", location.getLatitude());
                 userMap.put("Longitude", location.getLongitude());
@@ -96,7 +95,7 @@ public class LocationService extends Service {
 
 
             } else {
-                Functions.toast("not during work hours", getApplicationContext());
+//                Functions.toast("not during work hours", getApplicationContext());
                 stopSelf();
             }
         }
