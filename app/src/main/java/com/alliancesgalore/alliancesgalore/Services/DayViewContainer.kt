@@ -1,14 +1,24 @@
 package com.alliancesgalore.alliancesgalore.Services
 
-import android.view.View
-import android.widget.TextView
-import com.kizitonwose.calendarview.ui.ViewContainer
-import kotlinx.android.synthetic.main.calendar_day_layout.view.*
-import org.threeten.bp.LocalDate
-
-class DayViewContainer(view: View) : ViewContainer(view) {
-    private val selectedDates = mutableSetOf<LocalDate>()
-
-    val textView: TextView = view.calendarDayText
-
-}
+//class DayViewContainer(view: View) : ViewContainer(view) {
+//    private var selectedDate: LocalDate? = null
+//    lateinit var day: CalendarDay // Will be set when this container is bound.
+//    val textView = view.exFiveDayText
+//    val layout = view.exFiveDayLayout
+//    val flightTopView = view.exFiveDayFlightTop
+//    val flightBottomView = view.exFiveDayFlightBottom
+//
+//    init {
+//        view.setOnClickListener {
+//            if (day.owner == DayOwner.THIS_MONTH) {
+//                if (selectedDate != day.date) {
+//                    val oldDate = selectedDate
+//                    selectedDate = day.date
+//                    exFiveCalendar.notifyDateChanged(day.date)
+//                    oldDate?.let { exFiveCalendar.notifyDateChanged(it) }
+//                    updateAdapterForDate(day.date)
+//                }
+//            }
+//        }
+//    }
+//}

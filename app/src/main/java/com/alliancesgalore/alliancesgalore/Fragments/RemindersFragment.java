@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -28,15 +30,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
+import com.kizitonwose.calendarview.model.CalendarMonth;
 import com.kizitonwose.calendarview.model.DayOwner;
 import com.kizitonwose.calendarview.ui.DayBinder;
+import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder;
 import com.kizitonwose.calendarview.ui.ViewContainer;
 
 import org.jetbrains.annotations.NotNull;
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.Month;
 import org.threeten.bp.YearMonth;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,6 +51,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.Intrinsics;
 
 
 public class RemindersFragment extends Fragment {
@@ -70,9 +78,11 @@ public class RemindersFragment extends Fragment {
     private static int firstVisibleInListview;
     private boolean scrollup = true;
     private CheckedTextView mMonthSwitch;
-    private CalendarView calendarView;
+    private CalendarView exFiveCalendar;
     private TextView mTextview;
-    private LocalDate today1 = LocalDate.now();
+    private LocalDate selectedDate;
+    private DateTimeFormatter monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM");
+//    private LocalDate today1 = LocalDate.now();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,27 +102,85 @@ public class RemindersFragment extends Fragment {
             }
 
             @Override
-            public void bind(@NotNull DayViewContainer dayViewContainer, @NotNull CalendarDay calendarDay) {
-                dayViewContainer.textView.setText(Integer.toString(calendarDay.getDate().getDayOfMonth()));
+            public void bind(@NotNull DayViewContainer container, @NotNull CalendarDay day) {
+                {
+                    container.day = day;
+                    TextView textView = container.textView;
+                    ConstraintLayout layout = container.layout;
+                    textView.setText(Integer.toString(day.getDate().getDayOfMonth()));
+
+                    View flightTopView = container.flightTopView;
+                    View flightBottomView = container.flightBottomView;
+
+                    flightTopView.setBackground(null);
+                    flightBottomView.setBackground(null);
+
+
+                    textView.setOnClickListener(v -> Functions.toast("day selected" + day, mCtx));
+                    if (day.getOwner() == DayOwner.THIS_MONTH) {
+
+                        textView.setTextColor(getResources().getColor(R.color.example_5_text_grey));
+//
+                        if (selectedDate == day.getDate()) {
+                            layout.setBackground(getResources().getDrawable(R.drawable.example_5_selected_bg));
+                            Functions.toast(selectedDate.toString(), mCtx);
+
+                        }
+//                        layout.setBackgroundResource(
+//                                if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
+//                        List<Date> flights = new ArrayList<>()
+//                        flights flights[day.getDate()];
+//                        if (flights != null) {
+//                            if (flights.count() == 1) {
+//                                flightBottomView.setBackgroundColor(view.context.getColorCompat(flights[0].color))
+//                            } else {
+//                                flightTopView.setBackgroundColor(view.context.getColorCompat(flights[0].color))
+//                                flightBottomView.setBackgroundColor(view.context.getColorCompat(flights[1].color))
+//                            }
+//                        }
+                    } else {
+                        textView.setTextColor(getResources().getColor(R.color.example_5_text_grey_light));
+                        layout.setBackground(null);
+                    }
+                }
             }
         };
 
-        calendarView.setDayBinder(binder);
+        exFiveCalendar.setDayBinder(binder);
 
         DateFormat simple = new SimpleDateFormat("MMM");
 
-
         // figure out current month
-        YearMonth currentmonth = YearMonth.from(Month.NOVEMBER);
-        //
-        YearMonth startmonth = YearMonth.from(Month.JANUARY);
-        YearMonth endMonth = YearMonth.from(Month.DECEMBER);
+        YearMonth currentMonth = YearMonth.now();
+        exFiveCalendar.setup(
+                currentMonth.minusMonths(10),
+                currentMonth.plusMonths(10),
+                DayOfWeek.MONDAY
+        );
+        exFiveCalendar.scrollToMonth(currentMonth);
+        MonthHeaderFooterBinder<MonthViewContainer> header = new MonthHeaderFooterBinder<MonthViewContainer>() {
+            @NotNull
+            @Override
+            public MonthViewContainer create(@NotNull View view) {
+                return new MonthViewContainer(view);
+            }
+
+            @Override
+            public void bind(@NotNull MonthViewContainer container, @NotNull CalendarMonth month) {
+
+            }
+        };
+
+        exFiveCalendar.setMonthHeaderBinder(header);
 
 
-        calendarView.setup(startmonth, endMonth, DayOfWeek.MONDAY);
-        calendarView.smoothScrollToMonth(currentmonth);
+        Function1<CalendarMonth, Unit> monthScrollListener = month -> {
+            mMonthSwitch.setText(monthTitleFormatter.format(month.getYearMonth().getMonth()));
+            return Unit.INSTANCE;
+        };
 
 
+        exFiveCalendar.setMonthScrollListener(monthScrollListener);
 //        calendarView.setMonthHeaderBinder();
 
 
@@ -207,9 +275,10 @@ public class RemindersFragment extends Fragment {
     }
 
     private void FindIds(View view) {
-        mRecycler = view.findViewById(R.id.event_recycler);
-        calendarView = view.findViewById(R.id.calendarview);
+        mRecycler = view.findViewById(R.id.reminder_recycler);
+        exFiveCalendar = view.findViewById(R.id.exFiveCalendar);
         mTextview = view.findViewById(R.id.calendarDayText);
+        mMonthSwitch = view.findViewById(R.id.reminders_monthview_switch);
 
     }
 
@@ -312,25 +381,77 @@ public class RemindersFragment extends Fragment {
     };
 
 
-    public final class DayViewContainer extends ViewContainer {
+    final class DayViewContainer extends ViewContainer {
         @NotNull
-        public TextView textView;
-        CalendarDay day;
+        public CalendarDay day;
+        private final TextView textView;
+        private final ConstraintLayout layout;
+        private final View flightTopView;
+        private final View flightBottomView;
+
+        @NotNull
+        public final CalendarDay getDay() {
+
+            return this.day;
+        }
+
+        public final void setDay(@NotNull CalendarDay var1) {
+            Intrinsics.checkParameterIsNotNull(var1, "<set-?>");
+            this.day = var1;
+        }
+
+        public final TextView getTextView() {
+            return this.textView;
+        }
+
+        public final ConstraintLayout getLayout() {
+            return this.layout;
+        }
+
+        public final View getFlightTopView() {
+            return this.flightTopView;
+        }
+
+        public final View getFlightBottomView() {
+            return this.flightBottomView;
+        }
 
         public DayViewContainer(@NotNull View view) {
             super(view);
-            this.textView = view.findViewById(R.id.calendarDayText);
-            textView.setOnClickListener(view1 -> {
-                if (day.getOwner() == DayOwner.THIS_MONTH) {
-                    if (selectedDates.contains(day.getDate())) {
-                        selectedDates.remove(day.getDate());
-                    } else {
-                        selectedDates.add(day.getDate());
+            this.textView = view.findViewById(R.id.exFiveDayText);
+            this.layout = view.findViewById(R.id.exFiveDayLayout);
+            this.flightTopView = view.findViewById(R.id.exFiveDayFlightTop);
+            this.flightBottomView = view.findViewById(R.id.exFiveDayFlightBottom);
+            view.setOnClickListener(it -> {
+                if (DayViewContainer.this.getDay() != null
+                        && DayViewContainer.this.getDay().getOwner() == DayOwner.THIS_MONTH
+                        && !Intrinsics.areEqual(RemindersFragment.this.selectedDate, DayViewContainer.this.getDay().getDate())) {
+                    LocalDate oldDate = RemindersFragment.this.selectedDate;
+                    RemindersFragment.this.selectedDate = DayViewContainer.this.getDay().getDate();
+//                        exFiveCalendar.notifyDateChanged();
+                    exFiveCalendar.notifyDateChanged(day.getDate());
+
+                    if (oldDate != null) {
+                        exFiveCalendar.notifyDateChanged(oldDate);
                     }
+                    ///mRecycler scroll to position
+
                 }
+
             });
         }
+    }
 
+    private void updateAdapterForDate(LocalDate date) {
+    }
+
+    class MonthViewContainer extends ViewContainer {
+        public LinearLayout legendLayout;
+
+        public MonthViewContainer(@NotNull View view) {
+            super(view);
+            legendLayout = view.findViewById(R.id.legendLayout);
+        }
     }
 }
 
