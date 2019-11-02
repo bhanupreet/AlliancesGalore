@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -91,9 +93,27 @@ public class RemindersFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_test, container, false);
         FindIds(view);
         mCtx = getContext();
-//        setAdapter();
+        setAdapter();
+        selectedDate = LocalDate.now();
 
+        mMonthSwitch.setChecked(false);
+        DateFormat monthFormat = new SimpleDateFormat("MMMM");
+        mMonthSwitch.setText(monthFormat.format(System.currentTimeMillis()));
+        mMonthSwitch.setOnClickListener(v -> {
+            mMonthSwitch.setChecked(!mMonthSwitch.isChecked());
+            if (mMonthSwitch.isChecked()) {
+                mMonthSwitch.setCheckMarkDrawable(R.drawable.ic_arrow_drop_down);
+                Animation slide_up = AnimationUtils.loadAnimation(mCtx, R.anim.slide_up);
+                exFiveCalendar.startAnimation(slide_up);
+                exFiveCalendar.setVisibility(View.GONE);
 
+            } else {
+                mMonthSwitch.setCheckMarkDrawable(R.drawable.ic_arrow_drop_up);
+                Animation slide_down = AnimationUtils.loadAnimation(mCtx, R.anim.slide_down);
+                exFiveCalendar.startAnimation(slide_down);
+                exFiveCalendar.setVisibility(View.VISIBLE);
+            }
+        });
         DayBinder<DayViewContainer> binder = new DayBinder<DayViewContainer>() {
             @NotNull
             @Override
@@ -116,19 +136,42 @@ public class RemindersFragment extends Fragment {
                     flightBottomView.setBackground(null);
 
 
-                    textView.setOnClickListener(v -> Functions.toast("day selected" + day, mCtx));
+//                    textView.setOnClickListener(v -> Functions.toast("day selected" + day, mCtx));
                     if (day.getOwner() == DayOwner.THIS_MONTH) {
 
                         textView.setTextColor(getResources().getColor(R.color.example_5_text_grey));
 //
                         if (selectedDate == day.getDate()) {
                             layout.setBackground(getResources().getDrawable(R.drawable.example_5_selected_bg));
-                            Functions.toast(selectedDate.toString(), mCtx);
-
+                            Calendar date = Calendar.getInstance();
+                            date.set(selectedDate.getYear(), selectedDate.getMonthValue() - 1, selectedDate.getDayOfMonth(), 0, 0, 0);
+                            DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
+                            Functions.toast(simple.format(date.getTimeInMillis()), mCtx);
+                        } else {
+                            textView.setTextColor(getResources().getColor(R.color.example_5_text_grey_light));
+                            layout.setBackground(null);
                         }
 //                        layout.setBackgroundResource(
 //                                if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
 //                        List<Date> flights = new ArrayList<>()
+
+                        List<Event> events = new ArrayList<>(mList);
+
+                        Calendar date = Calendar.getInstance();
+                        date.set(day.getDate().getYear(), day.getDate().getMonthValue() - 1, day.getDate().getDayOfMonth(), 0, 0, 0);
+                        for (Event event : mList) {
+                            Calendar eventDay = Calendar.getInstance();
+                            eventDay.setTimeInMillis(event.getDateTime());
+                            eventDay.set(eventDay.get(Calendar.YEAR)
+                                    , eventDay.get(Calendar.MONTH)
+                                    , eventDay.get(Calendar.DAY_OF_MONTH)
+                                    , 0
+                                    , 0
+                                    , 0);
+                            if (eventDay == date) {
+                                flightTopView.setBackgroundColor(getResources().getColor(R.color.design_default_color_primary_dark));
+                            }
+                        }
 //                        flights flights[day.getDate()];
 //                        if (flights != null) {
 //                            if (flights.count() == 1) {
@@ -138,10 +181,8 @@ public class RemindersFragment extends Fragment {
 //                                flightBottomView.setBackgroundColor(view.context.getColorCompat(flights[1].color))
 //                            }
 //                        }
-                    } else {
-                        textView.setTextColor(getResources().getColor(R.color.example_5_text_grey_light));
-                        layout.setBackground(null);
                     }
+
                 }
             }
         };
@@ -188,7 +229,7 @@ public class RemindersFragment extends Fragment {
         mList.clear();
 
         query = FirebaseDatabase.getInstance().getReference().child("MyEvents").child(myemail);
-//        query.addListenerForSingleValueEvent(q1ValueEventListener);
+        query.addListenerForSingleValueEvent(q1ValueEventListener);
 
 
         return view;
@@ -383,7 +424,7 @@ public class RemindersFragment extends Fragment {
 
     final class DayViewContainer extends ViewContainer {
         @NotNull
-        public CalendarDay day;
+        public CalendarDay day = new CalendarDay(LocalDate.now(), DayOwner.THIS_MONTH);
         private final TextView textView;
         private final ConstraintLayout layout;
         private final View flightTopView;
@@ -396,7 +437,6 @@ public class RemindersFragment extends Fragment {
         }
 
         public final void setDay(@NotNull CalendarDay var1) {
-            Intrinsics.checkParameterIsNotNull(var1, "<set-?>");
             this.day = var1;
         }
 
@@ -422,15 +462,16 @@ public class RemindersFragment extends Fragment {
             this.layout = view.findViewById(R.id.exFiveDayLayout);
             this.flightTopView = view.findViewById(R.id.exFiveDayFlightTop);
             this.flightBottomView = view.findViewById(R.id.exFiveDayFlightBottom);
+            selectedDate = day.getDate();
+
             view.setOnClickListener(it -> {
-                if (DayViewContainer.this.getDay() != null
-                        && DayViewContainer.this.getDay().getOwner() == DayOwner.THIS_MONTH
+                if (day.getOwner() == DayOwner.THIS_MONTH
                         && !Intrinsics.areEqual(RemindersFragment.this.selectedDate, DayViewContainer.this.getDay().getDate())) {
                     LocalDate oldDate = RemindersFragment.this.selectedDate;
-                    RemindersFragment.this.selectedDate = DayViewContainer.this.getDay().getDate();
+                    selectedDate = day.getDate();
+//                    view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 //                        exFiveCalendar.notifyDateChanged();
                     exFiveCalendar.notifyDateChanged(day.getDate());
-
                     if (oldDate != null) {
                         exFiveCalendar.notifyDateChanged(oldDate);
                     }
