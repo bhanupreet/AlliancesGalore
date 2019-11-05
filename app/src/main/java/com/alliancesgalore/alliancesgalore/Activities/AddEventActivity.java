@@ -45,7 +45,7 @@ public class AddEventActivity extends AppCompatActivity {
         mToolBar = findViewById(R.id.addEvent_toolbar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Add Event");
+        getSupportActionBar().setTitle("Add CustomEvent");
     }
 
     @Override

@@ -1,15 +1,15 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class Alliancesgalore extends Application {
-
+    private static Context context;
 
     private DatabaseReference mUserDatabase;
 
@@ -21,7 +21,12 @@ public class Alliancesgalore extends Application {
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        AndroidThreeTen.init(this);
+        context = getApplicationContext();
+    }
+
+
+    public static Context getAppContext() {
+        return context;
     }
 }
 

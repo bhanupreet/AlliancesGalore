@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alliancesgalore.alliancesgalore.Models.Event;
+import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
 
 import java.text.DateFormat;
@@ -18,11 +18,12 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     private Context mCtx;
-    private List<Event> mEventList;
+    private List<CustomEvent> mCustomEventList;
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
-    public EventAdapter(Context mCtx) {
+    public EventAdapter(Context mCtx, List<CustomEvent> mCustomEventList) {
+        this.mCustomEventList = mCustomEventList;
         this.mCtx = mCtx;
     }
 
@@ -48,23 +49,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
         DateFormat dayformat = new SimpleDateFormat("EEEE");
         DateFormat time = new SimpleDateFormat("hh:mm:ss a");
-        final Event event = mEventList.get(position);
-        holder.mEvent_title.setText(event.getTitle());
-        holder.mEvent_date.setText(simple.format(event.getDateTime()));
-        holder.mEvent_day.setText(dayformat.format(event.getDateTime()));
-        holder.mEventDescription.setText(event.getDescription());
+        final CustomEvent customEvent = mCustomEventList.get(position);
+        holder.mEvent_title.setText(customEvent.getTitle());
+        holder.mEvent_date.setText(simple.format(customEvent.getDateTime()));
+        holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
+        holder.mEventDescription.setText(customEvent.getDescription());
 
-        if (event.isAllDay()) {
+        if (customEvent.isAllDay()) {
             holder.mAllDay.setText("All day");
         } else
-            holder.mAllDay.setText(time.format(event.getDateTime()));
+            holder.mAllDay.setText(time.format(customEvent.getDateTime()));
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
 
-            String date1 = simple.format(mEventList.get(position - 1).getDateTime());
-            String date2 = simple.format(mEventList.get(position).getDateTime());
+            String date1 = simple.format(mCustomEventList.get(position - 1).getDateTime());
+            String date2 = simple.format(mCustomEventList.get(position).getDateTime());
             if (date1.equals(date2)) {
                 holder.mEventDatelayout.setVisibility(View.GONE);
             } else {
@@ -97,25 +98,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mEventList.size();
+        return mCustomEventList.size();
 
     }
 
-    public void addAll(List<Event> newEvents) {
-        int initialSize = mEventList.size();
-        for (Event event : newEvents) {
-            if (!mEventList.contains(event)) {
-                mEventList.add(event);
+    public void addAll(List<CustomEvent> newCustomEvents) {
+        int initialSize = mCustomEventList.size();
+        for (CustomEvent customEvent : newCustomEvents) {
+            if (!mCustomEventList.contains(customEvent)) {
+                mCustomEventList.add(customEvent);
             }
         }
-        notifyItemRangeInserted(initialSize, mEventList.size());
+        notifyItemRangeInserted(initialSize, mCustomEventList.size());
     }
 
     public long getLastItemDateTime() {
-        return mEventList.get(mEventList.size() - 1).getDateTime();
+        return mCustomEventList.get(mCustomEventList.size() - 1).getDateTime();
     }
 
-    public void setData(List<Event> mList) {
-        this.mEventList.addAll(mList);
+    public void setData(List<CustomEvent> mList) {
+        this.mCustomEventList.addAll(mList);
     }
 }

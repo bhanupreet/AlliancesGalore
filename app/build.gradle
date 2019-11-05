@@ -12,6 +12,12 @@ android {
         multiDexEnabled true
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
     }
     buildTypes {
         release {
@@ -76,10 +82,8 @@ dependencies {
     implementation 'com.google.api-client:google-api-client:1.23.0'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
     implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
-    implementation 'com.github.kizitonwose:CalendarView:0.2.9'
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
-
+    compile 'com.github.sundeepk:compact-calendar-view:3.0.0'
 
 
 }

@@ -3,7 +3,7 @@ package com.alliancesgalore.alliancesgalore.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Event implements Parcelable {
+public class CustomEvent implements Parcelable {
 
     private String title;
     private boolean allDay;
@@ -14,13 +14,13 @@ public class Event implements Parcelable {
     private String location;
     private String createdBy;
 
-    public Event() {
+    public CustomEvent() {
     }
     //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
     //start time is time in milliseconds,
 
 
-    public Event(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy) {
+    public CustomEvent(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy) {
         this.title = title;
         this.allDay = allDay;
         this.dateTime = dateTime;
@@ -31,7 +31,7 @@ public class Event implements Parcelable {
         this.createdBy = createdBy;
     }
 
-    protected Event(Parcel in) {
+    protected CustomEvent(Parcel in) {
         title = in.readString();
         allDay = in.readByte() != 0;
         dateTime = in.readLong();
@@ -42,15 +42,15 @@ public class Event implements Parcelable {
         createdBy = in.readString();
     }
 
-    public static final Creator<Event> CREATOR = new Creator<Event>() {
+    public static final Creator<CustomEvent> CREATOR = new Creator<CustomEvent>() {
         @Override
-        public Event createFromParcel(Parcel in) {
-            return new Event(in);
+        public CustomEvent createFromParcel(Parcel in) {
+            return new CustomEvent(in);
         }
 
         @Override
-        public Event[] newArray(int size) {
-            return new Event[size];
+        public CustomEvent[] newArray(int size) {
+            return new CustomEvent[size];
         }
     };
 
