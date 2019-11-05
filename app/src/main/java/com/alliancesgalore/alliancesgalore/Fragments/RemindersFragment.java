@@ -178,9 +178,9 @@ public class RemindersFragment extends Fragment {
         mEndOfMonth.set(selectedMonth.get(Calendar.YEAR)
                 , selectedMonth.get(Calendar.MONTH) + 1
                 , 0
-                , 0
-                , 0
-                , 0);
+                , 23
+                , 59
+                , 59);
         return mEndOfMonth;
     }
 

@@ -14,11 +14,18 @@ import com.alliancesgalore.alliancesgalore.R;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     private Context mCtx;
     private List<CustomEvent> mCustomEventList;
+    private List<CustomEvent> mFinalList;
+
+    {
+        new CopyOnWriteArrayList<>();
+    }
+
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
@@ -74,11 +81,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         }
         //END
 //
-        if (position == 0) {
-            holder.top.setVisibility(View.GONE);
-        } else {
-            holder.top.setVisibility(View.VISIBLE);
-        }
+//        if (position == 0) {
+//            holder.top.setVisibility(View.GONE);
+//        } else {
+//            holder.top.setVisibility(View.VISIBLE);
+//        }
 
 
         holder.itemView.setOnLongClickListener(view -> {
@@ -119,4 +126,5 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     public void setData(List<CustomEvent> mList) {
         this.mCustomEventList.addAll(mList);
     }
+
 }
