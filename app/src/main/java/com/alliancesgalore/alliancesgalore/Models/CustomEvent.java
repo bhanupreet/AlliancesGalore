@@ -13,6 +13,27 @@ public class CustomEvent implements Parcelable {
     private int notify;
     private String location;
     private String createdBy;
+    private boolean repitionFlag = false;
+
+    public CustomEvent(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy, boolean repitionFlag) {
+        this.title = title;
+        this.allDay = allDay;
+        this.dateTime = dateTime;
+        this.repetition = repetition;
+        this.description = description;
+        this.notify = notify;
+        this.location = location;
+        this.createdBy = createdBy;
+        this.repitionFlag = repitionFlag;
+    }
+
+    public boolean isRepitionFlag() {
+        return repitionFlag;
+    }
+
+    public void setRepitionFlag(boolean repitionFlag) {
+        this.repitionFlag = repitionFlag;
+    }
 
     public CustomEvent() {
     }
@@ -31,7 +52,7 @@ public class CustomEvent implements Parcelable {
         this.createdBy = createdBy;
     }
 
-    protected CustomEvent(Parcel in) {
+    public CustomEvent(Parcel in) {
         title = in.readString();
         allDay = in.readByte() != 0;
         dateTime = in.readLong();
@@ -53,6 +74,17 @@ public class CustomEvent implements Parcelable {
             return new CustomEvent[size];
         }
     };
+
+    public CustomEvent(CustomEvent myCustomEvent) {
+        this.title = myCustomEvent.getTitle();
+        this.allDay = myCustomEvent.isAllDay();
+        this.dateTime = myCustomEvent.getDateTime();
+        this.repetition = myCustomEvent.getRepetition();
+        this.description = myCustomEvent.getDescription();
+        this.notify = myCustomEvent.getNotify();
+        this.location = myCustomEvent.getLocation();
+        this.createdBy = myCustomEvent.getCreatedBy();
+    }
 
     public String getTitle() {
         return title;

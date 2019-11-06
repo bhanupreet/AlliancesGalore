@@ -5,12 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
@@ -19,10 +20,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/event_date_layout"
-            android:layout_width="match_parent"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:background="@color/blue_800"
-            android:padding="5dp"
+            android:padding="3dp"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -32,9 +33,11 @@
                 android:id="@+id/event_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Monday"
+                android:gravity="center"
+                android:text="Wed"
                 android:textColor="#ffffff"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,9 +45,10 @@
                 android:id="@+id/event_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="24 October"
+                android:text="24 Oct"
                 android:textColor="#ffffff"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/event_day" />
 
@@ -52,11 +56,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="5dp"
+
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
@@ -64,45 +69,46 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:id="@+id/event_title"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:textColor="#ffffff"
-
+                android:gravity="center_vertical"
                 android:text="Event title"
+
+                android:textColor="#ffffff"
                 android:textSize="24sp"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/event_description"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:text="Event Description"
                 android:textColor="#ffffff"
 
                 android:textSize="22sp"
-                app:layout_constraintTop_toBottomOf="@id/event_title" />
+                app:layout_constraintStart_toStartOf="@+id/event_title"
+                app:layout_constraintTop_toBottomOf="@+id/event_title" />
 
             <TextView
                 android:id="@+id/event_allday"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:gravity="right"
                 android:text="All Day"
-                android:textColor="#ffffff"
 
+                android:textColor="#ffffff"
                 android:textSize="22sp"
-                app:layout_constraintTop_toBottomOf="@id/event_title" />
+                app:layout_constraintEnd_toEndOf="@+id/event_title"
+                app:layout_constraintTop_toBottomOf="@+id/event_title" />
 
             <View
                 android:layout_width="match_parent"

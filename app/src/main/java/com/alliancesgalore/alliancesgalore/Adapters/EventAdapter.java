@@ -62,6 +62,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
         holder.mEventDescription.setText(customEvent.getDescription());
 
+
+
         if (customEvent.isAllDay()) {
             holder.mAllDay.setText("All day");
         } else
@@ -78,6 +80,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             } else {
                 holder.mEventDatelayout.setVisibility(View.VISIBLE);
             }
+        }
+        if(position==0){
+            holder.mEventDatelayout.setVisibility(View.VISIBLE);
         }
         //END
 //
