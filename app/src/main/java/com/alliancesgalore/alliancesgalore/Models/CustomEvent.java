@@ -3,6 +3,8 @@ package com.alliancesgalore.alliancesgalore.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 public class CustomEvent implements Parcelable {
 
     private String title;
@@ -165,5 +167,17 @@ public class CustomEvent implements Parcelable {
         parcel.writeInt(notify);
         parcel.writeString(location);
         parcel.writeString(createdBy);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        CustomEvent o1 = (CustomEvent) obj;
+        return o1.getTitle().equals(this.getTitle()) && o1.getDateTime() == this.getDateTime();
     }
 }

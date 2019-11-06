@@ -117,31 +117,16 @@ public class RemindersFragment extends Fragment {
                 DateFormat simple = new SimpleDateFormat("MMMM");
                 mMonthSwitch.setText(simple.format(firstDayOfNewMonth));
                 exFiveCalendar.removeAllEvents();
+                mList.clear();
+                temp.clear();
                 loadData(mStartOfMonth, mEndOfMonth);
-                loadRepeatingData(mStartOfMonth);
+//                loadRepeatingData(mStartOfMonth);
+
 
             }
         });
 
         return view;
-    }
-
-    private void loadRepeatingData(Calendar mStartOfMonth) {
-        for (CustomEvent event : mRepeatList) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(event.getDateTime());
-            cal.set(cal.get(Calendar.YEAR)
-                    , mStartOfMonth.get(Calendar.MONTH)
-                    , cal.get(Calendar.DAY_OF_MONTH)
-                    , cal.get(Calendar.HOUR_OF_DAY)
-                    , cal.get(Calendar.MINUTE)
-                    , 0);
-
-            CustomEvent newEvent = new CustomEvent(event);
-            newEvent.setDateTime(cal.getTimeInMillis());
-            if (!mList.contains(newEvent))
-                mList.add(newEvent);
-        }
     }
 
 
@@ -180,6 +165,9 @@ public class RemindersFragment extends Fragment {
                 }
                 currentTime.setTimeInMillis(System.currentTimeMillis());
 
+                mList.clear();
+                temp.clear();
+                mRepeatList.clear();
                 Calendar mStartOfMonth = setStartOfMonth(currentTime);
                 Calendar mEndOfMonth = setEndOfMonth(currentTime);
                 loadData(mStartOfMonth, mEndOfMonth);
@@ -262,47 +250,51 @@ public class RemindersFragment extends Fragment {
         q2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 exFiveCalendar.removeAllEvents();
+                mList.clear();
+                mEventsList.clear();
+                temp.clear();
+
+
                 if (dataSnapshot.exists()) {
-                    mList.clear();
-                    mEventsList.clear();
                     mRecycler.setVisibility(View.VISIBLE);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
-                        if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
+                        if (myEvents.contains(key) && !mList.contains(myCustomEvent))
                             mList.add(myCustomEvent);
-
-//                        myEvents.remove(key);
-//                        adapter.notifyItemInserted(mList.size() - 1);
-                        }
-
                     }
-
-
-                } else
-                    mRecycler.setVisibility(View.GONE);
+                }
+//                for (CustomEvent customEvent : mRepeatList) {
+//                    if (!mList.contains(customEvent) && customEvent.getDateTime() > mStartOfMonth.getTimeInMillis() && customEvent.getDateTime() < mEndOfMonth.getTimeInMillis()) {
+//                        mList.add(customEvent);
+//                    }
+//                }
 
                 temp.clear();
-                mList.addAll(mRepeatList);
-                for (CustomEvent event : mList) {
+                for (CustomEvent event : mRepeatList) {
                     if (event.getRepetition() == 1 && !event.isRepitionFlag()) {
                         setEvents(event, 1, mEndOfMonth);
                     } else if (event.getRepetition() == 2 && !event.isRepitionFlag()) {
                         setEvents(event, 7, mEndOfMonth);
                     } else if (event.getRepetition() == 3) {
-                        setMonthlyEvents(event, mStartOfMonth);
+                        setEvents(event, mEndOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH), mEndOfMonth);
                     }
                 }
 
-                mList.addAll(temp);
+                for (CustomEvent event : temp) {
+                    if (!mList.contains(event) && event.getDateTime() > mStartOfMonth.getTimeInMillis()) {
+                        mList.add(event);
+                    }
+                }
+
                 Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
                 for (CustomEvent myCustomEvent : mList) {
                     Event event = new Event(Color.GREEN, myCustomEvent.getDateTime(), myCustomEvent.getTitle());
                     if (!mEventsList.contains(event))
                         mEventsList.add(event);
                 }
+                Functions.toast(Integer.toString(mList.size()), mCtx);
                 exFiveCalendar.addEvents(mEventsList);
                 adapter.notifyDataSetChanged();
             }
@@ -323,10 +315,9 @@ public class RemindersFragment extends Fragment {
             mEndOfMonth.set(Calendar.DAY_OF_MONTH, mEndOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
             while (nextday.getTimeInMillis() < mEndOfMonth.getTimeInMillis()) {
                 CustomEvent event1 = new CustomEvent(event);
-                event1.setRepitionFlag(true);
                 nextday.add(Calendar.MONTH, 1);
                 event.setDateTime(nextday.getTimeInMillis());
-                if (!temp.contains(event1))
+                if (!temp.contains(event1) && !mList.contains(event1))
                     temp.add(event1);
             }
         }
@@ -334,7 +325,6 @@ public class RemindersFragment extends Fragment {
 
     private void setEvents(CustomEvent event, int i, Calendar mEndOfMonth) {
         event.setRepitionFlag(true);
-
         Calendar nextday = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(event.getDateTime());
@@ -344,7 +334,8 @@ public class RemindersFragment extends Fragment {
             event1.setRepitionFlag(true);
             nextday.add(Calendar.DATE, i);
             event.setDateTime(nextday.getTimeInMillis());
-            temp.add(event1);
+            if (!temp.contains(event1) && !mList.contains(event1))
+                temp.add(event1);
             Event event2 = new Event(Color.GREEN, event.getDateTime(), event.getTitle());
             if (!mEventsList.contains(event2))
                 mEventsList.add(event2);
