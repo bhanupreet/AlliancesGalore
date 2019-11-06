@@ -11,7 +11,6 @@ import android.widget.CheckedTextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.Adapters.EventAdapter;
@@ -119,6 +118,7 @@ public class RemindersFragment extends Fragment {
                 exFiveCalendar.removeAllEvents();
                 mList.clear();
                 temp.clear();
+                mRecycler.setVisibility(View.GONE);
                 loadData(mStartOfMonth, mEndOfMonth);
 //                loadRepeatingData(mStartOfMonth);
 
@@ -126,6 +126,18 @@ public class RemindersFragment extends Fragment {
             }
         });
 
+
+        mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int i = (layoutManager.findFirstCompletelyVisibleItemPosition() + layoutManager.findFirstCompletelyVisibleItemPosition()) / 2;
+                if (i != -1) {
+                    Date date = new Date(mList.get(i).getDateTime());
+                    exFiveCalendar.setCurrentDate(date);
+                }
+            }
+        });
         return view;
     }
 
@@ -138,7 +150,6 @@ public class RemindersFragment extends Fragment {
         mRecycler.setAdapter(adapter);
 //        RecyclerView.ItemDecoration dividerItemDecoration = new DividerItemDecorator_Event(getContext());
 //        mRecycler.addItemDecoration(dividerItemDecoration);
-        firstVisibleInListview = layoutManager.findFirstVisibleItemPosition();
         adapter.addItemClickListener(position -> {
             DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm:ss a");
             Functions.toast(simple.format(mList.get(position).getDateTime()), mCtx);
@@ -185,8 +196,8 @@ public class RemindersFragment extends Fragment {
     private Calendar setEndOfMonth(Calendar selectedMonth) {
         Calendar mEndOfMonth = Calendar.getInstance();
         mEndOfMonth.set(selectedMonth.get(Calendar.YEAR)
-                , selectedMonth.get(Calendar.MONTH) + 1
-                , 0
+                , selectedMonth.get(Calendar.MONTH)
+                , selectedMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
                 , 23
                 , 59
                 , 59);
@@ -205,29 +216,6 @@ public class RemindersFragment extends Fragment {
 
     }
 
-    private ValueEventListener q3Listener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            mRepeatList.clear();
-            if (dataSnapshot.exists()) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
-                    String key = snapshot.getKey();
-                    if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent)) {
-                        mRepeatList.add(myCustomEvent);
-//                        myEvents.remove(key);
-//                        adapter.notifyItemInserted(mList.size() - 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-
-    };
 
     private void loadData(Calendar mStartOfMonth, Calendar mEndOfMonth) {
 
@@ -238,119 +226,128 @@ public class RemindersFragment extends Fragment {
                 .child("CalendarEvents")
                 .orderByChild("repetition")
                 .startAt(1);
-        q3.addListenerForSingleValueEvent(q3Listener);
-
-        Query q2 = FirebaseDatabase
-                .getInstance()
-                .getReference()
-                .child("CalendarEvents")
-                .orderByChild("dateTime")
-                .startAt(mStartOfMonth.getTimeInMillis())
-                .endAt(mEndOfMonth.getTimeInMillis());
-        q2.addValueEventListener(new ValueEventListener() {
+        q3.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                exFiveCalendar.removeAllEvents();
-                mList.clear();
-                mEventsList.clear();
-                temp.clear();
-
-
+                mRepeatList.clear();
                 if (dataSnapshot.exists()) {
-                    mRecycler.setVisibility(View.VISIBLE);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
-                        if (myEvents.contains(key) && !mList.contains(myCustomEvent))
-                            mList.add(myCustomEvent);
+                        if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent))
+                            mRepeatList.add(myCustomEvent);
+//                        myEvents.remove(key);
+//                        adapter.notifyItemInserted(mList.size() - 1);
                     }
-                }
-//                for (CustomEvent customEvent : mRepeatList) {
-//                    if (!mList.contains(customEvent) && customEvent.getDateTime() > mStartOfMonth.getTimeInMillis() && customEvent.getDateTime() < mEndOfMonth.getTimeInMillis()) {
-//                        mList.add(customEvent);
-//                    }
-//                }
+                    Query q2 = FirebaseDatabase
+                            .getInstance()
+                            .getReference()
+                            .child("CalendarEvents")
+                            .orderByChild("dateTime")
+                            .startAt(mStartOfMonth.getTimeInMillis())
+                            .endAt(mEndOfMonth.getTimeInMillis());
+                    q2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                temp.clear();
-                for (CustomEvent event : mRepeatList) {
-                    if (event.getRepetition() == 1 && !event.isRepitionFlag()) {
-                        setEvents(event, 1, mEndOfMonth);
-                    } else if (event.getRepetition() == 2 && !event.isRepitionFlag()) {
-                        setEvents(event, 7, mEndOfMonth);
-                    } else if (event.getRepetition() == 3) {
-                        setEvents(event, mEndOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH), mEndOfMonth);
-                    }
-                }
+                            exFiveCalendar.removeAllEvents();
+                            mList.clear();
+                            mEventsList.clear();
+                            temp.clear();
 
-                for (CustomEvent event : temp) {
-                    if (!mList.contains(event) && event.getDateTime() > mStartOfMonth.getTimeInMillis()) {
-                        mList.add(event);
-                    }
-                }
 
-                Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
-                for (CustomEvent myCustomEvent : mList) {
-                    Event event = new Event(Color.GREEN, myCustomEvent.getDateTime(), myCustomEvent.getTitle());
-                    if (!mEventsList.contains(event))
-                        mEventsList.add(event);
+                            for (CustomEvent customEvent : mRepeatList) {
+                                if (!mList.contains(customEvent)) {
+                                    mList.add(customEvent);
+                                }
+                            }
+
+                            temp.clear();
+                            for (CustomEvent event : mList) {
+                                if (event.getRepetition() == 1 && !event.isRepitionFlag()) {
+                                    setEvents(event, 1, mEndOfMonth, false);
+                                } else if (event.getRepetition() == 2 && !event.isRepitionFlag()) {
+                                    setEvents(event, 7, mEndOfMonth, false);
+                                } else if (event.getRepetition() == 3) {
+                                    setEvents(event, 1, mEndOfMonth, true);
+                                }
+                            }
+
+                            mList.clear();
+                            for (CustomEvent event : temp) {
+                                if (!mList.contains(event)
+                                        && event.getDateTime() > mStartOfMonth.getTimeInMillis()
+                                        && event.getDateTime() < mEndOfMonth.getTimeInMillis()) {
+                                    mList.add(event);
+
+                                }
+                            }
+
+                            if (dataSnapshot.exists()) {
+                                mRecycler.setVisibility(View.VISIBLE);
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
+                                    String key = snapshot.getKey();
+                                    if (myEvents.contains(key) && !mList.contains(myCustomEvent))
+                                        mList.add(myCustomEvent);
+                                }
+                            }
+                            Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
+                            for (CustomEvent myCustomEvent : mList) {
+                                Event event = new Event(Color.GREEN, myCustomEvent.getDateTime(), myCustomEvent.getTitle());
+                                if (!mEventsList.contains(event))
+                                    mEventsList.add(event);
+                            }
+//                Functions.toast(Integer.toString(mList.size()), mCtx);
+                            exFiveCalendar.addEvents(mEventsList);
+                            adapter.notifyDataSetChanged();
+                            if (mList.isEmpty()) {
+                                mRecycler.setVisibility(View.GONE);
+                            } else
+                                mRecycler.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
-                Functions.toast(Integer.toString(mList.size()), mCtx);
-                exFiveCalendar.addEvents(mEventsList);
-                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
         });
+
+
     }
 
-    private void setMonthlyEvents(CustomEvent event, Calendar mEndOfMonth) {
-        {
-            Calendar nextday = Calendar.getInstance();
-            Calendar today = Calendar.getInstance();
-            today.setTimeInMillis(event.getDateTime());
-            nextday.setTimeInMillis(event.getDateTime());
-            mEndOfMonth.set(Calendar.DAY_OF_MONTH, mEndOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
-            while (nextday.getTimeInMillis() < mEndOfMonth.getTimeInMillis()) {
-                CustomEvent event1 = new CustomEvent(event);
-                nextday.add(Calendar.MONTH, 1);
-                event.setDateTime(nextday.getTimeInMillis());
-                if (!temp.contains(event1) && !mList.contains(event1))
-                    temp.add(event1);
-            }
-        }
-    }
-
-    private void setEvents(CustomEvent event, int i, Calendar mEndOfMonth) {
+    private void setEvents(CustomEvent event, int i, Calendar mEndOfMonth, boolean ismonth) {
         event.setRepitionFlag(true);
         Calendar nextday = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(event.getDateTime());
         nextday.setTimeInMillis(event.getDateTime());
-        while (nextday.getTimeInMillis() < mEndOfMonth.getTimeInMillis()) {
+        while (nextday.getTimeInMillis() <= mEndOfMonth.getTimeInMillis()) {
             CustomEvent event1 = new CustomEvent(event);
             event1.setRepitionFlag(true);
-            nextday.add(Calendar.DATE, i);
-            event.setDateTime(nextday.getTimeInMillis());
+            if (ismonth) {
+                nextday.add(Calendar.MONTH, i);
+            } else
+                nextday.add(Calendar.DATE, i);
+
+            event1.setDateTime(nextday.getTimeInMillis());
             if (!temp.contains(event1) && !mList.contains(event1))
                 temp.add(event1);
-            Event event2 = new Event(Color.GREEN, event.getDateTime(), event.getTitle());
+
+            Event event2 = new Event(Color.GREEN, event1.getDateTime(), event1.getTitle());
             if (!mEventsList.contains(event2))
                 mEventsList.add(event2);
 
         }
-    }
-
-
-    private RecyclerView.SmoothScroller setSmoothScroller(Context mCtx) {
-        return new LinearSmoothScroller(mCtx) {
-            @Override
-            protected int getVerticalSnapPreference() {
-                return LinearSmoothScroller.SNAP_TO_START;
-            }
-        };
     }
 
 

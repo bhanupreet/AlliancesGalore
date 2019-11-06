@@ -46,14 +46,6 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         return holder;
     }
 
-    public void onMove(RecyclerView recyclerView, int firstPos, int secondPos) {
-        /*Do your stuff what you want
-          Notify your adapter about change in positions using notifyItemMoved method
-          Shift element e.g. insertion sort*/
-        swap(secondPos, firstPos);
-        notifyDataSetChanged();
-    }
-
     @Override
     public void onBindViewHolder(@NonNull UserProfileViewHolder holder, int position) {
         final UserProfile userProfile = mUsersList.get(position);

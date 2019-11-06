@@ -53,15 +53,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
-        DateFormat dayformat = new SimpleDateFormat("EEEE");
+        DateFormat simple = new SimpleDateFormat("dd MMM");
+        DateFormat dayformat = new SimpleDateFormat("EEE");
         DateFormat time = new SimpleDateFormat("hh:mm:ss a");
         final CustomEvent customEvent = mCustomEventList.get(position);
         holder.mEvent_title.setText(customEvent.getTitle());
         holder.mEvent_date.setText(simple.format(customEvent.getDateTime()));
         holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
         holder.mEventDescription.setText(customEvent.getDescription());
-
 
 
         if (customEvent.isAllDay()) {
@@ -76,12 +75,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             String date1 = simple.format(mCustomEventList.get(position - 1).getDateTime());
             String date2 = simple.format(mCustomEventList.get(position).getDateTime());
             if (date1.equals(date2)) {
-                holder.mEventDatelayout.setVisibility(View.GONE);
+
+                holder.mEventDatelayout.setVisibility(View.INVISIBLE);
             } else {
                 holder.mEventDatelayout.setVisibility(View.VISIBLE);
             }
         }
-        if(position==0){
+        if (position == 0) {
             holder.mEventDatelayout.setVisibility(View.VISIBLE);
         }
         //END
@@ -113,23 +113,4 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         return mCustomEventList.size();
 
     }
-
-    public void addAll(List<CustomEvent> newCustomEvents) {
-        int initialSize = mCustomEventList.size();
-        for (CustomEvent customEvent : newCustomEvents) {
-            if (!mCustomEventList.contains(customEvent)) {
-                mCustomEventList.add(customEvent);
-            }
-        }
-        notifyItemRangeInserted(initialSize, mCustomEventList.size());
-    }
-
-    public long getLastItemDateTime() {
-        return mCustomEventList.get(mCustomEventList.size() - 1).getDateTime();
-    }
-
-    public void setData(List<CustomEvent> mList) {
-        this.mCustomEventList.addAll(mList);
-    }
-
 }

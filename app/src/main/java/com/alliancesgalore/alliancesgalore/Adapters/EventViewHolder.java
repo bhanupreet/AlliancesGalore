@@ -4,14 +4,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.R;
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
 
-    ConstraintLayout mEventDatelayout;
+    View mEventDatelayout;
     TextView mEvent_date;
     TextView mEvent_day, mEvent_title, mEventDescription, mAllDay;
 //    View top;
