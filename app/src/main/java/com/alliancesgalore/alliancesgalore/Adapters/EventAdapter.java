@@ -14,18 +14,11 @@ import com.alliancesgalore.alliancesgalore.R;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
 
     private Context mCtx;
     private List<CustomEvent> mCustomEventList;
-    private List<CustomEvent> mFinalList;
-
-    {
-        new CopyOnWriteArrayList<>();
-    }
-
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
 
@@ -46,9 +39,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.custom_event_layout, parent, false);
-        EventViewHolder holder = new EventViewHolder(view);
-
-        return holder;
+        return new EventViewHolder(view);
     }
 
     @Override
@@ -62,49 +53,35 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
         holder.mEventDescription.setText(customEvent.getDescription());
 
-
-        if (customEvent.isAllDay()) {
+        if (customEvent.isAllDay())
             holder.mAllDay.setText("All day");
-        } else
+        else
             holder.mAllDay.setText(time.format(customEvent.getDateTime()));
+
         //IT WORKS DON'T TOUCH IT
         //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
-
             String date1 = simple.format(mCustomEventList.get(position - 1).getDateTime());
             String date2 = simple.format(mCustomEventList.get(position).getDateTime());
-            if (date1.equals(date2)) {
-
+            if (date1.equals(date2))
                 holder.mEventDatelayout.setVisibility(View.INVISIBLE);
-            } else {
+            else
                 holder.mEventDatelayout.setVisibility(View.VISIBLE);
-            }
         }
-        if (position == 0) {
-            holder.mEventDatelayout.setVisibility(View.VISIBLE);
-        }
-        //END
-//
-//        if (position == 0) {
-//            holder.top.setVisibility(View.GONE);
-//        } else {
-//            holder.top.setVisibility(View.VISIBLE);
-//        }
 
+        if (position == 0)
+            holder.mEventDatelayout.setVisibility(View.VISIBLE);
 
         holder.itemView.setOnLongClickListener(view -> {
-            if (mItemLongClickListener != null) {
+            if (mItemLongClickListener != null)
                 mItemLongClickListener.onItemLongClick(position);
-            }
-
             return false;
         });
 
         holder.itemView.setOnClickListener(view1 -> {
-            if (mItemClickListener != null) {
+            if (mItemClickListener != null)
                 mItemClickListener.onItemClick(position);
-            }
         });
     }
 
