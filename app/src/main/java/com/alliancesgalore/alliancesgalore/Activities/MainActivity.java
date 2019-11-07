@@ -40,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +53,16 @@ public class MainActivity extends AppCompatActivity {
     public CRMfragment crmFragment;
     public FloatingActionButton fab;
     protected OnBackPressedListener onBackPressedListener;
+
+    public static List<UserProfile> getmList() {
+        return mList;
+    }
+
+    public static void setmList(List<UserProfile> mList) {
+        MainActivity.mList = mList;
+    }
+
+    private static List<UserProfile> mList;
 
     public interface OnBackPressedListener {
         void doBack();

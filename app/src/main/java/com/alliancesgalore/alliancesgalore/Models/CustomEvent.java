@@ -16,45 +16,13 @@ public class CustomEvent implements Parcelable {
     private String location;
     private String createdBy;
     private boolean repitionFlag = false;
+    private int color = 0x0000FF00;
+    private String uid;
 
-    public CustomEvent(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy, boolean repitionFlag) {
-        this.title = title;
-        this.allDay = allDay;
-        this.dateTime = dateTime;
-        this.repetition = repetition;
-        this.description = description;
-        this.notify = notify;
-        this.location = location;
-        this.createdBy = createdBy;
-        this.repitionFlag = repitionFlag;
+    CustomEvent() {
     }
 
-    public boolean isRepitionFlag() {
-        return repitionFlag;
-    }
-
-    public void setRepitionFlag(boolean repitionFlag) {
-        this.repitionFlag = repitionFlag;
-    }
-
-    public CustomEvent() {
-    }
-    //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
-    //start time is time in milliseconds,
-
-
-    public CustomEvent(String title, boolean allDay, long dateTime, int repetition, String description, int notify, String location, String createdBy) {
-        this.title = title;
-        this.allDay = allDay;
-        this.dateTime = dateTime;
-        this.repetition = repetition;
-        this.description = description;
-        this.notify = notify;
-        this.location = location;
-        this.createdBy = createdBy;
-    }
-
-    public CustomEvent(Parcel in) {
+    protected CustomEvent(Parcel in) {
         title = in.readString();
         allDay = in.readByte() != 0;
         dateTime = in.readLong();
@@ -63,6 +31,9 @@ public class CustomEvent implements Parcelable {
         notify = in.readInt();
         location = in.readString();
         createdBy = in.readString();
+        repitionFlag = in.readByte() != 0;
+        color = in.readInt();
+        uid = in.readString();
     }
 
     public static final Creator<CustomEvent> CREATOR = new Creator<CustomEvent>() {
@@ -77,6 +48,34 @@ public class CustomEvent implements Parcelable {
         }
     };
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+
+    public boolean isRepitionFlag() {
+        return repitionFlag;
+    }
+
+    public void setRepitionFlag(boolean repitionFlag) {
+        this.repitionFlag = repitionFlag;
+    }
+
+    //Repetiton can have 3 values: 1 = everyday, 2 = every week, every month;
+    //start time is time in milliseconds,
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public CustomEvent(CustomEvent myCustomEvent) {
         this.title = myCustomEvent.getTitle();
         this.allDay = myCustomEvent.isAllDay();
@@ -86,6 +85,8 @@ public class CustomEvent implements Parcelable {
         this.notify = myCustomEvent.getNotify();
         this.location = myCustomEvent.getLocation();
         this.createdBy = myCustomEvent.getCreatedBy();
+        this.color = myCustomEvent.getColor();
+        this.uid = myCustomEvent.getUid();
     }
 
     public String getTitle() {
@@ -152,6 +153,19 @@ public class CustomEvent implements Parcelable {
         this.createdBy = createdBy;
     }
 
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        CustomEvent o1 = (CustomEvent) obj;
+        return o1.getTitle().equals(this.getTitle()) && o1.getDateTime() == this.getDateTime();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -167,17 +181,8 @@ public class CustomEvent implements Parcelable {
         parcel.writeInt(notify);
         parcel.writeString(location);
         parcel.writeString(createdBy);
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        CustomEvent o1 = (CustomEvent) obj;
-        return o1.getTitle().equals(this.getTitle()) && o1.getDateTime() == this.getDateTime();
+        parcel.writeByte((byte) (repitionFlag ? 1 : 0));
+        parcel.writeInt(color);
+        parcel.writeString(uid);
     }
 }

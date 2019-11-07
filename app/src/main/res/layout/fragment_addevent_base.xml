@@ -311,5 +311,46 @@
         android:background="#696969"
         app:layout_constraintTop_toBottomOf="@id/addEvent_Location_layout" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addEvent_color_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:transitionName="addDescLocAnimation"
+
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_view5">
+
+        <View
+            android:id="@+id/addEvent_color_img"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="10dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/addEvent_color_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addEvent_color_text" />
+
+        <TextView
+            android:id="@+id/addEvent_color_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Colour"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/addEvent_color_img"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/addEvent_view6"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="#696969"
+        app:layout_constraintTop_toBottomOf="@id/addEvent_Location_layout" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,11 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 
+import com.alliancesgalore.alliancesgalore.Activities.EventActivity;
 import com.alliancesgalore.alliancesgalore.Adapters.EventAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.SnappingLinearLayoutManager;
 import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Services.AlarmReceiver;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -37,6 +42,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.alliancesgalore.alliancesgalore.Activities.MainActivity.getmList;
+
 
 public class RemindersFragment extends Fragment implements CompactCalendarView.CompactCalendarViewListener {
     private EventAdapter adapter;
@@ -50,6 +57,9 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private CompactCalendarView exFiveCalendar;
     private CheckedTextView mMonthSwitch;
     private List<Event> mEventsList = new ArrayList<>();
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +72,18 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         setQuery();
         setCalendar();
         setmRecycler();
+
+
+        alarmMgr = (AlarmManager) mCtx.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mCtx, AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(mCtx, 0, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.MINUTE, 25);
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
 
         return view;
     }
@@ -123,8 +145,11 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mRecycler.setLayoutManager(layoutManager);
         mRecycler.setAdapter(adapter);
         adapter.addItemClickListener(position -> {
-            DateFormat simple = new SimpleDateFormat("dd MMM yyyy hh:mm:ss a");
-            Functions.toast(simple.format(mList.get(position).getDateTime()), mCtx);
+            Intent EventIntent = new Intent(getContext(), EventActivity.class);
+            EventIntent.putExtra("object", mList.get(position));
+            Functions.toast(String.valueOf(getmList().size()), mCtx);
+            EventIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) getmList());
+            startActivity(EventIntent);
         });
     }
 
@@ -198,7 +223,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             if (!temp.contains(event1) && !mList.contains(event1))
                 temp.add(event1);
 
-            Event event2 = new Event(Color.GREEN, event1.getDateTime(), event1.getTitle());
+            Event event2 = new Event(event1.getColor(), event1.getDateTime(), event1.getTitle());
             if (!mEventsList.contains(event2))
                 mEventsList.add(event2);
 
@@ -211,6 +236,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         for (CustomEvent event : mList) {
             if (simple.format(event.getDateTime()).equals(simple.format(dateClicked))) {
                 mRecycler.smoothScrollToPosition(mList.indexOf(event));
+                Functions.toast(String.valueOf(getmList().size()), mCtx);
                 return;
             }
         }
@@ -315,7 +341,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                             //sorting the list and putting dots on to the calendar
                             Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
                             for (CustomEvent myCustomEvent : mList) {
-                                Event event = new Event(Color.GREEN, myCustomEvent.getDateTime(), myCustomEvent.getTitle());
+                                Event event = new Event(myCustomEvent.getColor(), myCustomEvent.getDateTime(), myCustomEvent.getTitle());
                                 if (!mEventsList.contains(event))
                                     mEventsList.add(event);
                             }

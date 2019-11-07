@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         holder.mEvent_date.setText(simple.format(customEvent.getDateTime()));
         holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
         holder.mEventDescription.setText(customEvent.getDescription());
+        if (holder.mEventColor == null)
+            holder.mEventColor.setBackgroundColor(Color.GREEN);
+        else
+            holder.mEventColor.setBackgroundColor(customEvent.getColor());
 
         if (customEvent.isAllDay())
             holder.mAllDay.setText("All day");

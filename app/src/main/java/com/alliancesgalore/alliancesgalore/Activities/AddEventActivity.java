@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -19,9 +20,22 @@ public class AddEventActivity extends AppCompatActivity {
     public static List<UserProfile> selectedlist = new ArrayList<>();
 
     private Toolbar mToolBar;
-    private static String mDescription = "", mLocation = "", mTitle = "";
+    private static String mDescription = "";
+    private static String mLocation = "";
+    private static String mTitle = "";
+
+
+    private static int color = Color.GREEN;
     private static long mDate, mTime;
     private static boolean mAlldaySwitch;
+
+    public static int getColor() {
+        return color;
+    }
+
+    public static void setColor(int color) {
+        AddEventActivity.color = color;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +149,7 @@ public class AddEventActivity extends AppCompatActivity {
             setLocation("");
             setDescription("");
             selectedlist.clear();
+            setColor(0);
 
         } catch (Exception e) {
             e.printStackTrace();

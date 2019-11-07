@@ -39,12 +39,14 @@
             android:layout_height="250dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            app:compactCalendarBackgroundColor="@color/colorPrimary"
+            app:compactCalendarBackgroundColor="#ffffff"
             app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimaryDark"
-            app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
-            app:compactCalendarMultiEventIndicatorColor="#fff"
+            app:compactCalendarCurrentDayTextColor="@color/white"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+            app:compactCalendarCurrentSelectedDayTextColor="@color/white"
+            app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
             app:compactCalendarTargetHeight="250dp"
-            app:compactCalendarTextColor="#fff"
+            app:compactCalendarTextColor="#212121"
             app:compactCalendarTextSize="12sp" />
 
         <androidx.recyclerview.widget.RecyclerView

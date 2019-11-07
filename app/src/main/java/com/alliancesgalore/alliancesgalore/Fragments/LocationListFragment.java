@@ -614,6 +614,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
                 sortclick();
                 itemClick();
                 itemLongClick();
+                MainActivity.setmList(allsubordinatesList);
             }
         }
 

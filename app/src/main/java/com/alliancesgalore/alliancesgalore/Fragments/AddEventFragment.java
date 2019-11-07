@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.TransitionInflater;
@@ -25,7 +26,7 @@ import com.alliancesgalore.alliancesgalore.Activities.AddEventActivity;
 import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.alliancesgalore.alliancesgalore.Utils.ColorPickerDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -37,7 +38,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDate;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDescription;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getList;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getLocation;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getTime;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmAllDaySwitch;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmTitle;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmAlldaySwitch;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmTitle;
+import static com.alliancesgalore.alliancesgalore.Utils.Functions.encodeUserEmail;
+import static com.alliancesgalore.alliancesgalore.Utils.Functions.toast;
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 
@@ -56,10 +68,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private TimePickerDialog myTimePicker;
     private Date time;
     private Date temptime;
-    private ConstraintLayout mRepeatLayout, mAddPeopleLayout, mDescriptionLayout, mNotifyLayout, mLocationLayout;
+    private ConstraintLayout mRepeatLayout, mAddPeopleLayout, mDescriptionLayout, mNotifyLayout, mLocationLayout, mColorLayout;
     private String timeText;
     private CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
     private CharSequence[] notify = {"5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"};
+    private View mColorView;
 
 
     @Override
@@ -88,56 +101,57 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mDescriptionLayout.setOnClickListener(this);
         mNotifyLayout.setOnClickListener(this);
         mLocationLayout.setOnClickListener(this);
-
+        mColorLayout.setOnClickListener(this);
 
         return view;
     }
 
     private void SetViews() {
 
-        if (TextUtils.isEmpty(AddEventActivity.getLocation())) {
+        if (TextUtils.isEmpty(getLocation())) {
             mLocation.setText("Location");
         } else
-            mLocation.setText(AddEventActivity.getLocation().trim());
+            mLocation.setText(getLocation().trim());
 
 
-        if (TextUtils.isEmpty(AddEventActivity.getDescription()))
+        if (TextUtils.isEmpty(getDescription()))
             mDescription.setText("Description");
         else
-            mDescription.setText(AddEventActivity.getDescription().trim());
+            mDescription.setText(getDescription().trim());
 
 
-        if (AddEventActivity.getDate() == 0) {
+        if (getDate() == 0) {
             mDate.setText("Date");
         } else {
-            long date = AddEventActivity.getDate();
+            long date = getDate();
             String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
             mDate.setText(full);
         }
 
 
-        if (AddEventActivity.getTime() == 0) {
+        if (getTime() == 0) {
             mTime.setText("Time");
         } else {
-            long time = AddEventActivity.getTime();
+            long time = getTime();
             DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
         }
 
 
-        mTitle.setText(AddEventActivity.getmTitle());
-        mAllDaySwitch.setChecked(AddEventActivity.getmAllDaySwitch());
+        mTitle.setText(getmTitle());
+        mAllDaySwitch.setChecked(getmAllDaySwitch());
 
         setTimeVisibility();
         mRepition.setText(repeat[mrepeat]);
         mNotify.setText(notify[mnotify]);
         setAddPeopleview();
+        mColorView.setBackgroundColor(AddEventActivity.getColor());
     }
 
     private void setAddPeopleview() {
 
         if (!selectedlist.isEmpty()) {
-            Functions.toast(String.valueOf(selectedlist.size()), mCtx);
+            toast(String.valueOf(selectedlist.size()), mCtx);
             if (!selectedlist.contains(myProfile)) {
                 selectedlist.add(myProfile);
             }
@@ -158,7 +172,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         } else
             mAddPeople.setText("Add people");
 
-        Functions.toast(String.valueOf(selectedlist.size()), getContext());
+        toast(String.valueOf(selectedlist.size()), getContext());
     }
 
     @Override
@@ -208,9 +222,22 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             case R.id.addEvent_savebtn:
                 saveBtnClick();
                 break;
+            case R.id.addEvent_color_layout:
+                colorpicker();
 
         }
     }
+
+    private void colorpicker() {
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog(mCtx, Color.GREEN,color -> {
+            // do action
+            mColorView.setBackgroundColor(color);
+            AddEventActivity.setColor(color);
+            toast(Integer.toString(color), mCtx);
+        });
+        colorPickerDialog.show();
+    }
+
 
     private void setDescriptionLocation(String key, ConstraintLayout layout) {
 
@@ -243,6 +270,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mDescription = view.findViewById(R.id.addEvent_description_text);
         mNotify = view.findViewById(R.id.addEvent_Notify_text);
         mLocation = view.findViewById(R.id.addEvent_Location_text);
+        mColorView = view.findViewById(R.id.addEvent_color_img);
+        mColorLayout = view.findViewById(R.id.addEvent_color_layout);
 
         mRepeatLayout = view.findViewById(R.id.addEvent_repeat_layout);
         mAddPeopleLayout = view.findViewById(R.id.addEvent_AddPeople_layout);
@@ -264,7 +293,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             date = calendar.getTime();
             AddEventActivity.setDate(date.getTime());
             String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
-            Functions.toast(full, mCtx);
+            toast(full, mCtx);
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
 
@@ -299,7 +328,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             timeText = mTime.getText().toString();
         }
 
-        AddEventActivity.setmAlldaySwitch(mAllDaySwitch.isChecked());
+        setmAlldaySwitch(mAllDaySwitch.isChecked());
     }
 
     private void setRepetition() {
@@ -338,15 +367,15 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void saveBtnClick() {
 
         if (TextUtils.isEmpty(mTitle.getText())) {
-            Functions.toast("Please add a title to event", mCtx);
+            toast("Please add a title to event", mCtx);
         } else if (mDate.getText().equals("Date")) {
-            Functions.toast("Please add Date", mCtx);
+            toast("Please add Date", mCtx);
         } else if (mDescription.getText().equals("Description")) {
-            Functions.toast("Please enter Description", mCtx);
+            toast("Please enter Description", mCtx);
         } else if (mLocation.getText().equals("Location")) {
-            Functions.toast("Please enter Location", mCtx);
+            toast("Please enter Location", mCtx);
         } else if (mTime.getText().equals("Time") && !mAllDaySwitch.isChecked()) {
-            Functions.toast("Please add time", mCtx);
+            toast("Please add time", mCtx);
         } else {
             save();
         }
@@ -369,7 +398,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        AddEventActivity.setmTitle(mTitle.getText().toString());
+        setmTitle(mTitle.getText().toString());
     }
 
     //TO - DO
@@ -391,7 +420,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         DatabaseReference calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
         String key = calEvents.getKey();
-        Functions.toast(key, mCtx);
+        toast(key, mCtx);
         map.put("title", mTitle.getText().toString());
         map.put("allDay", mAllDaySwitch.isChecked());
         map.put("dateTime", mDateTime);
@@ -400,21 +429,22 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("notify", mnotify);
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
-        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> Functions.toast("Data added", mCtx));
+        map.put("color", AddEventActivity.getColor());
+        calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
 
 
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
-        List<UserProfile> myList = AddEventActivity.getList();
+        List<UserProfile> myList = getList();
         if (!myList.contains(myProfile)) {
             myList.add(myProfile);
         }
 
         for (UserProfile profile : myList) {
-            eventParticipants.put(Functions.encodeUserEmail(profile.getEmail()), true);
+            eventParticipants.put(encodeUserEmail(profile.getEmail()), true);
         }
 
-        eventParticipants.put(Functions.encodeUserEmail(myProfile.getEmail()), true);
+        eventParticipants.put(encodeUserEmail(myProfile.getEmail()), true);
 
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()
@@ -422,7 +452,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child("EventParticipants")
                 .child(key);
 
-        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> Functions.toast("part1 updated", mCtx));
+        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> toast("part1 updated", mCtx));
 
         HashMap<String, Object> myEvents = new HashMap<>();
         myEvents.put(key, true);
@@ -432,10 +462,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     .getInstance()
                     .getReference()
                     .child("MyEvents")
-                    .child(Functions.encodeUserEmail(profile.getEmail()));
+                    .child(encodeUserEmail(profile.getEmail()));
 
             myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
-                Functions.toast("Data updated successfully", mCtx);
+                toast("Data updated successfully", mCtx);
                 Intent mainIntent = new Intent(getContext(), MainActivity.class);
                 startActivity(mainIntent);
                 getActivity().finish();
@@ -443,4 +473,5 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             });
         }
     }
+
 }

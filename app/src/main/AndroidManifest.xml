@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -31,9 +32,17 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".Activities.AddEventActivity">
+        <activity android:name=".Activities.EventActivity"></activity>
 
-        </activity>
+        <receiver
+            android:name=".Services.AlarmReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".Activities.AddEventActivity"></activity>
         <activity
             android:name=".Activities.MapActivity"
             android:parentActivityName=".Activities.MainActivity" />
@@ -71,9 +80,7 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:parentActivityName=".Activities.StartActivity" />
-        <activity android:name=".Activities.SplashActivity">
-
-        </activity>
+        <activity android:name=".Activities.SplashActivity"></activity>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
