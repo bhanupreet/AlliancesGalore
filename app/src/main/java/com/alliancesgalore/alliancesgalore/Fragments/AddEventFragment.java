@@ -41,7 +41,6 @@ import java.util.List;
 
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDate;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDescription;
-import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getList;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getLocation;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getTime;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmAllDaySwitch;
@@ -410,6 +409,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     //TO - DO
     private void save() {
 
+
+        //setting the datetime
         if (!mAllDaySwitch.isChecked()) {
             time = temptime;
         } else {
@@ -426,15 +427,20 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mDateTime = datetime.getTime();
 
         String key;
+
+        //if the old event is being edited
+        //removelist = oldlist-selected list
+        //iterate on remove list and remove only given profiles
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
             List<UserProfile> removelist = new ArrayList<>();
-
+            List<String> removekeys = new ArrayList<>();
             calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(AddEventActivity.key);
             key = AddEventActivity.key;
             for (UserProfile profile : AddEventActivity.mOldList)
-                if (!selectedlist.contains(profile))
+                if (!selectedlist.contains(profile)) {
+                    removekeys.add(encodeUserEmail(profile.getEmail()));
                     removelist.add(profile);
-
+                }
             for (UserProfile profile : removelist) {
                 DatabaseReference myEventsref1 = FirebaseDatabase
                         .getInstance()
@@ -443,6 +449,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                         .child(encodeUserEmail(profile.getEmail()))
                         .child(key);
                 myEventsref1.removeValue();
+            }
+
+            for (String string : removekeys) {
+                FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("EventParticipants")
+                        .child(key)
+                        .child(string)
+                        .removeValue();
             }
 
         } else {
@@ -465,16 +481,14 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
-        List<UserProfile> myList = getList();
-        if (!myList.contains(myProfile)) {
-            myList.add(myProfile);
+        if (!selectedlist.contains(myProfile)) {
+            selectedlist.add(myProfile);
         }
 
-        for (UserProfile profile : myList) {
+
+        for (UserProfile profile : selectedlist) {
             eventParticipants.put(encodeUserEmail(profile.getEmail()), true);
         }
-
-        eventParticipants.put(encodeUserEmail(myProfile.getEmail()), true);
 
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()
@@ -483,11 +497,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child(key);
 
         String finalKey = key;
-        eventParticipantsref.removeValue();
+//        eventParticipantsref.removeValue();
         eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
             toast("part1 updated", mCtx);
             HashMap<String, Object> myEvents = new HashMap<>();
             myEvents.put(finalKey, true);
+
             for (UserProfile profile : selectedlist) {
 
                 DatabaseReference myEventsref1 = FirebaseDatabase
@@ -505,7 +520,5 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 });
             }
         });
-
-
     }
 }
