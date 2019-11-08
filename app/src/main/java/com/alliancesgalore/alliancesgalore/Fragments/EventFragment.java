@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.alliancesgalore.alliancesgalore.Activities.EventActivity.getEvent;
-import static com.alliancesgalore.alliancesgalore.Utils.Functions.toast;
+import static com.alliancesgalore.alliancesgalore.Activities.EventActivity.mSelectedList;
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class EventFragment extends Fragment implements View.OnClickListener {
@@ -88,6 +88,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         setViews();
         return view;
     }
+
 
     private void setViews() {
         if (TextUtils.isEmpty(getEvent().getLocation())) {
@@ -175,9 +176,13 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                 addpeopletext = "else condition";
             }
             mAddPeople.setText(addpeopletext);
+            for (UserProfile profile : selectedlist)
+                if (!mSelectedList.contains(profile)) {
+                    mSelectedList.add(profile);
+                }
         }
 
-        toast(String.valueOf(selectedlist.size()), getContext());
+//        toast(String.valueOf(selectedlist.size()), getContext());
     }
 
     @Override

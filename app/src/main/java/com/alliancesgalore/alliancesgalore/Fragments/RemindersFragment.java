@@ -402,8 +402,9 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                             DateFormat date = new SimpleDateFormat("dd MMM yyyy");
                             int pos = 0;
                             for (CustomEvent event : mList) {
-                                if (date.format(event.getDateTime()).equals(date.format(calendar.getTimeInMillis()))) {
+                                if (calendar.getTimeInMillis() >= event.getDateTime()) {
                                     pos = mList.indexOf(event);
+                                    return;
                                 }
                             }
                             mRecycler.scrollToPosition(pos);

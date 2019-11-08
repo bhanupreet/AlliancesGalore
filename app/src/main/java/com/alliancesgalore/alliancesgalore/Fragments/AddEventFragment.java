@@ -45,6 +45,7 @@ import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.ge
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getTime;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmAllDaySwitch;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmTitle;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.isEdit;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmAlldaySwitch;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmTitle;
@@ -73,6 +74,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
     private CharSequence[] notify = {"5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"};
     private View mColorView;
+    private DatabaseReference calEvents;
 
 
     @Override
@@ -151,7 +153,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void setAddPeopleview() {
 
         if (!selectedlist.isEmpty()) {
-            toast(String.valueOf(selectedlist.size()), mCtx);
+//            toast(String.valueOf(selectedlist.size()), mCtx);
             if (!selectedlist.contains(myProfile)) {
                 selectedlist.add(myProfile);
             }
@@ -172,7 +174,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         } else
             mAddPeople.setText("Add people");
 
-        toast(String.valueOf(selectedlist.size()), getContext());
+//        toast(String.valueOf(selectedlist.size()), getContext());
     }
 
     @Override
@@ -229,11 +231,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void colorpicker() {
-        ColorPickerDialog colorPickerDialog = new ColorPickerDialog(mCtx, Color.GREEN,color -> {
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog(mCtx, Color.GREEN, color -> {
             // do action
             mColorView.setBackgroundColor(color);
             AddEventActivity.setColor(color);
-            toast(Integer.toString(color), mCtx);
+//            toast(Integer.toString(color), mCtx);
         });
         colorPickerDialog.show();
     }
@@ -293,7 +295,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             date = calendar.getTime();
             AddEventActivity.setDate(date.getTime());
             String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
-            toast(full, mCtx);
+//            toast(full, mCtx);
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
 
@@ -413,14 +415,24 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             newTime.set(Calendar.SECOND, 0);
             time = newTime.getTime();
         }
-        Date datetime = combineDateTime(date, time);
+
+        Date staticstate = new Date(AddEventActivity.getDate());
+        Date statictime = new Date(AddEventActivity.getTime());
+        Date datetime = combineDateTime(staticstate, statictime);
         mDateTime = datetime.getTime();
 
-        HashMap<String, Object> map = new HashMap<>();
+        String key;
+        if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
+            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(AddEventActivity.key);
+            key = AddEventActivity.key;
 
-        DatabaseReference calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
-        String key = calEvents.getKey();
-        toast(key, mCtx);
+        } else {
+            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
+            key = calEvents.getKey();
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+//        toast(key, mCtx);
         map.put("title", mTitle.getText().toString());
         map.put("allDay", mAllDaySwitch.isChecked());
         map.put("dateTime", mDateTime);
@@ -430,9 +442,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
         map.put("color", AddEventActivity.getColor());
+
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
-
-
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
         List<UserProfile> myList = getList();
@@ -452,26 +463,28 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child("EventParticipants")
                 .child(key);
 
-        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> toast("part1 updated", mCtx));
+        String finalKey = key;
+        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
+            toast("part1 updated", mCtx);
+            HashMap<String, Object> myEvents = new HashMap<>();
+            myEvents.put(finalKey, true);
+            for (UserProfile profile : selectedlist) {
+                DatabaseReference myEventsref = FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("MyEvents")
+                        .child(encodeUserEmail(profile.getEmail()));
 
-        HashMap<String, Object> myEvents = new HashMap<>();
-        myEvents.put(key, true);
+                myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
+                    toast("Data updated successfully", mCtx);
+                    Intent mainIntent = new Intent(getContext(), MainActivity.class);
+                    startActivity(mainIntent);
+                    getActivity().finish();
 
-        for (UserProfile profile : myList) {
-            DatabaseReference myEventsref = FirebaseDatabase
-                    .getInstance()
-                    .getReference()
-                    .child("MyEvents")
-                    .child(encodeUserEmail(profile.getEmail()));
+                });
+            }
+        });
 
-            myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
-                toast("Data updated successfully", mCtx);
-                Intent mainIntent = new Intent(getContext(), MainActivity.class);
-                startActivity(mainIntent);
-                getActivity().finish();
 
-            });
-        }
     }
-
 }

@@ -2,6 +2,7 @@ package com.alliancesgalore.alliancesgalore.Activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +11,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.alliancesgalore.alliancesgalore.Fragments.AddEventFragment;
+import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
+import com.alliancesgalore.alliancesgalore.Utils.Functions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AddEventActivity extends AppCompatActivity {
@@ -23,7 +27,7 @@ public class AddEventActivity extends AppCompatActivity {
     private static String mDescription = "";
     private static String mLocation = "";
     private static String mTitle = "";
-
+    public static String isEdit = "true", key;
 
     private static int color = Color.GREEN;
     private static long mDate, mTime;
@@ -44,6 +48,34 @@ public class AddEventActivity extends AppCompatActivity {
         SetmToolBar();
         SetFragment();
         selectedlist.clear();
+
+        isEdit = getIntent().getStringExtra("isedit");
+        Functions.toast(isEdit, AddEventActivity.this);
+        if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
+            selectedlist = getIntent().getParcelableArrayListExtra("objectlist");
+            CustomEvent event = getIntent().getParcelableExtra("object");
+
+            mDescription = event.getDescription();
+            mLocation = event.getLocation();
+            mTitle = event.getTitle();
+            color = event.getColor();
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(event.getDateTime());
+            date.set(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            mDate = date.getTimeInMillis();
+
+            Calendar time = Calendar.getInstance();
+            time.setTimeInMillis(event.getDateTime());
+            time.set(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH), date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE), 0);
+
+            mTime = time.getTimeInMillis();
+            mAlldaySwitch = event.isAllDay();
+            key = event.getUid();
+        }
+//        if (isEdit) {
+
+//
+//        }
     }
 
     private void SetFragment() {
