@@ -195,12 +195,13 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
             if (dataSnapshot.exists()) {
+                myEvents.clear();
+//                Functions.toast("datasnapshot exists", mCtx);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     myEvents.add(snapshot.getKey());
 
                 currentTime.setTimeInMillis(System.currentTimeMillis());
                 mList.clear();
-                temp.clear();
                 mRepeatList.clear();
                 Calendar mStartOfMonth = setStartOfMonth(currentTime);
                 Calendar mEndOfMonth = setEndOfMonth(currentTime);
@@ -314,6 +315,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
                 //getting repeating events list
                 if (dataSnapshot.exists()) {
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
@@ -322,100 +324,99 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                             mRepeatList.add(myCustomEvent);
                         }
                     }
-                    Query q2 = FirebaseDatabase
-                            .getInstance()
-                            .getReference()
-                            .child("CalendarEvents")
-                            .orderByChild("dateTime")
-                            .startAt(mStartOfMonth.getTimeInMillis())
-                            .endAt(mEndOfMonth.getTimeInMillis());
+                    exFiveCalendar.removeAllEvents();
+                    mList.clear();
+                    mEventsList.clear();
+                    temp.clear();
 
-                    q2.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            exFiveCalendar.removeAllEvents();
-                            mList.clear();
-                            mEventsList.clear();
-                            temp.clear();
-
-                            //add repeating events to mlist
-                            for (CustomEvent customEvent : mRepeatList) {
-                                if (!mList.contains(customEvent)) {
-                                    mList.add(customEvent);
-
-                                }
-                            }
-
-                            //set repeating events according to given option
-                            temp.clear();
-                            for (CustomEvent event : mList) {
-                                if (event.getRepetition() == 1 && !event.isRepitionFlag()) {
-                                    setEvents(event, 1, mEndOfMonth, false);
-                                } else if (event.getRepetition() == 2 && !event.isRepitionFlag()) {
-                                    setEvents(event, 7, mEndOfMonth, false);
-                                } else if (event.getRepetition() == 3) {
-                                    setEvents(event, 1, mEndOfMonth, true);
-                                }
-                            }
-
-                            //storing repeated events in a temp list and clearing the main list
-                            //traversing the temp list to get events during given month
-                            mList.clear();
-                            for (CustomEvent event : temp) {
-                                if (!mList.contains(event)
-                                        && event.getDateTime() > mStartOfMonth.getTimeInMillis()
-                                        && event.getDateTime() < mEndOfMonth.getTimeInMillis()) {
-                                    mList.add(event);
-
-                                }
-                            }
-
-                            //finally adding non repeating events
-                            if (dataSnapshot.exists()) {
-                                mRecycler.setVisibility(View.VISIBLE);
-                                mNoEvents.setVisibility(View.GONE);
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
-                                    String key = snapshot.getKey();
-                                    if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
-                                        myCustomEvent.setUid(key);
-                                        mList.add(myCustomEvent);
-
-                                    }
-                                }
-                            }
-
-                            //sorting the list and putting dots on to the calendar
-                            addDots();
-                            exFiveCalendar.addEvents(mEventsList);
-                            adapter.notifyDataSetChanged();
-                            if (mList.isEmpty()) {
-                                mRecycler.setVisibility(View.GONE);
-                                mNoEvents.setVisibility(View.VISIBLE);
-                            } else {
-                                mRecycler.setVisibility(View.VISIBLE);
-                                mNoEvents.setVisibility(View.GONE);
-                            }
-                            Calendar calendar = Calendar.getInstance();
-                            DateFormat date = new SimpleDateFormat("dd MMM yyyy");
-                            int pos = 0;
-                            for (CustomEvent event : mList) {
-                                if (calendar.getTimeInMillis() >= event.getDateTime()) {
-                                    pos = mList.indexOf(event);
-                                    return;
-                                }
-                            }
-                            mRecycler.scrollToPosition(pos);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                    //add repeating events to mlist
+                    for (CustomEvent customEvent : mRepeatList) {
+                        if (!mList.contains(customEvent)) {
+                            mList.add(customEvent);
 
                         }
-                    });
+                    }
+
+                    //set repeating events according to given option
+                    temp.clear();
+                    for (CustomEvent event : mList) {
+                        if (event.getRepetition() == 1 && !event.isRepitionFlag()) {
+                            setEvents(event, 1, mEndOfMonth, false);
+                        } else if (event.getRepetition() == 2 && !event.isRepitionFlag()) {
+                            setEvents(event, 7, mEndOfMonth, false);
+                        } else if (event.getRepetition() == 3) {
+                            setEvents(event, 1, mEndOfMonth, true);
+                        }
+                    }
+
+                    //storing repeated events in a temp list and clearing the main list
+                    //traversing the temp list to get events during given month
+                    mList.clear();
+                    for (CustomEvent event : temp) {
+                        if (!mList.contains(event)
+                                && event.getDateTime() > mStartOfMonth.getTimeInMillis()
+                                && event.getDateTime() < mEndOfMonth.getTimeInMillis()) {
+                            mList.add(event);
+
+                        }
+                    }
                 }
+                Query q2 = FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("CalendarEvents")
+                        .orderByChild("dateTime")
+                        .startAt(mStartOfMonth.getTimeInMillis())
+                        .endAt(mEndOfMonth.getTimeInMillis());
+
+                q2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //finally adding non repeating events
+                        if (dataSnapshot.exists()) {
+
+                            mRecycler.setVisibility(View.VISIBLE);
+                            mNoEvents.setVisibility(View.GONE);
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
+                                String key = snapshot.getKey();
+                                if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
+                                    myCustomEvent.setUid(key);
+                                    mList.add(myCustomEvent);
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        //sorting the list and putting dots on to the calendar
+                        addDots();
+                        exFiveCalendar.addEvents(mEventsList);
+                        adapter.notifyDataSetChanged();
+                        if (mList.isEmpty()) {
+                            mRecycler.setVisibility(View.GONE);
+                            mNoEvents.setVisibility(View.VISIBLE);
+                        } else {
+                            mRecycler.setVisibility(View.VISIBLE);
+                            mNoEvents.setVisibility(View.GONE);
+                        }
+                        Calendar calendar = Calendar.getInstance();
+                        DateFormat date = new SimpleDateFormat("dd MMM yyyy");
+                        int pos = 0;
+                        for (CustomEvent event : mList) {
+                            if (calendar.getTimeInMillis() >= event.getDateTime()) {
+                                pos = mList.indexOf(event);
+                            }
+                        }
+                        mRecycler.scrollToPosition(pos);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override

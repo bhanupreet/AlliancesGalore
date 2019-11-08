@@ -697,7 +697,10 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     @Override
     public void doBack() {
         Toast.makeText(getActivity(), "OnBackpress Click", Toast.LENGTH_LONG).show();
-        resetActionMode();
+        if (actionMode != null)
+            resetActionMode();
+        else {
+        }
 //        SetFAB();
     }
 

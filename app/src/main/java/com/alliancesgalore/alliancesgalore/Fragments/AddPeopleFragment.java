@@ -136,13 +136,15 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
+
             case android.R.id.home:
-                selectedlist.clear();
+//                selectedlist.clear();
                 Functions.toast("backbutton press", getContext());
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 
@@ -213,6 +215,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         if (view == mSaveBtn) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
+
             fm.popBackStack();
         }
     }

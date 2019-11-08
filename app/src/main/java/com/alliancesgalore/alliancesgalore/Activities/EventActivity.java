@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -17,6 +18,7 @@ import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,19 +92,45 @@ public class EventActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.event_edit:
-                Functions.toast(getEvent().getUid(), EventActivity.this);
-                Intent editintent = new Intent(EventActivity.this, AddEventActivity.class);
-                editintent.putExtra("isedit", "true");
-                editintent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) mSelectedList);
-                editintent.putExtra("object", event);
-                startActivity(editintent);
+                editEvent();
                 return true;
             case R.id.event_delete:
-                Functions.toast("Event delete", EventActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("Delete Event")
+                        .setMessage("Are you sure you want to delete the selected event?")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> deleteEvent())
+                        .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+                AlertDialog alert = builder.create();
+                alert.show();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void editEvent() {
+        Functions.toast(getEvent().getUid(), EventActivity.this);
+        Intent editintent = new Intent(EventActivity.this, AddEventActivity.class);
+        editintent.putExtra("isedit", "true");
+        editintent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) mSelectedList);
+        editintent.putExtra("object", event);
+        startActivity(editintent);
+    }
+
+    private void deleteEvent() {
+        FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(event.getUid()).removeValue();
+        FirebaseDatabase.getInstance().getReference().child("EventParticipants").child(event.getUid()).removeValue();
+        for (UserProfile profile : mSelectedList) {
+            FirebaseDatabase.getInstance().getReference().child("MyEvents").child(Functions.encodeUserEmail(profile.getEmail())).child(event.getUid()).removeValue();
+        }
+        Intent intent = new Intent(EventActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+        Functions.toast("Event delete", EventActivity.this);
+
     }
 
 

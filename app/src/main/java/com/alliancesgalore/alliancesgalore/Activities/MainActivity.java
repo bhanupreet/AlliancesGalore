@@ -377,11 +377,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
 
-        if (onBackPressedListener != null)
+        if (onBackPressedListener != null) {
             onBackPressedListener.doBack();
-        else
-            super.onBackPressed();
+        } else
+            onBackPressed();
     }
 
     public int getcurrenttabposition() {

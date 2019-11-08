@@ -21,7 +21,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class AddEventActivity extends AppCompatActivity {
-    public static List<UserProfile> selectedlist = new ArrayList<>();
+    public static List<UserProfile> selectedlist = new ArrayList<>(), mOldList;
 
     private Toolbar mToolBar;
     private static String mDescription = "";
@@ -46,13 +46,15 @@ public class AddEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
         SetmToolBar();
-        SetFragment();
+
         selectedlist.clear();
 
         isEdit = getIntent().getStringExtra("isedit");
         Functions.toast(isEdit, AddEventActivity.this);
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
             selectedlist = getIntent().getParcelableArrayListExtra("objectlist");
+            mOldList = new ArrayList<>(selectedlist);
+//            mOldList = getIntent().getParcelableExtra("objectlist");
             CustomEvent event = getIntent().getParcelableExtra("object");
 
             mDescription = event.getDescription();
@@ -72,6 +74,7 @@ public class AddEventActivity extends AppCompatActivity {
             mAlldaySwitch = event.isAllDay();
             key = event.getUid();
         }
+        SetFragment();
 //        if (isEdit) {
 
 //
@@ -182,6 +185,7 @@ public class AddEventActivity extends AppCompatActivity {
             setDescription("");
             selectedlist.clear();
             setColor(0);
+            mOldList.clear();
 
         } catch (Exception e) {
             e.printStackTrace();

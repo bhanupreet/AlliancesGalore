@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -423,8 +424,23 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         String key;
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
+            List<UserProfile> removelist = new ArrayList<>();
+
             calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(AddEventActivity.key);
             key = AddEventActivity.key;
+            for (UserProfile profile : AddEventActivity.mOldList)
+                if (!selectedlist.contains(profile))
+                    removelist.add(profile);
+                
+            for (UserProfile profile : removelist) {
+                DatabaseReference myEventsref1 = FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("MyEvents")
+                        .child(encodeUserEmail(profile.getEmail()))
+                        .child(key);
+                myEventsref1.removeValue();
+            }
 
         } else {
             calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
@@ -464,22 +480,24 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 .child(key);
 
         String finalKey = key;
+        eventParticipantsref.removeValue();
         eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
             toast("part1 updated", mCtx);
             HashMap<String, Object> myEvents = new HashMap<>();
             myEvents.put(finalKey, true);
             for (UserProfile profile : selectedlist) {
-                DatabaseReference myEventsref = FirebaseDatabase
+
+                DatabaseReference myEventsref1 = FirebaseDatabase
                         .getInstance()
                         .getReference()
                         .child("MyEvents")
                         .child(encodeUserEmail(profile.getEmail()));
-
-                myEventsref.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
+                myEventsref1.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
                     toast("Data updated successfully", mCtx);
                     Intent mainIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(mainIntent);
-                    getActivity().finish();
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    getActivity().finishAffinity();
 
                 });
             }
