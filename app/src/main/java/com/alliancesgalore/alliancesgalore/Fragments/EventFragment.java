@@ -1,8 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static com.alliancesgalore.alliancesgalore.Activities.EventActivity.getEvent;
@@ -41,24 +38,11 @@ import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 public class EventFragment extends Fragment implements View.OnClickListener {
     private TextInputEditText mTitle;
     private SwitchCompat mAllDaySwitch;
-    private int mrepeat = 0, mnotify = 0;
-    private ConstraintLayout mAlldayLayout;
-    private long mDateTime = 0;
     private TextView mDate, mTime, mDescription, mRepition, mNotify, mLocation, mAddPeople;
-    private Button mSaveBtn;
-    private Calendar cStartDate = Calendar.getInstance();
-    private int mYear, mMonth, mDay;
-    private Context mCtx;
-    private Date date;
-    private TimePickerDialog myTimePicker;
-    private Date time;
-    private Date temptime;
-    private ConstraintLayout mRepeatLayout, mAddPeopleLayout, mDescriptionLayout, mNotifyLayout, mLocationLayout, mColorLayout;
-    private String timeText;
+    private View mColorView;
     private List<String> emailList = new ArrayList<>();
     private CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
     private CharSequence[] notify = {"5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"};
-    private View mColorView;
     private List<UserProfile> mList = new ArrayList<>(), selectedlist = new ArrayList<>();
 
     @Override
@@ -87,14 +71,12 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                         emailList.add(Functions.decodeUserEmail(email));
                     }
                     for (UserProfile profile : mList) {
-                        if (emailList.contains(profile.getEmail())) {
+                        if (emailList.contains(profile.getEmail()) && !selectedlist.contains(profile)) {
                             selectedlist.add(profile);
                         }
                     }
-
-                    setAddPeopleview();
-//                    Functions.toast(String.valueOf(mSelectedList.size()), EventActivity.this);
                 }
+                setAddPeopleview();
             }
 
             @Override
@@ -142,12 +124,12 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         mAllDaySwitch.setChecked(getEvent().isAllDay());
 
         setTimeVisibility();
-        mrepeat = getEvent().getRepetition();
-        mnotify = getEvent().getNotify();
+        int mrepeat = getEvent().getRepetition();
+        int mnotify = getEvent().getNotify();
         mRepition.setText(repeat[mrepeat]);
         mNotify.setText(notify[mnotify]);
         setAddPeopleview();
-        mColorLayout.setBackgroundColor(getEvent().getColor());
+        mColorView.setBackgroundColor(getEvent().getColor());
 
         mTitle.setEnabled(false);
         mAllDaySwitch.setEnabled(false);
@@ -156,10 +138,8 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     private void setTimeVisibility() {
         if (getEvent().isAllDay()) {
             mTime.setVisibility(View.GONE);
-            timeText = "time";
         } else {
             mTime.setVisibility(View.VISIBLE);
-            timeText = mTime.getText().toString();
         }
 
     }
@@ -167,6 +147,12 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     private void setAddPeopleview() {
 
         if (!selectedlist.isEmpty()) {
+//            List<UserProfile> temp = new ArrayList<>(selectedlist);
+//            selectedlist.clear();
+//            for (UserProfile profile : temp) {
+//                if (!temp.contains(profile))
+//                    selectedlist.add(profile);
+//            }
 //            toast(String.valueOf(selectedlist.size()), mCtx);
             if (!selectedlist.contains(myProfile)) {
                 selectedlist.add(myProfile);
@@ -177,16 +163,19 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                 selectedlist.set(0, profile0);
 
             }
+            String addpeopletext;
 
-            String addpeopletext = "Add People";
-            if (selectedlist.size() == 2) {
+            if (selectedlist.size() == 1) {
+                addpeopletext = "You";
+            } else if (selectedlist.size() == 2) {
                 addpeopletext = "You and " + selectedlist.get(0).getDisplay_name();
-            } else if (selectedlist.size() > 2)
+            } else if (selectedlist.size() > 2) {
                 addpeopletext = "You and " + selectedlist.get(0).getDisplay_name() + " + " + (selectedlist.size() - 2) + " others";
+            } else {
+                addpeopletext = "else condition";
+            }
             mAddPeople.setText(addpeopletext);
-
-        } else
-            mAddPeople.setText("Add people");
+        }
 
         toast(String.valueOf(selectedlist.size()), getContext());
     }
@@ -194,17 +183,31 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+        switch (view.getId()) {
+            case R.id.addEvent_AddPeople_layout:
+                EventPeopleFragment fragment = new EventPeopleFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("objectlist", (ArrayList<? extends Parcelable>) selectedlist);
+                bundle.putString("title", getEvent().getTitle());
+                fragment.setArguments(bundle);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.event_container, fragment)
+                        .addToBackStack("eventfragment")
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .commit();
+
+        }
     }
 
     private void FindIds(View view) {
 
         mTitle = view.findViewById(R.id.addEvent_title);
-
         mAllDaySwitch = view.findViewById(R.id.addEvent_allday_switch);
         mDate = view.findViewById(R.id.addEvent_startDate);
         mTime = view.findViewById(R.id.addEvent_startTime);
 
-        mSaveBtn = view.findViewById(R.id.addEvent_savebtn);
+        Button mSaveBtn = view.findViewById(R.id.addEvent_savebtn);
+        mSaveBtn.setVisibility(View.GONE);
 
         mRepition = view.findViewById(R.id.addEvent_repeat_text);
         mAddPeople = view.findViewById(R.id.addEvent_AddPeople_text);
@@ -212,12 +215,11 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         mNotify = view.findViewById(R.id.addEvent_Notify_text);
         mLocation = view.findViewById(R.id.addEvent_Location_text);
         mColorView = view.findViewById(R.id.addEvent_color_img);
-        mColorLayout = view.findViewById(R.id.addEvent_color_layout);
+        ConstraintLayout mColorLayout = view.findViewById(R.id.addEvent_color_layout);
 
-        mRepeatLayout = view.findViewById(R.id.addEvent_repeat_layout);
-        mAddPeopleLayout = view.findViewById(R.id.addEvent_AddPeople_layout);
-        mDescriptionLayout = view.findViewById(R.id.addEvent_Description_layout);
-        mNotifyLayout = view.findViewById(R.id.addEvent_Notify_layout);
-        mLocationLayout = view.findViewById(R.id.addEvent_Location_layout);
+        ConstraintLayout mAddPeopleLayout = view.findViewById(R.id.addEvent_AddPeople_layout);
+        mAddPeopleLayout.setOnClickListener(this);
     }
+
+
 }

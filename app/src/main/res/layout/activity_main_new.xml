@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f0f0f0"
     android:orientation="vertical"
     tools:context=".Activities.MainActivity">
 
@@ -37,15 +38,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
-        android:fillViewport="true"
         android:backgroundTint="@android:color/white"
+        android:fillViewport="true"
         app:layout_behavior=".Utils.KeepWithinParentBoundsScrollingBehavior" />
 
     <FrameLayout
         android:id="@+id/simpleFrameLayout"
         android:layout_width="match_parent"
-        android:layout_margin="30dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="30dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_locationlist"

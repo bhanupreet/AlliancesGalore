@@ -1,6 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -59,6 +61,8 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private List<Event> mEventsList = new ArrayList<>();
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
+    private TextView mNoEvents;
+    private TextView mYear;
 
 
     @Override
@@ -104,6 +108,8 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
     private void setCalendar() {
         exFiveCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+//        exFiveCalendar.setCurrentDate(System.currentTimeMillis());
         exFiveCalendar.setListener(this);
     }
 
@@ -118,6 +124,9 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private void setMonthSwitch() {
         mMonthSwitch.setChecked(false);
         DateFormat monthFormat = new SimpleDateFormat("MMMM");
+        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        mYear.setText(yearFormat.format(System.currentTimeMillis()));
+        mYear.bringToFront();
         mMonthSwitch.setText(monthFormat.format(System.currentTimeMillis()));
         mMonthSwitch.setOnClickListener(v -> {
             if (!exFiveCalendar.isAnimating()) {
@@ -157,6 +166,28 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mRecycler = view.findViewById(R.id.reminder_recycler);
         exFiveCalendar = view.findViewById(R.id.compactcalendar_view);
         mMonthSwitch = view.findViewById(R.id.reminders_monthview_switch);
+        mNoEvents = view.findViewById(R.id.noevents);
+        mNoEvents.setVisibility(View.GONE);
+        mYear = view.findViewById(R.id.reminders_year);
+        mYear.setOnClickListener(view12 -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(exFiveCalendar.getFirstDayOfCurrentMonth().getTime());
+            DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
+                DateFormat yearformat = new SimpleDateFormat("yyyy");
+                DateFormat monthformat = new SimpleDateFormat("MMMM");
+
+                Calendar selecteddate = Calendar.getInstance();
+                selecteddate.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                exFiveCalendar.setCurrentDate(selecteddate.getTime());
+                mMonthSwitch.setText(monthformat.format(selecteddate.getTimeInMillis()));
+                mYear.setText(yearformat.format(selecteddate.getTimeInMillis()));
+                Calendar mStartOfMonth = setStartOfMonth(selecteddate);
+                Calendar mEndOfMonth = setEndOfMonth(selecteddate);
+                loadData(mStartOfMonth, mEndOfMonth);
+
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.show();
+        });
     }
 
     private ValueEventListener q1ValueEventListener = new ValueEventListener() {
@@ -244,15 +275,24 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
     @Override
     public void onMonthScroll(Date firstDayOfNewMonth) {
+        mRecycler.scrollToPosition(0);
         Calendar mStartOfMonth = Calendar.getInstance();
         mStartOfMonth.setTimeInMillis(firstDayOfNewMonth.getTime());
         Calendar mEndOfMonth = setEndOfMonth(mStartOfMonth);
         DateFormat simple = new SimpleDateFormat("MMMM");
+        DateFormat year = new SimpleDateFormat("yyyy");
+        mYear.setText(year.format(firstDayOfNewMonth));
         mMonthSwitch.setText(simple.format(firstDayOfNewMonth));
         exFiveCalendar.removeAllEvents();
         mList.clear();
         temp.clear();
         mRecycler.setVisibility(View.GONE);
+        int top = layoutManager.findFirstCompletelyVisibleItemPosition();
+        Calendar calendar = Calendar.getInstance();
+//        if (!mList.isEmpty()) {
+//            calendar.setTimeInMillis(mList.get(top).getDateTime());
+//            exFiveCalendar.setCurrentDate(calendar.getTime());
+//        }
         loadData(mStartOfMonth, mEndOfMonth);
     }
 
@@ -260,6 +300,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     //DO NOT TOUCH THIS FUNCTION, TOUCHING IT BREAKS THE ADAPTER
 
     private void loadData(Calendar mStartOfMonth, Calendar mEndOfMonth) {
+        mRecycler.setVisibility(View.GONE);
         Query q3 = FirebaseDatabase
                 .getInstance()
                 .getReference()
@@ -276,8 +317,10 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
-                        if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent))
+                        if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent)) {
+                            myCustomEvent.setUid(key);
                             mRepeatList.add(myCustomEvent);
+                        }
                     }
                     Query q2 = FirebaseDatabase
                             .getInstance()
@@ -300,6 +343,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                             for (CustomEvent customEvent : mRepeatList) {
                                 if (!mList.contains(customEvent)) {
                                     mList.add(customEvent);
+
                                 }
                             }
 
@@ -330,27 +374,39 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                             //finally adding non repeating events
                             if (dataSnapshot.exists()) {
                                 mRecycler.setVisibility(View.VISIBLE);
+                                mNoEvents.setVisibility(View.GONE);
+
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                                     String key = snapshot.getKey();
-                                    if (myEvents.contains(key) && !mList.contains(myCustomEvent))
+                                    if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
+                                        myCustomEvent.setUid(key);
                                         mList.add(myCustomEvent);
+
+                                    }
                                 }
                             }
 
                             //sorting the list and putting dots on to the calendar
-                            Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
-                            for (CustomEvent myCustomEvent : mList) {
-                                Event event = new Event(myCustomEvent.getColor(), myCustomEvent.getDateTime(), myCustomEvent.getTitle());
-                                if (!mEventsList.contains(event))
-                                    mEventsList.add(event);
-                            }
+                            addDots();
                             exFiveCalendar.addEvents(mEventsList);
                             adapter.notifyDataSetChanged();
                             if (mList.isEmpty()) {
                                 mRecycler.setVisibility(View.GONE);
-                            } else
+                                mNoEvents.setVisibility(View.VISIBLE);
+                            } else {
                                 mRecycler.setVisibility(View.VISIBLE);
+                                mNoEvents.setVisibility(View.GONE);
+                            }
+                            Calendar calendar = Calendar.getInstance();
+                            DateFormat date = new SimpleDateFormat("dd MMM yyyy");
+                            int pos = 0;
+                            for (CustomEvent event : mList) {
+                                if (date.format(event.getDateTime()).equals(date.format(calendar.getTimeInMillis()))) {
+                                    pos = mList.indexOf(event);
+                                }
+                            }
+                            mRecycler.scrollToPosition(pos);
                         }
 
                         @Override
@@ -365,6 +421,16 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    private void addDots() {
+        Collections.sort(mList, (m1, m2) -> Long.compare(m1.getDateTime(), m2.getDateTime()));
+        for (CustomEvent myCustomEvent : mList) {
+            Event event = new Event(myCustomEvent.getColor(), myCustomEvent.getDateTime(), myCustomEvent.getTitle());
+            if (!mEventsList.contains(event))
+                mEventsList.add(event);
+        }
+
     }
 
 
