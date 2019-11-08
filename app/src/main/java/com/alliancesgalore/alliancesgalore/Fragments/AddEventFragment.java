@@ -45,10 +45,14 @@ import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.ge
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getLocation;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getTime;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmAllDaySwitch;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmNotify;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmRepeat;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmTitle;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.isEdit;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmAlldaySwitch;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmNotify;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmRepeat;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmTitle;
 import static com.alliancesgalore.alliancesgalore.Utils.Functions.encodeUserEmail;
 import static com.alliancesgalore.alliancesgalore.Utils.Functions.toast;
@@ -58,7 +62,6 @@ import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 public class AddEventFragment extends Fragment implements View.OnClickListener {
     private TextInputEditText mTitle;
     private SwitchCompat mAllDaySwitch;
-    private int mrepeat = 0, mnotify = 0;
     private ConstraintLayout mAlldayLayout;
     private long mDateTime = 0;
     private TextView mDate, mTime, mDescription, mRepition, mNotify, mLocation, mAddPeople;
@@ -145,8 +148,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mAllDaySwitch.setChecked(getmAllDaySwitch());
 
         setTimeVisibility();
-        mRepition.setText(repeat[mrepeat]);
-        mNotify.setText(notify[mnotify]);
+        mRepition.setText(repeat[getmRepeat()]);
+        mNotify.setText(notify[getmNotify()]);
         setAddPeopleview();
         mColorView.setBackgroundColor(AddEventActivity.getColor());
     }
@@ -337,8 +340,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void setRepetition() {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
-        alert.setSingleChoiceItems(repeat, mrepeat, (dialog, which) -> {
-            mrepeat = which;
+        alert.setSingleChoiceItems(repeat, getmRepeat(), (dialog, which) -> {
+            setmRepeat(which);
             mRepition.setText(repeat[which]);
             dialog.dismiss();
         });
@@ -359,8 +362,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void setNotify() {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
-        alert.setSingleChoiceItems(notify, mnotify, (dialog, which) -> {
-            mnotify = which;
+        alert.setSingleChoiceItems(notify, getmNotify(), (dialog, which) -> {
+            setmNotify(which);
             mNotify.setText(notify[which]);
             dialog.dismiss();
         });
@@ -431,7 +434,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             for (UserProfile profile : AddEventActivity.mOldList)
                 if (!selectedlist.contains(profile))
                     removelist.add(profile);
-                
+
             for (UserProfile profile : removelist) {
                 DatabaseReference myEventsref1 = FirebaseDatabase
                         .getInstance()
@@ -452,9 +455,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("title", mTitle.getText().toString());
         map.put("allDay", mAllDaySwitch.isChecked());
         map.put("dateTime", mDateTime);
-        map.put("repetition", mrepeat);
+        map.put("repetition", getmRepeat());
         map.put("description", mDescription.getText().toString());
-        map.put("notify", mnotify);
+        map.put("notify", getmNotify());
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
         map.put("color", AddEventActivity.getColor());

@@ -29,7 +29,24 @@ public class AddEventActivity extends AppCompatActivity {
     private static String mTitle = "";
     public static String isEdit = "true", key;
 
-    private static int color = Color.GREEN;
+    private static int color = Color.GREEN, mRepeat = 0, mNotify = 0;
+
+    public static int getmRepeat() {
+        return mRepeat;
+    }
+
+    public static void setmRepeat(int mRepeat) {
+        AddEventActivity.mRepeat = mRepeat;
+    }
+
+    public static int getmNotify() {
+        return mNotify;
+    }
+
+    public static void setmNotify(int mNotify) {
+        AddEventActivity.mNotify = mNotify;
+    }
+
     private static long mDate, mTime;
     private static boolean mAlldaySwitch;
 
@@ -73,6 +90,8 @@ public class AddEventActivity extends AppCompatActivity {
             mTime = time.getTimeInMillis();
             mAlldaySwitch = event.isAllDay();
             key = event.getUid();
+            setmNotify(event.getNotify());
+            setmRepeat(event.getRepetition());
         }
         SetFragment();
 //        if (isEdit) {
