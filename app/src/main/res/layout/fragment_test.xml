@@ -52,7 +52,7 @@
         <com.github.sundeepk.compactcalendarview.CompactCalendarView
             android:id="@+id/compactcalendar_view"
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="250dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             app:compactCalendarBackgroundColor="#ffffff"

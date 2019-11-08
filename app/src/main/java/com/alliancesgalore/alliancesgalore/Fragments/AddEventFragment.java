@@ -406,7 +406,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         setmTitle(mTitle.getText().toString());
     }
 
-    //TO - DO
     private void save() {
 
 
@@ -466,6 +465,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             key = calEvents.getKey();
         }
 
+        //creating a map
+
         HashMap<String, Object> map = new HashMap<>();
 //        toast(key, mCtx);
         map.put("title", mTitle.getText().toString());
@@ -478,6 +479,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("createdBy", myProfile.getEmail());
         map.put("color", AddEventActivity.getColor());
 
+        //puttinf a calendarevent object
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
@@ -485,11 +487,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             selectedlist.add(myProfile);
         }
 
-
+        //creating a map with emails of event participants
         for (UserProfile profile : selectedlist) {
             eventParticipants.put(encodeUserEmail(profile.getEmail()), true);
         }
 
+        //updating the map in database
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()
                 .getReference()
@@ -500,6 +503,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 //        eventParticipantsref.removeValue();
         eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
             toast("part1 updated", mCtx);
+
+
+            //creating a map with eventslist and updating it for the selected profiles
             HashMap<String, Object> myEvents = new HashMap<>();
             myEvents.put(finalKey, true);
 

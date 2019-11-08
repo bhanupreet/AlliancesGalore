@@ -22,41 +22,15 @@ import java.util.List;
 
 public class AddEventActivity extends AppCompatActivity {
     public static List<UserProfile> selectedlist = new ArrayList<>(), mOldList;
-
-    private Toolbar mToolBar;
+    private static long mDate, mTime;
+    private static boolean mAlldaySwitch;
     private static String mDescription = "";
     private static String mLocation = "";
     private static String mTitle = "";
     public static String isEdit = "true", key;
-
     private static int color = Color.GREEN, mRepeat = 0, mNotify = 0;
+    private Toolbar mToolBar;
 
-    public static int getmRepeat() {
-        return mRepeat;
-    }
-
-    public static void setmRepeat(int mRepeat) {
-        AddEventActivity.mRepeat = mRepeat;
-    }
-
-    public static int getmNotify() {
-        return mNotify;
-    }
-
-    public static void setmNotify(int mNotify) {
-        AddEventActivity.mNotify = mNotify;
-    }
-
-    private static long mDate, mTime;
-    private static boolean mAlldaySwitch;
-
-    public static int getColor() {
-        return color;
-    }
-
-    public static void setColor(int color) {
-        AddEventActivity.color = color;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,12 +98,13 @@ public class AddEventActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
+            return true;
         } else {
-            return super.onOptionsItemSelected(item);
+            return false;
         }
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -187,6 +162,30 @@ public class AddEventActivity extends AppCompatActivity {
 
     public static void setmTitle(String title) {
         mTitle = title;
+    }
+
+    public static int getmRepeat() {
+        return mRepeat;
+    }
+
+    public static void setmRepeat(int mRepeat) {
+        AddEventActivity.mRepeat = mRepeat;
+    }
+
+    public static int getmNotify() {
+        return mNotify;
+    }
+
+    public static void setmNotify(int mNotify) {
+        AddEventActivity.mNotify = mNotify;
+    }
+
+    public static int getColor() {
+        return color;
+    }
+
+    public static void setColor(int color) {
+        AddEventActivity.color = color;
     }
 
     @Override
