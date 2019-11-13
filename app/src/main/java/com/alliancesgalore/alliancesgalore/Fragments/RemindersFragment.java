@@ -229,7 +229,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         Calendar mStartOfMonth = Calendar.getInstance();
         mStartOfMonth.set(currentTime.get(Calendar.YEAR),
                 currentTime.get(Calendar.MONTH),
-                1,
+                currentTime.getActualMinimum(Calendar.DAY_OF_MONTH),
                 0,
                 0,
                 0);

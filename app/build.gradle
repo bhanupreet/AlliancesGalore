@@ -50,14 +50,18 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
+
+
+
     implementation 'com.google.firebase:firebase-dynamic-links:19.0.0'
-    implementation 'androidx.core:core-ktx:+'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0-alpha03'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
@@ -81,10 +85,15 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:6.0.2'
     implementation 'com.google.api-client:google-api-client:1.23.0'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-    implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
 
     implementation "com.github.skydoves:colorpickerpreference:2.0.0"
     implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
+//    implementation 'com.google.android.libraries.places:places-compat:2.0.0'
+
+
+//    implementation 'com.google.android.libraries.places:places:2.0.0'
+//    implementation 'com.google.android.libraries.places:places:2.0.0'
+
 
 
 }

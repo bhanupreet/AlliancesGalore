@@ -221,6 +221,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.addEvent_Location_layout:
+//                setDescriptionLocationcation();
                 setDescriptionLocation("loc", mLocationLayout);
                 break;
 
@@ -232,6 +233,19 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         }
     }
+
+//    private void setLocation() {
+//        int AUTOCOMPLETE_REQUEST_CODE = 1;
+//// Set the fields to specify which types of place data to
+//// return after the user has made a selection.
+//        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+//
+//// Start the autocomplete intent.
+//        Intent intent = new Autocomplete.IntentBuilder(
+//                AutocompleteActivityMode.FULLSCREEN, fields)
+//                .build(this);
+//        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+//    }
 
     private void colorpicker() {
         ColorPickerDialog colorPickerDialog = new ColorPickerDialog(mCtx, Color.GREEN, color -> {
