@@ -15,7 +15,6 @@ import com.alliancesgalore.alliancesgalore.Adapters.MapInfoAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.DividerItemDecorator;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdate;
@@ -114,7 +113,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         mRecycler.setLayoutManager(layoutManager);
         adapter = new UserProfileAdapter(this, mMapSelectionList);
         mRecycler.setAdapter(adapter);
-        mRecycler.addItemDecoration(new DividerItemDecorator(this));
+//        mRecycler.addItemDecoration(new DividerItemDecorator(this));
 //        adapter.swap(pos, 0);
     }
 
@@ -246,7 +245,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mma");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy hh:mma");
         String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
         Marker marker2 = mMap.addMarker(new MarkerOptions()
                 .position(location)

@@ -64,7 +64,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             holder.mAllDay.setText(time.format(customEvent.getDateTime()));
 
         //IT WORKS DON'T TOUCH IT
-        //CONVERT TIME TO DATE FOR BETTER FUNCTIONALITY
 
         if (position > 0) {
             String date1 = simple.format(mCustomEventList.get(position - 1).getDateTime());

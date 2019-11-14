@@ -38,4 +38,12 @@ public class SnappingLinearLayoutManager extends LinearLayoutManager {
             return SNAP_TO_START;
         }
     }
+//    @Override
+//    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+//        try {
+//            super.onLayoutChildren(recycler, state);
+//        } catch (IndexOutOfBoundsException e) {
+//            Log.e("TAG", "meet a IOOBE in RecyclerView");
+//        }
+//    }
 }

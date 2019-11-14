@@ -83,6 +83,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
 
     }
@@ -497,6 +498,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
         HashMap<String, Object> eventParticipants = new HashMap<>();
 
+
         if (!selectedlist.contains(myProfile)) {
             selectedlist.add(myProfile);
         }
@@ -518,7 +520,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
             toast("part1 updated", mCtx);
 
-
             //creating a map with eventslist and updating it for the selected profiles
             HashMap<String, Object> myEvents = new HashMap<>();
             myEvents.put(finalKey, true);
@@ -530,6 +531,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                         .getReference()
                         .child("MyEvents")
                         .child(encodeUserEmail(profile.getEmail()));
+
                 myEventsref1.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
                     toast("Data updated successfully", mCtx);
                     Intent mainIntent = new Intent(getContext(), MainActivity.class);
