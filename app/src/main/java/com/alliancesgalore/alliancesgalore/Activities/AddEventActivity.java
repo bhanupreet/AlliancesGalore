@@ -64,7 +64,7 @@ public class AddEventActivity extends AppCompatActivity {
             mTime = time.getTimeInMillis();
             mAlldaySwitch = event.isAllDay();
             key = event.getUid();
-            setmNotify(event.getNotify());
+//            setmNotify(event.getNotify());
             setmRepeat(event.getRepetition());
         }
         SetFragment();

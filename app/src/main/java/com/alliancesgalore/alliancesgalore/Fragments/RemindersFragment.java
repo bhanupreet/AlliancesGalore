@@ -214,14 +214,14 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         }
     };
 
-    private Calendar setEndOfMonth(Calendar selectedMonth) {
+    private Calendar setEndOfMonth(Calendar currentTime) {
         Calendar mEndOfMonth = Calendar.getInstance();
-        mEndOfMonth.set(selectedMonth.get(Calendar.YEAR)
-                , selectedMonth.get(Calendar.MONTH)
-                , selectedMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
-                , 23
-                , 59
-                , 59);
+        mEndOfMonth.set(currentTime.get(Calendar.YEAR)
+                ,currentTime.get(Calendar.MONTH),
+                currentTime.getActualMaximum(Calendar.DAY_OF_MONTH),
+                currentTime.getActualMaximum(Calendar.HOUR_OF_DAY),
+                currentTime.getActualMaximum(Calendar.MINUTE),
+                currentTime.getActualMaximum(Calendar.SECOND));
         return mEndOfMonth;
     }
 
@@ -230,9 +230,9 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mStartOfMonth.set(currentTime.get(Calendar.YEAR),
                 currentTime.get(Calendar.MONTH),
                 currentTime.getActualMinimum(Calendar.DAY_OF_MONTH),
-                0,
-                0,
-                0);
+                currentTime.getActualMinimum(Calendar.HOUR_OF_DAY),
+                currentTime.getActualMinimum(Calendar.MINUTE),
+                currentTime.getActualMinimum(Calendar.SECOND));
         return mStartOfMonth;
     }
 
@@ -361,8 +361,8 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                     adapter.notifyDataSetChanged();
                     for (CustomEvent event : temp) {
                         if (!mList.contains(event)
-                                && event.getDateTime() > mStartOfMonth.getTimeInMillis()
-                                && event.getDateTime() < mEndOfMonth.getTimeInMillis()) {
+                                && event.getDateTime() >= mStartOfMonth.getTimeInMillis()
+                                && event.getDateTime() <= mEndOfMonth.getTimeInMillis()) {
                             mList.add(event);
 
                         }

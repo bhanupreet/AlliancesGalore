@@ -25,7 +25,6 @@ import androidx.fragment.app.Fragment;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -48,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
 import static android.app.Activity.RESULT_OK;
+import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 
 public class ProfileFragment extends Fragment {
@@ -82,15 +82,22 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            mProgress.setVisibility(View.VISIBLE);
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 UploadTask uploadTask = uploadToDatabase(resultUri);
                 uploadTask.addOnCompleteListener(uploadOnComplete);
-            }
+            } else
+                mProgress.setVisibility(View.INVISIBLE);
+
         } else
             Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
+//        mProgress.setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -122,9 +129,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void LoadImage() {
-        if (Global.myProfile.getImage() != null) {
+        if (myProfile.getImage() != null) {
             Picasso.get()
-                    .load(Global.myProfile.getImage())
+                    .load(myProfile.getImage())
                     .placeholder(R.drawable.defaultprofile)
                     .into(mProfileImage);
         }
@@ -132,9 +139,9 @@ public class ProfileFragment extends Fragment {
 
     private void setDetails() {
         LoadImage();
-        mDisplayName.setText(Global.myProfile.getDisplay_name());
-        mEmail.setText(Global.myProfile.getEmail());
-        mDeesignation.setText(Global.myProfile.getRole());
+        mDisplayName.setText(myProfile.getDisplay_name());
+        mEmail.setText(myProfile.getEmail());
+        mDeesignation.setText(myProfile.getRole());
     }
 
     private void FindIds(View view) {
@@ -199,11 +206,12 @@ public class ProfileFragment extends Fragment {
     private View.OnClickListener changePhotoOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            mProgress.setVisibility(View.VISIBLE);
             CropImage.activity()
                     .setAspectRatio(1, 1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(getContext(), ProfileFragment.this);
+            mProgress.setVisibility(View.INVISIBLE);
+
         }
     };
 
@@ -230,6 +238,7 @@ public class ProfileFragment extends Fragment {
             DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid());
             HashMap<String, Object> result = new HashMap<>();
             result.put("image", downloadurl);
+            myProfile.setImage(downloadurl);
             myRef.updateChildren(result).addOnCompleteListener(updateDatabaseOnComplete);
         }
     };
@@ -238,11 +247,12 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onComplete(@NonNull Task task) {
             if (task.isSuccessful()) {
-                mProgress.setVisibility(View.INVISIBLE);
+
                 Toast.makeText(getContext(), "image uploaded successfully", Toast.LENGTH_SHORT).show();
-                LoadImage();
+
             } else
                 Functions.toast(task);
+            mProgress.setVisibility(View.INVISIBLE);
         }
     };
 

@@ -489,7 +489,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         map.put("dateTime", mDateTime);
         map.put("repetition", getmRepeat());
         map.put("description", mDescription.getText().toString());
-        map.put("notify", getmNotify());
+//        map.put("notify", getmNotify());
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
         map.put("color", AddEventActivity.getColor());
