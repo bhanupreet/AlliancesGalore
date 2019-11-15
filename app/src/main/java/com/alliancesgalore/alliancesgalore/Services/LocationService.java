@@ -1,16 +1,23 @@
 package com.alliancesgalore.alliancesgalore.Services;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alliancesgalore.alliancesgalore.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,7 +32,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class LocationService extends Service {
+    private static final int NOTIF_ID = 1;
+    private static final String NOTIF_CHANNEL_ID = "Channel_Id";
     private static final String TAG = LocationService.class.getSimpleName();
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -35,16 +45,14 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        requestLocationUpdates();
-    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startMyOwnForeground();
+        else
+            startForeground(1, new Notification());
 
-    protected BroadcastReceiver stopReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            unregisterReceiver(stopReceiver);
-            stopSelf();
-        }
-    };
+        requestLocationUpdates();
+//        buildNotification();
+    }
 
     private void requestLocationUpdates() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -62,7 +70,6 @@ public class LocationService extends Service {
                 client.requestLocationUpdates(request, locationCallback, null);
         }
     }
-
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -97,7 +104,30 @@ public class LocationService extends Service {
             } else {
 //                Functions.toast("not during work hours", getApplicationContext());
                 stopSelf();
+                stopForeground(true);
+
             }
         }
     };
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startMyOwnForeground() {
+        String NOTIFICATION_CHANNEL_ID = "com.example.simpleapp";
+        String channelName = "My Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        Notification notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("App is running in background")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+        startForeground(2, notification);
+    }
 }

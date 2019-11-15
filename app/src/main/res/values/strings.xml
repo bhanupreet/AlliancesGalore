@@ -5,4 +5,5 @@
     <string name="title">title</string>
     <string name="confirm">confirm</string>
     <string name="cancel">cancel</string>
+    <string name="tracking_enabled_notif">app is running</string>
 </resources>
