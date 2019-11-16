@@ -58,7 +58,6 @@ public class LocationService extends Service {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-
             LocationRequest request = new LocationRequest();
             request.setInterval(5000);
             request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -68,6 +67,9 @@ public class LocationService extends Service {
 
             if (permission == PackageManager.PERMISSION_GRANTED)
                 client.requestLocationUpdates(request, locationCallback, null);
+        } else {
+            stopSelf();
+            stopForeground(true);
         }
     }
 

@@ -106,6 +106,7 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     @Override
     public void onPause() {
         super.onPause();
+        resetActionMode();
     }
 
     @Override
