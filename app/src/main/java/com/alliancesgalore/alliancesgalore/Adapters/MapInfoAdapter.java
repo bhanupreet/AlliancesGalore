@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
     private final View myContentsView;
     private Context mCtx;
 
+    @SuppressLint("InflateParams")
     public MapInfoAdapter(Context mCtx) {
         this.mCtx = mCtx;
         myContentsView = LayoutInflater.from(mCtx).inflate(R.layout.custom_map_info_window, null);

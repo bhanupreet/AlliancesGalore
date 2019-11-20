@@ -217,7 +217,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private Calendar setEndOfMonth(Calendar currentTime) {
         Calendar mEndOfMonth = Calendar.getInstance();
         mEndOfMonth.set(currentTime.get(Calendar.YEAR)
-                ,currentTime.get(Calendar.MONTH),
+                , currentTime.get(Calendar.MONTH),
                 currentTime.getActualMaximum(Calendar.DAY_OF_MONTH),
                 currentTime.getActualMaximum(Calendar.HOUR_OF_DAY),
                 currentTime.getActualMaximum(Calendar.MINUTE),
@@ -247,7 +247,13 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             CustomEvent event1 = new CustomEvent(event);
             event1.setRepitionFlag(true);
             if (ismonth) {
+                Calendar previous = Calendar.getInstance();
+                previous.setTimeInMillis(nextday.getTimeInMillis());
                 nextday.add(Calendar.MONTH, i);
+                if (previous.get(Calendar.DAY_OF_MONTH) == previous.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+                    nextday.set(Calendar.DAY_OF_MONTH, nextday.getActualMaximum(Calendar.DAY_OF_MONTH));
+                }
+
             } else
                 nextday.add(Calendar.DATE, i);
 

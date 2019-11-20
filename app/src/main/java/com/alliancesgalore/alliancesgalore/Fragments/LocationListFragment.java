@@ -553,8 +553,9 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
             mActionmode.finish();
         mFilterbtn.setEnabled(true);
         mSortBtn.setEnabled(true);
-        for (UserProfile profile : filterlist)
-            profile.setSelected(false);
+        if (filterlist != null)
+            for (UserProfile profile : filterlist)
+                profile.setSelected(false);
 
         multiselect_list.clear();
         sort(filterlist);

@@ -11,11 +11,11 @@ import com.alliancesgalore.alliancesgalore.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 import mva2.adapter.ItemViewHolder;
 
-public class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
+class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
     TextView mDesignation, mDisplayName;
     CircleImageView mProfileImage,mTick;
 
-    public UserProfileViewHolder(@NonNull View itemView) {
+    UserProfileViewHolder(@NonNull View itemView) {
 
         super(itemView);
         mDisplayName = itemView.findViewById(R.id.users_single_displayname);

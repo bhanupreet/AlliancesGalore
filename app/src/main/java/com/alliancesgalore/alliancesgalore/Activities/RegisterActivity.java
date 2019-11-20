@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -35,12 +34,14 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout mEmail;
     private TextInputLayout mPassword;
     private Button mCreateBtn;
-    private String Email, password, role, display_name, token;
+    private String Email;
+    private String password;
+    private String role;
+    private String display_name;
     private FirebaseAuth mAuth;
     private Toolbar mToolbar;
     private ProgressDialog mregProgress;
     private DatabaseReference mDatabase;
-    private CredentialsClient mCredentialsClient;
     private Spinner mSpinner;
     private int level;
 

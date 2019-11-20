@@ -9,16 +9,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alliancesgalore.alliancesgalore.R;
 
 public class SplashActivity extends AppCompatActivity {
+    int SPLASH_TIME_OUT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        int SPLASH_TIME_OUT = 3000;
+
         new Handler().postDelayed(() -> {
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(i);
-                finish();
+            Intent i = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(i);
+            finish();
         }, SPLASH_TIME_OUT);
     }
 }

@@ -53,7 +53,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-places:17.0.0'
 
 
-
     implementation 'com.google.firebase:firebase-dynamic-links:19.0.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -90,11 +89,13 @@ dependencies {
     implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
 //    implementation 'com.google.android.libraries.places:places-compat:2.0.0'
 
-
+    implementation 'eu.davidea:flexible-adapter:5.1.0'
+    implementation 'eu.davidea:flexible-adapter-ui:1.0.0'
+    implementation 'eu.davidea:flexible-adapter-livedata:1.0.0-b3'
+    // From 1.0.0-b3, library is compiled with data binding v2
+    implementation 'eu.davidea:flexible-adapter-databinding:1.0.0'
 //    implementation 'com.google.android.libraries.places:places:2.0.0'
 //    implementation 'com.google.android.libraries.places:places:2.0.0'
-
-
 
 }
 apply plugin: 'com.google.gms.google-services'

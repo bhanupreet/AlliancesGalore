@@ -48,8 +48,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     private LatLng MyLocation;
     private int pos;
     private LatLngBounds.Builder builder;
-    private Boolean isMultiselect = false;
-    private boolean isinitial = true;
+    private Boolean isMultiSelect = false;
+    private boolean initial = true;
     private LatLngBounds bounds;
 
     @Override
@@ -68,31 +68,29 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         MyLocation = setLatLong(obj);
         LatLng location = MyLocation;
 
-        isMultiselect = getIntent().getBooleanExtra("ismultiselect", false);
+        isMultiSelect = getIntent().getBooleanExtra("ismultiselect", false);
 
-        if (isMultiselect) {
-            setMultiselectMarkers();
+        if (isMultiSelect) {
+            setMultiSelectMarkers();
 
         } else
-            setdefault(obj, location);
+            setDefault(obj, location);
 
 //        setLocation(location);
-        setmToolbar();
+        setToolbar();
         setAdapter();
         RecyclerClick();
         setBottomSheetBehavior();
     }
 
-    private void setMultiselectMarkers() {
+    private void setMultiSelectMarkers() {
         builder = new LatLngBounds.Builder();
         for (UserProfile profile : mMapSelectionList) {
             LatLng temp = new LatLng(profile.getLatitude(), profile.getLongitude());
-            setdefault(profile, temp);
+            setDefault(profile, temp);
             builder.include(temp);
         }
-
-        isinitial = true;
-
+        initial = true;
     }
 
     private void setMapRefreshListener() {
@@ -117,11 +115,11 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 //        adapter.swap(pos, 0);
     }
 
-    private void setdefault(UserProfile obj, LatLng location) {
+    private void setDefault(UserProfile obj, LatLng location) {
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
 
-            if (isMultiselect && isinitial) {
+            if (isMultiSelect && initial) {
                 bounds = builder.build();
 //                mMap.setLatLngBoundsForCameraTarget(bounds);
                 mMap.setPadding(150, 150, 150, 150);
@@ -129,7 +127,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                 mMap.animateCamera(cu);
 //                mMap.animateCamera(CameraUpdateFactory.zoomBy(-2));
 
-            } else if (!isMultiselect) {
+            } else if (!isMultiSelect) {
                 googleMap.clear();
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -141,7 +139,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         });
     }
 
-    private void setmToolbar() {
+    private void setToolbar() {
         Toolbar mToolbar = findViewById(R.id.map_toolbar);
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Location");
@@ -157,9 +155,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
             setLocation(Location);
 
-            if (!isMultiselect)
-                setdefault(obj, Location);
-            isinitial = false;
+            if (!isMultiSelect)
+                setDefault(obj, Location);
+            initial = false;
 
             adapter.swap(0, pos);
             Objects.requireNonNull(mRecycler.getLayoutManager()).scrollToPosition(0);
@@ -218,9 +216,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private LatLng setLatLong(UserProfile obj) {
-        LatLng returnthis = new LatLng(obj.getLatitude(), obj.getLongitude());
-        MyLocation = returnthis;
-        return returnthis;
+        LatLng returnThis = new LatLng(obj.getLatitude(), obj.getLongitude());
+        MyLocation = returnThis;
+        return returnThis;
     }
 
     private ArrayList<UserProfile> ObjectListIntent() {
@@ -236,12 +234,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return (super.onOptionsItemSelected(item));
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else
+            return false;
     }
 
     private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {

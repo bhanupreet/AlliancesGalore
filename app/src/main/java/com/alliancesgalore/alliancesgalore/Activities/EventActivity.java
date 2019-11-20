@@ -52,16 +52,13 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        event = getIntent().getParcelableExtra("object");
+        getIntentVariables();
+        setToolbar();
+        setFragment();
 
-        mList = getIntent().getParcelableArrayListExtra("objectlist");
+    }
 
-        mToolbar = findViewById(R.id.mEvent_toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(event.getTitle());
-
-
+    private void setFragment() {
         FragmentManager fm = getSupportFragmentManager();
         EventFragment fragment = new EventFragment();
         Bundle bundle = new Bundle();
@@ -71,7 +68,18 @@ public class EventActivity extends AppCompatActivity {
                 .add(R.id.event_container, fragment)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .commit();
+    }
 
+    private void getIntentVariables() {
+        event = getIntent().getParcelableExtra("object");
+        mList = getIntent().getParcelableArrayListExtra("objectlist");
+    }
+
+    private void setToolbar() {
+        mToolbar = findViewById(R.id.mEvent_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(event.getTitle());
     }
 
     @Override
@@ -95,13 +103,7 @@ public class EventActivity extends AppCompatActivity {
                 editEvent();
                 return true;
             case R.id.event_delete:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .setTitle("Delete Event")
-                        .setMessage("Are you sure you want to delete the selected event?")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> deleteEvent())
-                        .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
-                AlertDialog alert = builder.create();
-                alert.show();
+              deleteEventDialog();
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -109,6 +111,17 @@ public class EventActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deleteEventDialog() {
+        AlertDialog.Builder builder = new AlertDialog
+                .Builder(this)
+                .setTitle("Delete Event")
+                .setMessage("Are you sure you want to delete the selected event?")
+                .setPositiveButton("Yes", (dialogInterface, i) -> deleteEvent())
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void editEvent() {

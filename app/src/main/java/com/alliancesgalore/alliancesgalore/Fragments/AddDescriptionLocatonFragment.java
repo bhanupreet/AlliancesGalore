@@ -24,6 +24,28 @@ public class AddDescriptionLocatonFragment extends Fragment {
 
     private TextInputLayout mDescLoc;
     private Button mSavebtn;
+    String myStrings;
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_description_location, container, false);
+
+        getIntent();
+        FindIds(view);
+        setHint();
+        setSaveBtn();
+
+        return view;
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -34,34 +56,7 @@ public class AddDescriptionLocatonFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_description_location, container, false);
-        //here is your arguments
-        Bundle bundle = getArguments();
-
-        //here is your list array
-        String myStrings = bundle.getString("desc_loc");
-
-        mDescLoc = view.findViewById(R.id.addEvent_desc_loc_input);
-
-        if (myStrings.equals("desc")) {
-            mDescLoc.setHint("Description");
-            mDescLoc.getEditText().setText(AddEventActivity.getDescription());
-        } else {
-            mDescLoc.setHint("Location");
-            mDescLoc.getEditText().setText(AddEventActivity.getLocation());
-        }
-
-        mSavebtn = view.findViewById(R.id.addEvent_desc_loc_savebtn);
-
+    private void setSaveBtn() {
         mSavebtn.setOnClickListener(v -> {
             if (TextUtils.isEmpty(Functions.TextOf(mDescLoc))) {
                 Functions.toast("Feild cannot be left blank", getContext());
@@ -77,8 +72,27 @@ public class AddDescriptionLocatonFragment extends Fragment {
                 fm.popBackStack();
             }
         });
+    }
 
-        return view;
+    private void setHint() {
+        if (myStrings.equals("desc")) {
+            mDescLoc.setHint("Description");
+            mDescLoc.getEditText().setText(AddEventActivity.getDescription());
+        } else {
+            mDescLoc.setHint("Location");
+            mDescLoc.getEditText().setText(AddEventActivity.getLocation());
+        }
 
+    }
+
+    private void getIntent() {
+        Bundle bundle = getArguments();
+
+        myStrings = bundle.getString("desc_loc");
+    }
+
+    private void FindIds(View view) {
+        mSavebtn = view.findViewById(R.id.addEvent_desc_loc_savebtn);
+        mDescLoc = view.findViewById(R.id.addEvent_desc_loc_input);
     }
 }

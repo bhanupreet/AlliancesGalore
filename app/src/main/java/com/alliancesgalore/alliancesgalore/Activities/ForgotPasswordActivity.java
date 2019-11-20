@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class ForgotPasswordActivity extends AppCompatActivity {
 
     private TextInputLayout mEmail;
@@ -39,7 +41,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void setToolbar() {
 
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("Forgot password");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Forgot password");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }

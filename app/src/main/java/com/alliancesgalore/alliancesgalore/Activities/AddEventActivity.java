@@ -19,6 +19,7 @@ import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class AddEventActivity extends AppCompatActivity {
     public static List<UserProfile> selectedlist = new ArrayList<>(), mOldList;
@@ -86,7 +87,7 @@ public class AddEventActivity extends AppCompatActivity {
     private void SetmToolBar() {
         mToolBar = findViewById(R.id.addEvent_toolbar);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Add CustomEvent");
     }
 
@@ -202,7 +203,7 @@ public class AddEventActivity extends AppCompatActivity {
             setLocation("");
             setDescription("");
             selectedlist.clear();
-            setColor(0);
+            setColor(Color.GREEN);
             mOldList.clear();
 
         } catch (Exception e) {
