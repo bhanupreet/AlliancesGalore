@@ -65,12 +65,27 @@
             app:compactCalendarTextColor="#212121"
             app:compactCalendarTextSize="12sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reminder_recycler"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f0f0f0"
-            android:nestedScrollingEnabled="false" />
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reminder_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f0f0f0"
+                android:nestedScrollingEnabled="false" />
+
+            <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                android:id="@+id/reminder_recycler_shimmer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:shimmer_demo_angle="20"
+                app:shimmer_demo_child_count="10"
+                app:shimmer_demo_layout="@layout/custom_event_layout_shimmer"
+                app:shimmer_demo_shimmer_color="#fafafa"
+                app:shimmer_demo_view_holder_item_background="#ffffff" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/noevents"
@@ -84,4 +99,5 @@
             android:textColor="#212121"
             android:textSize="22sp" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,7 @@ import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Services.AlarmReceiver;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,6 +64,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private PendingIntent alarmIntent;
     private TextView mNoEvents;
     private TextView mYear;
+    private ShimmerRecyclerView mShimmer;
 
 
     @Override
@@ -164,6 +166,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
     private void FindIds(View view) {
         mRecycler = view.findViewById(R.id.reminder_recycler);
+        mShimmer = view.findViewById(R.id.reminder_recycler_shimmer);
         exFiveCalendar = view.findViewById(R.id.compactcalendar_view);
         mMonthSwitch = view.findViewById(R.id.reminders_monthview_switch);
         mNoEvents = view.findViewById(R.id.noevents);
@@ -298,6 +301,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mList.clear();
         temp.clear();
         mRecycler.setVisibility(View.GONE);
+        mShimmer.showShimmerAdapter();
         int top = layoutManager.findFirstCompletelyVisibleItemPosition();
         Calendar calendar = Calendar.getInstance();
 //        if (!mList.isEmpty()) {
@@ -313,6 +317,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
     private void loadData(Calendar mStartOfMonth, Calendar mEndOfMonth) {
         mRecycler.setVisibility(View.GONE);
+        mShimmer.showShimmerAdapter();
         Query q3 = FirebaseDatabase
                 .getInstance()
                 .getReference()
@@ -389,6 +394,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                         if (dataSnapshot.exists()) {
 
                             mRecycler.setVisibility(View.VISIBLE);
+                            mShimmer.hideShimmerAdapter();
                             mNoEvents.setVisibility(View.GONE);
 
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -409,9 +415,11 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                         adapter.notifyDataSetChanged();
                         if (mList.isEmpty()) {
                             mRecycler.setVisibility(View.GONE);
+                            mShimmer.hideShimmerAdapter();
                             mNoEvents.setVisibility(View.VISIBLE);
                         } else {
                             mRecycler.setVisibility(View.VISIBLE);
+                            mShimmer.hideShimmerAdapter();
                             mNoEvents.setVisibility(View.GONE);
                         }
                         Calendar calendar = Calendar.getInstance();
