@@ -9,7 +9,6 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,7 +51,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
-public class LocationListFragment extends Fragment implements MainActivity.OnBackPressedListener {
+public class LocationListFragment extends Fragment {
 
     private RecyclerView mRecycler;
     private UserProfileAdapter adapter;
@@ -89,7 +87,6 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
-        ((MainActivity) getActivity()).setOnBackPressedListener(this);
         ReportingToCheck();
         FindIds(view);
         query();
@@ -144,20 +141,20 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
 //        SetFAB();
         query();
 
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener((v, keyCode, event) -> {
-
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                isMultiselect = false;
-                resetActionMode();
-
-                return true;
-
-            }
-
-            return false;
-        });
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        getView().setOnKeyListener((v, keyCode, event) -> {
+//
+//            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+//                isMultiselect = false;
+//                resetActionMode();
+//
+//                return true;
+//
+//            }
+//
+//            return false;
+//        });
     }
 
     @Override
@@ -663,8 +660,8 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
+            resetActionMode();
             mActionmode = null;
-            doBack();
         }
     };
 
@@ -694,16 +691,6 @@ public class LocationListFragment extends Fragment implements MainActivity.OnBac
         }
 
         setActionModeTitle();
-    }
-
-    @Override
-    public void doBack() {
-        Toast.makeText(getActivity(), "OnBackpress Click", Toast.LENGTH_LONG).show();
-        if (actionMode != null)
-            resetActionMode();
-        else {
-        }
-//        SetFAB();
     }
 
     public static int dpFromPx(final Context context, final float px) {

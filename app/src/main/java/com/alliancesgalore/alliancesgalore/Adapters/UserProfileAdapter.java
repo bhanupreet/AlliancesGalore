@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
     private List<UserProfile> mUsersList;
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListner;
+    private int lastPosition = 0;
 
     public UserProfileAdapter(Context mCtx, List<UserProfile> mUsersList) {
         this.mCtx = mCtx;
@@ -66,6 +69,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
             }
 
         });
+        setAnimation(holder.layout, position);
+        lastPosition = 0;
     }
 
     @Override
@@ -79,5 +84,15 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
         mUsersList.set(b, aProfile);
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
         Collections.sort(mUsersList.subList(1, mUsersList.size()), (t1, t2) -> t1.getLevel() - t2.getLevel());
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(mCtx, R.anim.push_left_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 }

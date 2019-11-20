@@ -14,6 +14,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     TextView mEvent_date;
     TextView mEvent_day, mEvent_title, mEventDescription, mAllDay;
     View mEventColor;
+    View layout;
 //    View top;
 
     EventViewHolder(@NonNull View itemView) {
@@ -26,6 +27,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         mEventDescription = itemView.findViewById(R.id.event_description);
         mAllDay = itemView.findViewById(R.id.event_allday);
         mEventColor = itemView.findViewById(R.id.event_color);
+        layout = itemView.findViewById(R.id.event_layout);
 //        top = itemView.findViewById(R.id.event_topview);
     }
 }

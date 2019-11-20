@@ -403,9 +403,10 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                                 if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
                                     myCustomEvent.setUid(key);
                                     mList.add(myCustomEvent);
+//                                    adapter.notifyItemInserted(mList.size()-1);
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+//                            adapter.notifyDataSetChanged();
                         }
 
                         //sorting the list and putting dots on to the calendar

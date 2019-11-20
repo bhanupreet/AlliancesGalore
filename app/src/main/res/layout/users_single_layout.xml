@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#ffffff"
     android:clickable="false"
     android:focusable="false"
-    android:background="#ffffff"
     android:nestedScrollingEnabled="false"
     android:orientation="vertical"
     android:padding="15dp">
@@ -39,7 +40,6 @@
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/users_single_profile_image"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
     <TextView

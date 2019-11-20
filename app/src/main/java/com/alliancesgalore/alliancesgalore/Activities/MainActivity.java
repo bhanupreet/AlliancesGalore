@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     int position;
     public CRMfragment crmFragment;
     public FloatingActionButton fab;
-    protected OnBackPressedListener onBackPressedListener;
 
     public static List<UserProfile> getmList() {
         return mList;
@@ -64,13 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static List<UserProfile> mList;
 
-    public interface OnBackPressedListener {
-        void doBack();
-    }
-
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
-        this.onBackPressedListener = onBackPressedListener;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTab(int position) {
+        if (LocationListFragment.mActionmode != null)
+            LocationListFragment.mActionmode.finish();
 
         switch (position) {
             case 0:
@@ -247,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 selectedTabs();
                 fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add, MainActivity.this.getTheme()));
-                Functions.toast("set using onpageselected", MainActivity.this);
+//                Functions.toast("set using onpageselected", MainActivity.this);
                 fab.setOnClickListener(view -> {
                     Intent addIntent = new Intent(MainActivity.this, AddEventActivity.class);
                     startActivity(addIntent);
@@ -266,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
-        onBackPressedListener = null;
         super.onDestroy();
     }
 
@@ -376,15 +369,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        if (onBackPressedListener != null) {
-            onBackPressedListener.doBack();
-        } else
-            onBackPressed();
-    }
 
     public int getcurrenttabposition() {
         if (mTabLayout != null) {
@@ -410,11 +394,4 @@ public class MainActivity extends AppCompatActivity {
             return 0;
     }
 
-    public interface OnBackPressed {
-        void onBackpressed();
-    }
-
-    public void onBackpressed() {
-        super.onBackPressed();
-    }
 }

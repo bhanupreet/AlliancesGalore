@@ -13,7 +13,8 @@ import mva2.adapter.ItemViewHolder;
 
 class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
     TextView mDesignation, mDisplayName;
-    CircleImageView mProfileImage,mTick;
+    CircleImageView mProfileImage, mTick;
+    View layout;
 
     UserProfileViewHolder(@NonNull View itemView) {
 
@@ -22,5 +23,6 @@ class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
         mDesignation = itemView.findViewById(R.id.users_Single_designation);
         mProfileImage = itemView.findViewById(R.id.users_single_profile_image);
         mTick = itemView.findViewById(R.id.user_single_selected);
+        layout = itemView.findViewById(R.id.user_layout);
     }
 }

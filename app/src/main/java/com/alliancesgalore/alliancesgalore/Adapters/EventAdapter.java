@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private List<CustomEvent> mCustomEventList;
     private ItemClickListener mItemClickListener;
     private ItemLongClickListner mItemLongClickListener;
+    private int lastPosition = 0;
 
     public EventAdapter(Context mCtx, List<CustomEvent> mCustomEventList) {
         this.mCustomEventList = mCustomEventList;
@@ -87,11 +90,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             if (mItemClickListener != null)
                 mItemClickListener.onItemClick(position);
         });
+        setAnimation(holder.layout, position);
+        lastPosition = 0;
     }
 
     @Override
     public int getItemCount() {
         return mCustomEventList.size();
 
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(mCtx, R.anim.push_left_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 }
