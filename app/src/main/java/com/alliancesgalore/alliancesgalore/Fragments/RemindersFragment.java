@@ -431,8 +431,10 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                                 pos = mList.indexOf(event);
                             }
                         }
-                        if (pos != -1)
+                        if (pos != -1) {
                             mRecycler.smoothScrollToPosition(pos);
+                        }
+
                     }
 
                     @Override

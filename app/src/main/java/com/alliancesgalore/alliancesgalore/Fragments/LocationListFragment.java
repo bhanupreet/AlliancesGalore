@@ -61,7 +61,6 @@ public class LocationListFragment extends Fragment {
     private String mail;
     private ShimmerRecyclerView shimmerRecycler;
     private boolean sortByLevel = true, ascending = true, isSelectAll = false;
-    private ArrayList<UserProfile> temp;
     public static boolean isMultiselect = false;
     private LinearLayout mFilterbtn, mSortBtn;
     private SharedPreferences execSetting, tlSetting, managerSetting, sortsettings;
@@ -71,10 +70,8 @@ public class LocationListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                selectallbtn(item);
-
+        if (item.getItemId() == android.R.id.home) {
+            selectAllBtn(item);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -87,10 +84,10 @@ public class LocationListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
-        ReportingToCheck();
-        FindIds(view);
+        reportingToCheck();
+        findIds(view);
         query();
-        setmSwipeResfresh();
+        setmSwipeRefresh();
 
         execSetting = setPrefs(true, "executiveSettings");
         tlSetting = setPrefs(true, "tlSettings");
@@ -175,13 +172,13 @@ public class LocationListFragment extends Fragment {
     private Boolean handleMenuItemClicks(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.executives:
-                filterfunction(item, 30, execSetting);
+                filterFunction(item, 30, execSetting);
                 return false;
             case R.id.teamLeaders:
-                filterfunction(item, 20, tlSetting);
+                filterFunction(item, 20, tlSetting);
                 return false;
             case R.id.managers:
-                filterfunction(item, 10, managerSetting);
+                filterFunction(item, 10, managerSetting);
                 return false;
             default:
                 return false;
@@ -195,18 +192,18 @@ public class LocationListFragment extends Fragment {
         editor1.apply();
     }
 
-    private void FilterClick() {
+    private void filterClick() {
         if (myProfile.getLevel() <= 10) {
             mFilterbtn.setOnClickListener(view -> {
 
                 PopupMenu popup = new PopupMenu(getContext(), mFilterbtn);
-                FindIds(popup);
+                findIds(popup);
                 getSetChecked();
 
                 if (myProfile.getLevel() == 10)
                     mManagers.setVisible(false);
                 popup.setOnMenuItemClickListener(item -> {
-                    FilterSettings(item);
+                    filterSettings(item);
                     return handleMenuItemClicks(item);
                 });
                 popup.show();
@@ -226,7 +223,7 @@ public class LocationListFragment extends Fragment {
         }
     }
 
-    private void FilterSettings(MenuItem item) {
+    private void filterSettings(MenuItem item) {
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         item.setActionView(new View(getContext()));
         item.setOnActionExpandListener(menuActionExpandListener);
@@ -243,14 +240,14 @@ public class LocationListFragment extends Fragment {
 
     }
 
-    private void FindIds(PopupMenu popup) {
+    private void findIds(PopupMenu popup) {
         popup.getMenuInflater().inflate(R.menu.filter_menu, popup.getMenu());
         mExecutives = popup.getMenu().findItem(R.id.executives);
         mManagers = popup.getMenu().findItem(R.id.managers);
         mTeamLeaders = popup.getMenu().findItem(R.id.teamLeaders);
     }
 
-    private void filterfunction(MenuItem item, int level, SharedPreferences setting) {
+    private void filterFunction(MenuItem item, int level, SharedPreferences setting) {
         if (item.isChecked()) item.setChecked(false);
         else item.setChecked(true);
         SharedPreferences.Editor editor = setting.edit();
@@ -273,6 +270,7 @@ public class LocationListFragment extends Fragment {
     private void fabclick() {
         MainActivity mainActivity = (MainActivity) getActivity();
 
+        assert mainActivity != null;
         mainActivity.fab.setOnClickListener(v -> {
             isMultiselect = !isMultiselect;
             if (mActionmode == null) {
@@ -292,27 +290,27 @@ public class LocationListFragment extends Fragment {
     private void startActionMode(MainActivity mainActivity) {
         mainActivity.mToolbar.startActionMode(actionMode);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(dpFromPx(getContext(), 10), 0, 0, 0);
+        lp.setMargins(DpFromPx(getContext(), 10), 0, 0, 0);
 
         ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
         getActivity().findViewById(R.id.action_mode_close_button).setLayoutParams(lp);
-        getActivity().findViewById(R.id.action_mode_close_button).setPadding(dpFromPx(getContext(), 10), 0, dpFromPx(getContext(), 5), 0);
+        getActivity().findViewById(R.id.action_mode_close_button).setPadding(DpFromPx(getContext(), 10), 0, DpFromPx(getContext(), 5), 0);
 
 //        mainActivity.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                actionmodeSelectAll();
+//                actionModeSelectAll();
 //            }
 //        });
 
         getActivity().findViewById(R.id.action_mode_close_button).setOnClickListener(view -> {
-            actionmodeSelectAll();
+            actionModeSelectAll();
         });
 
 
     }
 
-    private void actionmodeSelectAll() {
+    private void actionModeSelectAll() {
         if (!isSelectAll) {
             for (UserProfile profile : filterlist) {
                 profile.setSelected(true);
@@ -322,7 +320,12 @@ public class LocationListFragment extends Fragment {
             }
             adapter.notifyDataSetChanged();
             isSelectAll = true;
-            ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.checked));
+            ((AppCompatImageView) Objects
+                    .requireNonNull(getActivity())
+                    .findViewById(R.id.action_mode_close_button))
+                    .setImageDrawable((Objects.requireNonNull(getContext()))
+                                    .getResources()
+                                    .getDrawable(R.drawable.checked));
         } else {
             for (UserProfile profile : filterlist) {
                 profile.setSelected(false);
@@ -330,20 +333,25 @@ public class LocationListFragment extends Fragment {
             }
             adapter.notifyDataSetChanged();
             isSelectAll = false;
-            ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+            ((AppCompatImageView) Objects
+                    .requireNonNull(getActivity())
+                    .findViewById(R.id.action_mode_close_button))
+                    .setImageDrawable(Objects.requireNonNull(getContext())
+                            .getResources()
+                            .getDrawable(R.drawable.uncheck));
         }
         setActionModeTitle();
     }
 
-    private void setSelectedTick(UserProfile selectedprofile) {
-        selectedprofile.setSelected(!selectedprofile.getSelected());
-        if (multiselect_list.contains(selectedprofile))
-            multiselect_list.remove(selectedprofile);
+    private void setSelectedTick(UserProfile selectedProfile) {
+        selectedProfile.setSelected(!selectedProfile.getSelected());
+        if (multiselect_list.contains(selectedProfile))
+            multiselect_list.remove(selectedProfile);
         else
-            multiselect_list.add(selectedprofile);
+            multiselect_list.add(selectedProfile);
     }
 
-    private void settingadapter(List<UserProfile> subordinatesList) {
+    private void settingAdapter(List<UserProfile> subordinatesList) {
         adapter = new UserProfileAdapter(getContext(), subordinatesList);
         mRecycler.setAdapter(adapter);
         mRecycler.setHasFixedSize(true);
@@ -358,19 +366,19 @@ public class LocationListFragment extends Fragment {
         query.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    private void ReportingToCheck() {
+    private void reportingToCheck() {
         if (myProfile != null && TextUtils.isEmpty(myProfile.getReportingTo()))
             sendToReport();
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
         shimmerRecycler = view.findViewById(R.id.locationlist_recyclershimmer);
         shimmerRecycler.showShimmerAdapter();
         mRecycler = view.findViewById(R.id.locationlist_recycler);
         allsubordinatesList = new ArrayList<>();
         multiselect_list = new ArrayList<>();
         multiselect_list.clear();
-        temp = new ArrayList<>();
+        ArrayList<UserProfile> temp = new ArrayList<>();
         subordinatesList = new CopyOnWriteArrayList<>();
         mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         mFilterbtn = view.findViewById(R.id.locationlist_filter);
@@ -378,25 +386,25 @@ public class LocationListFragment extends Fragment {
         mSwipeResfresh = view.findViewById(R.id.locationlist_refresh);
     }
 
-    private void setmSwipeResfresh() {
+    private void setmSwipeRefresh() {
         mSwipeResfresh.setOnRefreshListener(() -> {
             query();
             mSwipeResfresh.setRefreshing(false);
         });
     }
 
-    private void sortclick() {
+    private void sortClick() {
         mSortBtn.setOnClickListener(view -> {
             PopupMenu popup = new PopupMenu(getContext(), mSortBtn);
-            FindIds_sort(popup);
-            getSet_Sort();
+            findIdsSort(popup);
+            getSetSort();
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.sortby_level:
-                        setsortbtn(item, "level", true);
+                        setSortBtn(item, "level", true);
                         return false;
                     case R.id.sortyby_name:
-                        setsortbtn(item, "name", false);
+                        setSortBtn(item, "name", false);
                         return false;
                     default:
                         return false;
@@ -406,7 +414,7 @@ public class LocationListFragment extends Fragment {
         });
     }
 
-    private void setsortbtn(MenuItem item, String key, Boolean bool) {
+    private void setSortBtn(MenuItem item, String key, Boolean bool) {
         sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = sortsettings.edit();
         editor.putString("key_name", key);
@@ -419,13 +427,13 @@ public class LocationListFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void FindIds_sort(PopupMenu popup) {
+    private void findIdsSort(PopupMenu popup) {
         popup.getMenuInflater().inflate(R.menu.sort_menu, popup.getMenu());
         mName = popup.getMenu().findItem(R.id.sortyby_name);
         mLevel = popup.getMenu().findItem(R.id.sortby_level);
     }
 
-    private void getSet_Sort() {
+    private void getSetSort() {
         sortsettings = Objects.requireNonNull(getContext()).getSharedPreferences("MyPref", 0);
         String chk = sortsettings.getString("key_name", null);
         if (chk != null) {
@@ -437,17 +445,23 @@ public class LocationListFragment extends Fragment {
     }
 
     private void sort(List<UserProfile> subordinatesList) {
+        if (subordinatesList != null) {
+            List<UserProfile> temp = new ArrayList<>(subordinatesList);
+            if (ascending)
 
-        if (ascending)
-            Collections.sort(subordinatesList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-        else
-            Collections.sort(subordinatesList, (t2, t1) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
+                Collections.sort(temp, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
+            else
+                Collections.sort(temp, (t2, t1) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
 
-        if (sortByLevel && ascending)
-            Collections.sort(subordinatesList, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
+            if (sortByLevel && ascending)
+                Collections.sort(temp, (t1, t2) -> t1.getLevel() - (t2.getLevel()));
 
-        if (sortByLevel && !ascending)
-            Collections.sort(subordinatesList, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
+            if (sortByLevel && !ascending)
+                Collections.sort(temp, (t2, t1) -> t1.getLevel() - (t2.getLevel()));
+
+            subordinatesList.clear();
+            subordinatesList.addAll(temp);
+        }
     }
 
     @Override
@@ -463,8 +477,6 @@ public class LocationListFragment extends Fragment {
     }
 
     private void itemClick() {
-
-
         adapter.addItemClickListener(pos -> {
             UserProfile selectedprofile = filterlist.get(pos);
             if (isMultiselect) {
@@ -480,7 +492,7 @@ public class LocationListFragment extends Fragment {
     }
 
     private void itemLongClick() {
-        Vibrator vibe = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator vibe = (Vibrator) Objects.requireNonNull(getContext()).getSystemService(Context.VIBRATOR_SERVICE);
 
         adapter.addItemLongClickListener(position -> {
             if (!isMultiselect) {
@@ -490,6 +502,7 @@ public class LocationListFragment extends Fragment {
                     MainActivity mainActivity = (MainActivity) getActivity();
                     mFilterbtn.setEnabled(false);
                     mSortBtn.setEnabled(false);
+                    assert mainActivity != null;
                     startActionMode(mainActivity);
                     itemClick();
                 }
@@ -531,6 +544,7 @@ public class LocationListFragment extends Fragment {
     private void SetFAB() {
 
         MainActivity mainActivity = (MainActivity) getActivity();
+        assert mainActivity != null;
         if (mainActivity.getcurrenttabposition() == 1) {
 //            mainActivity.fab.hide();
             Functions.toast("set in locationlist OnResume", getContext());
@@ -538,7 +552,7 @@ public class LocationListFragment extends Fragment {
         }
     }
 
-    public void resetActionMode() {
+    private void resetActionMode() {
 //        MainActivity mainActivity = (MainActivity) getActivity();
 //
 //        mainActivity.fab.clearAnimation();
@@ -556,7 +570,8 @@ public class LocationListFragment extends Fragment {
 
         multiselect_list.clear();
         sort(filterlist);
-        adapter.notifyDataSetChanged();
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     private void setActionModeTitle() {
@@ -605,12 +620,12 @@ public class LocationListFragment extends Fragment {
 
                 sort(subordinatesList);
                 filterlist = new CopyOnWriteArrayList<>(subordinatesList);
-                settingadapter(filterlist);
+                settingAdapter(filterlist);
                 adapter.notifyDataSetChanged();
                 shimmerRecycler.hideShimmerAdapter();
 //                fabclick();
-                FilterClick();
-                sortclick();
+                filterClick();
+                sortClick();
                 itemClick();
                 itemLongClick();
                 MainActivity.setmList(allsubordinatesList);
@@ -665,7 +680,7 @@ public class LocationListFragment extends Fragment {
         }
     };
 
-    private void selectallbtn(MenuItem menuItem) {
+    private void selectAllBtn(MenuItem menuItem) {
         if (!isSelectAll) {
             for (UserProfile profile : filterlist) {
                 profile.setSelected(true);
@@ -693,7 +708,7 @@ public class LocationListFragment extends Fragment {
         setActionModeTitle();
     }
 
-    public static int dpFromPx(final Context context, final float px) {
+    private static int DpFromPx(final Context context, final float px) {
 
         return (int) (px / context.getResources().getDisplayMetrics().density);
     }

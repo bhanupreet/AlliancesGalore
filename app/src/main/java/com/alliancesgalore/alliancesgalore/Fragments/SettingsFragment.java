@@ -111,14 +111,14 @@ public class SettingsFragment extends Fragment {
 
     private void setAnimClick() {
         ProfileFragment profileFragment = new ProfileFragment();
-        getFragmentManager()
+        getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))
                 .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
                 .addSharedElement(mDesignation, ViewCompat.getTransitionName(mDesignation))
                 .addToBackStack("settings")
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.settings_container_pref, new EmptyFragment())
+//                .replace(R.id.settings_container_pref, new EmptyFragment())
                 .replace(R.id.settings_container, profileFragment)
                 .commit();
     }
@@ -150,7 +150,7 @@ public class SettingsFragment extends Fragment {
                     .addToBackStack("settings")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.settings_container, changePasswordFragment)
-                    .replace(R.id.settings_container_pref, new EmptyFragment())
+//                    .replace(R.id.settings_container_pref, new EmptyFragment())
                     .commit();
         }
     };

@@ -264,7 +264,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTrackerService() {
-        startService(new Intent(this, LocationService.class));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            // only for newer versions
+            Intent pushIntent = new Intent(this, LocationService.class);
+            startForegroundService(pushIntent);
+        } else {
+            Intent pushIntent = new Intent(this, LocationService.class);
+            startService(pushIntent);
+        }
     }
 
     private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();

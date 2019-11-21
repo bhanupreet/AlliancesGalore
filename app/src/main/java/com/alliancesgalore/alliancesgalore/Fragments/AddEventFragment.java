@@ -96,8 +96,13 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         FindIds(view);
         SetViews();
-
         mCtx = getContext();
+        setClickListeners();
+
+        return view;
+    }
+
+    private void setClickListeners() {
         mDate.setOnClickListener(this);
         mAllDaySwitch.setOnClickListener(this);
         mTime.setOnClickListener(this);
@@ -109,7 +114,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mLocationLayout.setOnClickListener(this);
         mColorLayout.setOnClickListener(this);
 
-        return view;
     }
 
     private void SetViews() {

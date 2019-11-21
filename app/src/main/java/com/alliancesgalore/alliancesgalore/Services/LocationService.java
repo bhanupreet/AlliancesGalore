@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alliancesgalore.alliancesgalore.Activities.MainActivity;
 import com.alliancesgalore.alliancesgalore.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -32,10 +34,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class LocationService extends Service {
-    private static final int NOTIF_ID = 1;
-    private static final String NOTIF_CHANNEL_ID = "Channel_Id";
-    private static final String TAG = LocationService.class.getSimpleName();
 
+    private static final long UPDATE_INTERVAL = 5000;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,9 +47,18 @@ public class LocationService extends Service {
         super.onCreate();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
-        else
-            startForeground(1, new Notification());
+        else {
+            Intent notificationIntent = new Intent(this, MainActivity.class);
 
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, 0);
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Alliances Galore")
+                    .setContentText("App is running in background")
+                    .setContentIntent(pendingIntent).build();
+            startForeground(1337, notification);
+        }
         requestLocationUpdates();
 //        buildNotification();
     }
@@ -59,7 +68,7 @@ public class LocationService extends Service {
 
         if (user != null) {
             LocationRequest request = new LocationRequest();
-            request.setInterval(5000);
+            request.setInterval(UPDATE_INTERVAL);
             request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
             int permission = ContextCompat.checkSelfPermission(this,
