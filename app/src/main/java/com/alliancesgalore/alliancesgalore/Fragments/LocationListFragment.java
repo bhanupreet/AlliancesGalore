@@ -541,16 +541,6 @@ public class LocationListFragment extends Fragment {
         Objects.requireNonNull(getActivity()).finish();
     }
 
-    private void SetFAB() {
-
-        MainActivity mainActivity = (MainActivity) getActivity();
-        assert mainActivity != null;
-        if (mainActivity.getcurrenttabposition() == 1) {
-//            mainActivity.fab.hide();
-            Functions.toast("set in locationlist OnResume", getContext());
-            mainActivity.fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_item, getContext().getTheme()));
-        }
-    }
 
     private void resetActionMode() {
 //        MainActivity mainActivity = (MainActivity) getActivity();
