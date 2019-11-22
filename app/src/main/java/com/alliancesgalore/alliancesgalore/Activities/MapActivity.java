@@ -37,7 +37,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.from;
 
 public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener {
     private BottomSheetBehavior bottomSheetBehavior;
@@ -54,6 +61,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     private boolean initial = true;
     private LatLngBounds bounds;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +91,11 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         setAdapter();
         recyclerClick();
         setBottomSheetBehavior();
+//        mRecycler.setOnTouchListener((v, event) -> {
+//            v.getParent().requestDisallowInterceptTouchEvent(true);
+//            v.onTouchEvent(event);
+//            return true;
+//        });
     }
 
     private void setMultiSelectMarkers() {
@@ -184,26 +197,29 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private void setBottomSheetBehavior() {
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior = from(findViewById(R.id.bottomSheetLayout));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetCallback() {
             @Override
             public void onStateChanged(@NotNull View bottomSheet, int newState) {
 
                 switch (newState) {
-                    case STATE_COLLAPSED:
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+
+                    case STATE_DRAGGING:
+                    case STATE_HALF_EXPANDED:
+                    case STATE_HIDDEN:
+                    case STATE_SETTLING:
                         break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                    case BottomSheetBehavior.STATE_SETTLING:
+                    case STATE_COLLAPSED:
                         mRecycler.smoothScrollToPosition(0);
                         mRecycler.setNestedScrollingEnabled(false);
                         mRecycler.setEnabled(false);
                         break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
+                    case STATE_EXPANDED:
                         mRecycler.setNestedScrollingEnabled(true);
                         mRecycler.setEnabled(true);
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + newState);
                 }
             }
 

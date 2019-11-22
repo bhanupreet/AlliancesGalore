@@ -11,25 +11,23 @@
     app:behavior_peekHeight="80dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_gravity="bottom"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        card_view:cardElevation="20dp"
-        card_view:cardUseCompatPadding="true">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/maplist_recyler"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="500dp"
             android:layout_gravity="bottom"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="ifContentScrolls"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:cardCornerRadius="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardElevation="20dp"
+            card_view:cardUseCompatPadding="true">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/maplist_recyler"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_gravity="bottom"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="ifContentScrolls" />
 
 
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
