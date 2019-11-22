@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,6 @@ import com.alliancesgalore.alliancesgalore.Adapters.MapInfoAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.UserProfileAdapter;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,6 +27,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,12 +60,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         setContentView(R.layout.activity_map);
 
         mMapSelectionList = new ArrayList<>();
-        mMapSelectionList = ObjectListIntent();
+        mMapSelectionList = objectListIntent();
 
         FindIds(savedInstanceState);
         setMapRefreshListener();
 
-        UserProfile obj = ObjectIntent();
+        UserProfile obj = objectIntent();
         pos = mMapSelectionList.indexOf(obj);
         MyLocation = setLatLong(obj);
         LatLng location = MyLocation;
@@ -79,7 +81,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 //        setLocation(location);
         setToolbar();
         setAdapter();
-        RecyclerClick();
+        recyclerClick();
         setBottomSheetBehavior();
     }
 
@@ -146,7 +148,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void RecyclerClick() {
+    private void recyclerClick() {
         adapter.swap(0, pos);
         adapter.addItemClickListener(pos -> {
             bottomSheetBehavior.setState(STATE_COLLAPSED);
@@ -185,7 +187,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout));
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
-            public void onStateChanged(View bottomSheet, int newState) {
+            public void onStateChanged(@NotNull View bottomSheet, int newState) {
 
                 switch (newState) {
                     case STATE_COLLAPSED:
@@ -206,12 +208,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             }
 
             @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
+            public void onSlide(@NotNull View bottomSheet, float slideOffset) {
             }
         });
     }
 
-    private UserProfile ObjectIntent() {
+    private UserProfile objectIntent() {
         return getIntent().getParcelableExtra("object");
     }
 
@@ -221,7 +223,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         return returnThis;
     }
 
-    private ArrayList<UserProfile> ObjectListIntent() {
+    private ArrayList<UserProfile> objectListIntent() {
         return getIntent().getParcelableArrayListExtra("objectlist");
     }
 
@@ -243,7 +245,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     private void loadMarkerIcon(UserProfile obj, GoogleMap mMap, LatLng location) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy hh:mma");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy hh:mma");
         String time = formatter.format(new Date(Long.parseLong(obj.getLastUpdated().toString())));
         Marker marker2 = mMap.addMarker(new MarkerOptions()
                 .position(location)
@@ -255,11 +257,11 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Functions.toast(marker.getTitle(), MapActivity.this);
-
+//        Functions.toast(marker.getTitle(), MapActivity.this);
         marker.showInfoWindow();
         UserProfile profile = (UserProfile) marker.getTag();
         int pos = mMapSelectionList.indexOf(profile);
+        assert profile != null;
         LatLng Location = setLatLong(profile);
         setLocation(Location);
         adapter.swap(0, pos);

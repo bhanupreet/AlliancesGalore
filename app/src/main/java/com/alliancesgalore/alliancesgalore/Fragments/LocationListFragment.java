@@ -361,7 +361,12 @@ public class LocationListFragment extends Fragment {
     }
 
     private void query() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("Users")
+                .orderByChild("display_name");
+
         query.keepSynced(true);
         query.addListenerForSingleValueEvent(valueEventListener);
     }

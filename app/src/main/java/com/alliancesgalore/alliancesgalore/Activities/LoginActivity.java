@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     private void SetmToolbar() {
 
         setSupportActionBar(mLoginToolbar);
-        getSupportActionBar().setTitle("Login");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Login");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, LoginOnComplete);
     }
 
-    private OnCompleteListener LoginOnComplete = new OnCompleteListener<AuthResult>() {
+    private OnCompleteListener<AuthResult> LoginOnComplete = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    private OnSuccessListener successListener = new OnSuccessListener<Void>() {
+    private OnSuccessListener<Void> successListener = new OnSuccessListener<Void>() {
         @Override
         public void onSuccess(Void aVoid) {
             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
             // Get new Instance ID token
             String token = Objects.requireNonNull(task.getResult()).getToken();
             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+            assert current_user != null;
             FirebaseDatabase.getInstance().getReference()
                     .child("Users")
                     .child(current_user.getUid())

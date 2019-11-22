@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
     android:id="@+id/bottomSheetLayout"
@@ -11,28 +11,25 @@
     app:behavior_peekHeight="80dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
-    <androidx.core.widget.NestedScrollView
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        card_view:cardElevation="20dp"
+        card_view:cardUseCompatPadding="true">
 
-        <androidx.cardview.widget.CardView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/maplist_recyler"
             android:layout_width="match_parent"
             android:layout_height="500dp"
             android:layout_gravity="bottom"
-            app:cardCornerRadius="10dp"
-            card_view:cardElevation="20dp"
-            card_view:cardUseCompatPadding="true">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/maplist_recyler"
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_gravity="bottom"
-                android:nestedScrollingEnabled="false"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="ifContentScrolls"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-        </androidx.cardview.widget.CardView>
-    </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

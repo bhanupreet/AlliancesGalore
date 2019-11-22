@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -38,7 +39,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getColor;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDate;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getDescription;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getLocation;
@@ -48,7 +51,9 @@ import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.ge
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmRepeat;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.getmTitle;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.isEdit;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.mOldList;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
+import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setColor;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmAlldaySwitch;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmNotify;
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.setmRepeat;
@@ -61,23 +66,16 @@ import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 public class AddEventFragment extends Fragment implements View.OnClickListener {
     private TextInputEditText mTitle;
     private SwitchCompat mAllDaySwitch;
-    private ConstraintLayout mAlldayLayout;
-    private long mDateTime = 0;
     private TextView mDate, mTime, mDescription, mRepition, mNotify, mLocation, mAddPeople;
     private Button mSaveBtn;
-    private Calendar cStartDate = Calendar.getInstance();
-    private int mYear, mMonth, mDay;
     private Context mCtx;
     private Date date;
-    private TimePickerDialog myTimePicker;
     private Date time;
     private Date temptime;
     private ConstraintLayout mRepeatLayout, mAddPeopleLayout, mDescriptionLayout, mNotifyLayout, mLocationLayout, mColorLayout;
-    private String timeText;
     private CharSequence[] repeat = {"Does not repeat", "Every day", "Every week", "Every month"};
     private CharSequence[] notify = {"5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"};
     private View mColorView;
-    private DatabaseReference calEvents;
 
 
     @Override
@@ -94,8 +92,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_addevent_base, container, false);
 
-        FindIds(view);
-        SetViews();
+        findIds(view);
+        setViews();
         mCtx = getContext();
         setClickListeners();
 
@@ -113,11 +111,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mNotifyLayout.setOnClickListener(this);
         mLocationLayout.setOnClickListener(this);
         mColorLayout.setOnClickListener(this);
-
     }
 
-    private void SetViews() {
-
+    @SuppressLint("SetTextI18n")
+    private void setViews() {
         if (TextUtils.isEmpty(getLocation())) {
             mLocation.setText("Location");
         } else
@@ -134,7 +131,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             mDate.setText("Date");
         } else {
             long date = getDate();
-            String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            @SuppressLint("SimpleDateFormat") String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
             mDate.setText(full);
         }
 
@@ -143,7 +140,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             mTime.setText("Time");
         } else {
             long time = getTime();
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
         }
 
@@ -155,9 +152,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mRepition.setText(repeat[getmRepeat()]);
         mNotify.setText(notify[getmNotify()]);
         setAddPeopleview();
-        mColorView.setBackgroundColor(AddEventActivity.getColor());
+        mColorView.setBackgroundColor(getColor());
     }
 
+    @SuppressLint("SetTextI18n")
     private void setAddPeopleview() {
 
         if (!selectedlist.isEmpty()) {
@@ -189,7 +187,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
 
         super.onResume();
-        SetViews();
+        setViews();
     }
 
     @Override
@@ -256,7 +254,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         ColorPickerDialog colorPickerDialog = new ColorPickerDialog(mCtx, Color.GREEN, color -> {
             // do action
             mColorView.setBackgroundColor(color);
-            AddEventActivity.setColor(color);
+            setColor(color);
 //            toast(Integer.toString(color), mCtx);
         });
         colorPickerDialog.show();
@@ -279,7 +277,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         ft.commit();
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
 
         mTitle = view.findViewById(R.id.addEvent_title);
 
@@ -307,16 +305,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void setDate() {
 
         Calendar calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int mYear = calendar.get(Calendar.YEAR);
+        int mMonth = calendar.get(Calendar.MONTH);
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
+        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
             mDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
             calendar.set(year, monthOfYear, dayOfMonth);
             date = calendar.getTime();
             AddEventActivity.setDate(date.getTime());
-            String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            @SuppressLint("SimpleDateFormat") String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
 //            toast(full, mCtx);
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -326,16 +324,16 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     private void setTime() {
 
         Calendar calender = Calendar.getInstance();
-        myTimePicker = new TimePickerDialog(mCtx, (view1, hourOfDay, minute) -> {
+        TimePickerDialog myTimePicker = new TimePickerDialog(mCtx, (view1, hourOfDay, minute) -> {
             Calendar newTime = Calendar.getInstance();
             newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
             newTime.set(Calendar.MINUTE, minute);
             newTime.set(Calendar.SECOND, 0);
             time = newTime.getTime();
             temptime = time;
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
-            timeText = simple.format(time);
+            simple.format(time);
             AddEventActivity.setTime(time.getTime());
         }, calender.get((Calendar.HOUR_OF_DAY)), calender.get(Calendar.MINUTE), false);
         myTimePicker.show();
@@ -346,10 +344,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         if (mAllDaySwitch.isChecked()) {
             mTime.setVisibility(View.GONE);
-            timeText = "time";
         } else {
             mTime.setVisibility(View.VISIBLE);
-            timeText = mTime.getText().toString();
+            mTime.getText().toString();
         }
 
         setmAlldaySwitch(mAllDaySwitch.isChecked());
@@ -368,9 +365,13 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private void setAddPeople() {
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentManager fm = Objects
+                .requireNonNull(getActivity())
+                .getSupportFragmentManager();
+
         FragmentTransaction ft = fm.beginTransaction();
-        ft.addSharedElement(mAddPeople, ViewCompat.getTransitionName(mAddPeople))
+        ft.addSharedElement(mAddPeople, Objects
+                .requireNonNull(ViewCompat.getTransitionName(mAddPeople)))
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.AddEvent_container, new AddPeopleFragment())
                 .addToBackStack("addPeople")
@@ -378,7 +379,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setNotify() {
-
         AlertDialog.Builder alert = new AlertDialog.Builder(mCtx);
         alert.setSingleChoiceItems(notify, getmNotify(), (dialog, which) -> {
             setmNotify(which);
@@ -422,7 +422,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        setmTitle(mTitle.getText().toString());
+        setmTitle(Objects.requireNonNull(mTitle.getText()).toString());
     }
 
     private void save() {
@@ -439,26 +439,35 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             time = newTime.getTime();
         }
 
-        Date staticstate = new Date(AddEventActivity.getDate());
-        Date statictime = new Date(AddEventActivity.getTime());
+        Date staticstate = new Date(getDate());
+        Date statictime = new Date(getTime());
         Date datetime = combineDateTime(staticstate, statictime);
-        mDateTime = datetime.getTime();
+        long mDateTime = datetime.getTime();
 
         String key;
 
         //if the old event is being edited
         //removelist = oldlist-selected list
         //iterate on remove list and remove only given profiles
+        DatabaseReference calEvents;
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
+
             List<UserProfile> removelist = new ArrayList<>();
             List<String> removekeys = new ArrayList<>();
-            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(AddEventActivity.key);
+
+            calEvents = FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("CalendarEvents")
+                    .child(AddEventActivity.key);
+
             key = AddEventActivity.key;
-            for (UserProfile profile : AddEventActivity.mOldList)
+            for (UserProfile profile : mOldList) {
                 if (!selectedlist.contains(profile)) {
                     removekeys.add(encodeUserEmail(profile.getEmail()));
                     removelist.add(profile);
                 }
+            }
             for (UserProfile profile : removelist) {
                 DatabaseReference myEventsref1 = FirebaseDatabase
                         .getInstance()
@@ -466,6 +475,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                         .child("MyEvents")
                         .child(encodeUserEmail(profile.getEmail()))
                         .child(key);
+
                 myEventsref1.removeValue();
             }
 
@@ -480,7 +490,11 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             }
 
         } else {
-            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
+            calEvents = FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("CalendarEvents")
+                    .push();
             key = calEvents.getKey();
         }
 
@@ -496,7 +510,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 //        map.put("notify", getmNotify());
         map.put("location", mLocation.getText().toString());
         map.put("createdBy", myProfile.getEmail());
-        map.put("color", AddEventActivity.getColor());
+        map.put("color", getColor());
 
         //puttinf a calendarevent object
         calEvents.updateChildren(map).addOnSuccessListener(aVoid -> toast("Data added", mCtx));
@@ -513,6 +527,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         }
 
         //updating the map in database
+        assert key != null;
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()
                 .getReference()
@@ -521,8 +536,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         String finalKey = key;
 //        eventParticipantsref.removeValue();
-        eventParticipantsref.updateChildren(eventParticipants).addOnSuccessListener(aVoid12 -> {
-            toast("part1 updated", mCtx);
+        eventParticipantsref
+                .updateChildren(eventParticipants)
+                .addOnSuccessListener(aVoid12 -> {
+//            toast("part1 updated", mCtx);
 
             //creating a map with eventslist and updating it for the selected profiles
             HashMap<String, Object> myEvents = new HashMap<>();
@@ -541,7 +558,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
                     Intent mainIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(mainIntent);
                     mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getActivity().finishAffinity();
+                    Objects.requireNonNull(getActivity()).finishAffinity();
 
                 });
             }

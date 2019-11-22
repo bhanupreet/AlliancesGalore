@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -15,7 +16,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
-import com.alliancesgalore.alliancesgalore.Activities.EventActivity;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
@@ -59,15 +59,22 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         FindIds(view);
 
         Bundle bundle = getArguments();
+        assert bundle != null;
         mList = bundle.getParcelableArrayList("objectlist");
 
-        Query query = FirebaseDatabase.getInstance().getReference().child("EventParticipants").child(EventActivity.getEvent().getUid());
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("EventParticipants")
+                .child(getEvent().getUid());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String email = snapshot.getKey();
+                        assert email != null;
                         emailList.add(Functions.decodeUserEmail(email));
                     }
                     for (UserProfile profile : mList) {
@@ -90,6 +97,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private void setViews() {
         if (TextUtils.isEmpty(getEvent().getLocation())) {
             mLocation.setText("Location");
@@ -107,7 +115,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             mDate.setText("Date");
         } else {
             long date = getEvent().getDateTime();
-            String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            @SuppressLint("SimpleDateFormat") String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
             mDate.setText(full);
         }
 
@@ -116,7 +124,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             mTime.setText("Time");
         } else {
             long time = getEvent().getDateTime();
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
         }
 
@@ -188,19 +196,17 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()) {
-            case R.id.addEvent_AddPeople_layout:
-                EventPeopleFragment fragment = new EventPeopleFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("objectlist", (ArrayList<? extends Parcelable>) selectedlist);
-                bundle.putString("title", getEvent().getTitle());
-                fragment.setArguments(bundle);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.event_container, fragment)
-                        .addToBackStack("eventfragment")
-                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                        .commit();
-
+        if (view.getId() == R.id.addEvent_AddPeople_layout) {
+            EventPeopleFragment fragment = new EventPeopleFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("objectlist", (ArrayList<? extends Parcelable>) selectedlist);
+            bundle.putString("title", getEvent().getTitle());
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.event_container, fragment)
+                    .addToBackStack("eventfragment")
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .commit();
         }
     }
 

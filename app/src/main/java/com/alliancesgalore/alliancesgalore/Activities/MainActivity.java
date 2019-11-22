@@ -41,6 +41,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(title);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
         getSupportActionBar().setLogo(Resid);
     }
 
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                if (isFloatButtonHidden == false && state == 1 && positionOffset != 0.0) {
+                if (!isFloatButtonHidden && state == 1 && positionOffset != 0.0) {
                     isFloatButtonHidden = true;
                     //hide floating action button
                     if (LocationListFragment.mActionmode != null) {
@@ -299,8 +300,17 @@ public class MainActivity extends AppCompatActivity {
         fabanim();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            String uid = FirebaseAuth.getInstance().getUid();
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addListenerForSingleValueEvent(valueEventListener);
+            String uid = FirebaseAuth
+                    .getInstance()
+                    .getUid();
+
+            assert uid != null;
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("Users")
+                    .child(uid)
+                    .addListenerForSingleValueEvent(valueEventListener);
         } else
             sendToStart();
     }

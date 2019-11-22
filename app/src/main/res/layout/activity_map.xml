@@ -24,6 +24,5 @@
     <include layout="@layout/fragment_location" />
 
     <include
-        layout="@layout/content_bottom_sheet"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        layout="@layout/content_bottom_sheet" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -76,7 +76,12 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     }
 
     private void setSavebtn() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("Users")
+                .orderByChild("display_name");
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -109,7 +114,12 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     }
 
     private void query() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("Users")
+                .orderByChild("display_name");
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -178,15 +188,11 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
-
-            case android.R.id.home:
-//                selectedlist.clear();
-                Functions.toast("backbutton press", getContext());
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == android.R.id.home) {//                selectedlist.clear();
+            Functions.toast("backbutton press", getContext());
+            return true;
         }
+        return false;
     }
 
     @Override

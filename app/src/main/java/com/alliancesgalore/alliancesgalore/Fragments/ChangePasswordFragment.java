@@ -44,17 +44,17 @@ public class ChangePasswordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_change_password, container, false);
-        FindIds(view);
+        findIds(view);
         FragFunctions.setToolBarTitle("Change Password", view);
-        ChangePasswordClick();
+        changePasswordClick();
         return view;
     }
 
-    private void ChangePasswordClick() {
+    private void changePasswordClick() {
         mChangePasswordbtn.setOnClickListener(ChangePasswordOnClick);
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
         mPasswordOld = view.findViewById(R.id.changepasswrd_passwordold);
         mPasswordnew1 = view.findViewById(R.id.changepasswrd_new1);
         mPasswordnew2 = view.findViewById(R.id.changepasswrd_new2);

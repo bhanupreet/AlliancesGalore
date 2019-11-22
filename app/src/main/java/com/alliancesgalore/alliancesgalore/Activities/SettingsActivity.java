@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.alliancesgalore.alliancesgalore.Fragments.SettingsFragment;
 import com.alliancesgalore.alliancesgalore.R;
 
+import java.util.Objects;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -25,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void setToolbar() {
         Toolbar mToolBar = findViewById(R.id.settings_app_bar);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("Settings");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

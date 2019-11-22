@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -215,7 +216,7 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    private OnCompleteListener uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
+    private OnCompleteListener<UploadTask.TaskSnapshot> uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
 
         @Override
         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -228,14 +229,21 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    private OnSuccessListener downloadURLsuccess = new OnSuccessListener<Uri>() {
+    private OnSuccessListener<Uri> downloadURLsuccess = new OnSuccessListener<Uri>() {
         @Override
         public void onSuccess(Uri uri) {
             Toast.makeText(getContext(), "URL got successfully", Toast.LENGTH_SHORT).show();
 
             String downloadurl = uri.toString();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid());
+
+            DatabaseReference myRef = database
+                    .getReference()
+                    .child("Users")
+                    .child(Objects.requireNonNull(FirebaseAuth
+                            .getInstance()
+                            .getUid()));
+
             HashMap<String, Object> result = new HashMap<>();
             result.put("image", downloadurl);
             myProfile.setImage(downloadurl);
@@ -260,6 +268,7 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onClick(View view) {
             FullscreenImageFragment fullscreenImageFragment = new FullscreenImageFragment();
+            assert getFragmentManager() != null;
             getFragmentManager()
                     .beginTransaction()
                     .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))

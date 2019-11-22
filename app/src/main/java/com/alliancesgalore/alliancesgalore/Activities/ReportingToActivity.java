@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ReportingToActivity extends AppCompatActivity {
     private RecyclerView mRecycler;
@@ -36,12 +37,12 @@ public class ReportingToActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reporting_to);
 
-        FindIds();
+        findIds();
         setToolBar();
-        ReportingToSwitch();
+        reportingToSwitch();
         query();
         setAdapter();
-        RecyclerClick();
+        recyclerClick();
     }
 
     private void setAdapter() {
@@ -54,24 +55,30 @@ public class ReportingToActivity extends AppCompatActivity {
     }
 
     private void query() {
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("level").equalTo(level);
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("Users")
+                .orderByChild("level")
+                .equalTo(level);
+
         query.keepSynced(true);
         query.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void setToolBar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Reporting To");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Reporting To");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
-    private void FindIds() {
+    private void findIds() {
         mRecycler = findViewById(R.id.ReportingTo_recycler);
         mToolbar = findViewById(R.id.reportingTo_toolbar);
         mReportingToList = new ArrayList<>();
     }
 
-    private void ReportingToSwitch() {
+    private void reportingToSwitch() {
         switch (Global.myProfile.getRole().toLowerCase()) {
             case "team leader":
                 level = 10;
@@ -84,9 +91,16 @@ public class ReportingToActivity extends AppCompatActivity {
         }
     }
 
-    private void RecyclerClick() {
+    private void recyclerClick() {
         adapter.addItemClickListener(pos -> {
-            FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid()).child("ReportingTo").setValue(mReportingToList.get(pos).getEmail());
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("Users")
+                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                    .child("ReportingTo")
+                    .setValue(mReportingToList.get(pos).getEmail());
+
             sendToMain();
         });
     }

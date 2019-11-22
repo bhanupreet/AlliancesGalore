@@ -22,11 +22,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class EventActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
     private List<UserProfile> mList = new ArrayList<>();
     public static List<UserProfile> mSelectedList = new ArrayList<>();
     private static CustomEvent event;
@@ -76,9 +76,9 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void setToolbar() {
-        mToolbar = findViewById(R.id.mEvent_toolbar);
+        Toolbar mToolbar = findViewById(R.id.mEvent_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(event.getTitle());
     }
 
@@ -134,11 +134,30 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void deleteEvent() {
-        FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(event.getUid()).removeValue();
-        FirebaseDatabase.getInstance().getReference().child("EventParticipants").child(event.getUid()).removeValue();
+        FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("CalendarEvents")
+                .child(event.getUid())
+                .removeValue();
+
+        FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("EventParticipants")
+                .child(event.getUid())
+                .removeValue();
+
         for (UserProfile profile : mSelectedList) {
-            FirebaseDatabase.getInstance().getReference().child("MyEvents").child(Functions.encodeUserEmail(profile.getEmail())).child(event.getUid()).removeValue();
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("MyEvents")
+                    .child(Functions.encodeUserEmail(profile.getEmail()))
+                    .child(event.getUid())
+                    .removeValue();
         }
+
         Intent intent = new Intent(EventActivity.this, MainActivity.class);
         startActivity(intent);
         finish();

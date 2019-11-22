@@ -109,7 +109,12 @@ public class LocationService extends Service {
                 userMap.put("LastUpdated", ServerValue.TIMESTAMP);
                 String uid = FirebaseAuth.getInstance().getUid();
                 if (uid != null)
-                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(userMap);
+                    FirebaseDatabase
+                            .getInstance()
+                            .getReference()
+                            .child("Users")
+                            .child(uid)
+                            .updateChildren(userMap);
 
 
             } else {

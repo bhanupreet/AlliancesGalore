@@ -43,13 +43,13 @@ public class ChangeNameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_change_name, container, false);
-        FindIds(view);
+        findIds(view);
         changebtnclick();
         FragFunctions.setToolBarTitle("Change Name", view);
         return view;
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
         mChangeBtn = view.findViewById(R.id.changeame_changenamebtn);
         mchangeNameText = view.findViewById(R.id.changename_name);
         mchangeNameText.getEditText().setText(Global.myProfile.getDisplay_name());
@@ -63,6 +63,7 @@ public class ChangeNameFragment extends Fragment {
         @Override
         public void onClick(View view) {
             String uid = FirebaseAuth.getInstance().getUid();
+            assert uid != null;
             FirebaseDatabase
                     .getInstance()
                     .getReference()
@@ -87,8 +88,17 @@ public class ChangeNameFragment extends Fragment {
     private OnCompleteListener changenameOnComplete = task -> {
         if (task.isSuccessful()) {
             Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();
-            String uid = FirebaseAuth.getInstance().getUid();
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addValueEventListener(valueEventListener);
+            String uid = FirebaseAuth
+                    .getInstance()
+                    .getUid();
+
+            assert uid != null;
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("Users")
+                    .child(uid)
+                    .addValueEventListener(valueEventListener);
             Objects.requireNonNull(getFragmentManager()).popBackStack();
         } else
             Functions.toast(task);

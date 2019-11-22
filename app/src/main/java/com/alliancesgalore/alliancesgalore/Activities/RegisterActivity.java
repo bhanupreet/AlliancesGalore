@@ -27,6 +27,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -50,13 +51,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        FindIds();
-        SetToolbar();
-        CreateBtn();
+        findIds();
+        setToolbar();
+        CreatcreatebtnBtn();
         SetSpinner();
     }
 
-    private void FindIds() {
+    private void findIds() {
         mAuth = FirebaseAuth.getInstance();
         mEmail = findViewById(R.id.reg_email);
         mPassword = findViewById(R.id.reg_password);
@@ -66,13 +67,13 @@ public class RegisterActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.login_toolbar);
     }
 
-    private void SetToolbar() {
+    private void setToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Create Account");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Create Account");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void CreateBtn() {
+    private void CreatcreatebtnBtn() {
         mCreateBtn.setOnClickListener(CreateBtnClickListener);
     }
 
@@ -127,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
             userMap.put("ReportingTo", "Admin");
     }
 
-    private Boolean EmptyFieldsCheck() {
+    private Boolean emptyFieldsCheck() {
         return TextUtils.isEmpty(Email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(display_name) || mSpinner.getSelectedItem().equals("Select One");
     }
 
@@ -137,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
             display_name = Functions.TextOf(mDisplayname);
             Email = Functions.TextOf(mEmail);
             password = Functions.TextOf(mPassword);
-            if (EmptyFieldsCheck()) {
+            if (emptyFieldsCheck()) {
                 Functions.toast("Field  cannot be left blank", RegisterActivity.this);
             } else {
                 regProgress();
@@ -146,16 +147,24 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
-    private OnCompleteListener RegUserOnComplete = new OnCompleteListener<AuthResult>() {
+    private OnCompleteListener<AuthResult> RegUserOnComplete = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
                 FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                 if (current_user != null) {
                     String uid = current_user.getUid();
-                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                    mDatabase = FirebaseDatabase
+                            .getInstance()
+                            .getReference()
+                            .child("Users")
+                            .child(uid);
+
                     getrole();
-                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(TokenOnCompleteListener);
+                    FirebaseInstanceId
+                            .getInstance()
+                            .getInstanceId()
+                            .addOnCompleteListener(TokenOnCompleteListener);
                 }
             } else {
                 mregProgress.hide();
@@ -164,7 +173,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
-    private OnCompleteListener TokenOnCompleteListener = new OnCompleteListener<InstanceIdResult>() {
+    private OnCompleteListener<InstanceIdResult> TokenOnCompleteListener = new OnCompleteListener<InstanceIdResult>() {
         @Override
         public void onComplete(@NonNull Task<InstanceIdResult> task) {
             if (!task.isSuccessful())
@@ -177,7 +186,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
-    private OnCompleteListener UpdateDatabaseOnCompleteListener = new OnCompleteListener<Void>() {
+    private OnCompleteListener<Void> UpdateDatabaseOnCompleteListener = new OnCompleteListener<Void>() {
         @Override
         public void onComplete(@NonNull Task<Void> task) {
             if (task.isSuccessful()) {

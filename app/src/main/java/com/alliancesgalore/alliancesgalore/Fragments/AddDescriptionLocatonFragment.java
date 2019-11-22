@@ -19,12 +19,14 @@ import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Objects;
+
 
 public class AddDescriptionLocatonFragment extends Fragment {
 
     private TextInputLayout mDescLoc;
     private Button mSavebtn;
-    String myStrings;
+    private String myStrings;
 
 
     @Nullable
@@ -33,7 +35,7 @@ public class AddDescriptionLocatonFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_description_location, container, false);
 
         getIntent();
-        FindIds(view);
+        findIds(view);
         setHint();
         setSaveBtn();
 
@@ -50,7 +52,10 @@ public class AddDescriptionLocatonFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentManager fm = Objects
+                    .requireNonNull(getActivity())
+                    .getSupportFragmentManager();
+
             fm.popBackStack();
         }
         return super.onOptionsItemSelected(item);
@@ -91,7 +96,7 @@ public class AddDescriptionLocatonFragment extends Fragment {
         myStrings = bundle.getString("desc_loc");
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
         mSavebtn = view.findViewById(R.id.addEvent_desc_loc_savebtn);
         mDescLoc = view.findViewById(R.id.addEvent_desc_loc_input);
     }

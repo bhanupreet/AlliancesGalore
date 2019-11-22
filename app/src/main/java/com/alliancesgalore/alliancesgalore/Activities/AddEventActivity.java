@@ -30,7 +30,6 @@ public class AddEventActivity extends AppCompatActivity {
     private static String mTitle = "";
     public static String isEdit = "true", key;
     private static int color = Color.GREEN, mRepeat = 0, mNotify = 0;
-    private Toolbar mToolBar;
 
 
     @Override
@@ -85,7 +84,7 @@ public class AddEventActivity extends AppCompatActivity {
 
 
     private void SetmToolBar() {
-        mToolBar = findViewById(R.id.addEvent_toolbar);
+        Toolbar mToolBar = findViewById(R.id.addEvent_toolbar);
         setSupportActionBar(mToolBar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Add CustomEvent");

@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -116,17 +117,25 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     }
 
     private void setQuery() {
-        String myemail = Functions.encodeUserEmail(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+        String myemail = Functions.encodeUserEmail(
+                Objects.requireNonNull(
+                        Objects.requireNonNull(
+                                FirebaseAuth.getInstance().getCurrentUser()).getEmail()));
         mList.clear();
 
-        query = FirebaseDatabase.getInstance().getReference().child("MyEvents").child(myemail);
+        query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("MyEvents")
+                .child(myemail);
+
         query.addListenerForSingleValueEvent(q1ValueEventListener);
     }
 
     private void setMonthSwitch() {
         mMonthSwitch.setChecked(false);
-        DateFormat monthFormat = new SimpleDateFormat("MMMM");
-        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        @SuppressLint("SimpleDateFormat") DateFormat monthFormat = new SimpleDateFormat("MMMM");
+        @SuppressLint("SimpleDateFormat") DateFormat yearFormat = new SimpleDateFormat("yyyy");
         mYear.setText(yearFormat.format(System.currentTimeMillis()));
         mYear.bringToFront();
         mMonthSwitch.setText(monthFormat.format(System.currentTimeMillis()));

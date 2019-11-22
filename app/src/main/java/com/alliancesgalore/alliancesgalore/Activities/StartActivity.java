@@ -18,8 +18,8 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         FindIds();
-        RegBtnClick();
-        LoginBtnClick();
+        regBtnClick();
+        loginBtnClick();
     }
 
     private void FindIds() {
@@ -37,11 +37,11 @@ public class StartActivity extends AppCompatActivity {
         startActivity(login_intent);
     }
 
-    private void RegBtnClick() {
+    private void regBtnClick() {
         mRegBtn.setOnClickListener(v -> regIntent());
     }
 
-    private void LoginBtnClick() {
+    private void loginBtnClick() {
         mLoginbtn.setOnClickListener(v -> loginIntent());
     }
 }

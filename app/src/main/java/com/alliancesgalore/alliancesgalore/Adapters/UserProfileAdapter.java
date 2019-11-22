@@ -69,8 +69,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
             }
 
         });
-        setAnimation(holder.layout, position);
-        lastPosition = 0;
+//        setAnimation(holder.layout, position);
+//        lastPosition = 0;
     }
 
     @Override

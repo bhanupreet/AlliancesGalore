@@ -57,7 +57,7 @@ public class CRMfragment extends Fragment {
 
     private UserProfile myProfile;
     public static int count = 0;
-    Bundle savedInstanceStateout = null;
+    private Bundle savedInstanceStateout = null;
     private ExtendedWebview crmweb;
     private SwipeToRefresh mRefresh;
     private ProgressBar progressBar;
@@ -66,6 +66,8 @@ public class CRMfragment extends Fragment {
     private ValueCallback<Uri[]> mUMA;
     private final static int FCR = 1;
     private String email, decrypted;
+    private int PERMISSION_ALL = 1;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -81,7 +83,7 @@ public class CRMfragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crm, container, false);
 
-        FindIds(view);
+        findIds(view);
         websettings(crmweb);
         webclicklistener(crmweb);
         getemailpass();
@@ -93,14 +95,14 @@ public class CRMfragment extends Fragment {
         return view;
     }
 
-    private void FindIds(View view) {
+    private void findIds(View view) {
 
         crmweb = view.findViewById(R.id.crm_web);
         progressBar = view.findViewById(R.id.crm_prog);
         mRefresh = view.findViewById(R.id.crm_refresh);
     }
 
-    public static boolean hasPermissions(Context context, String... permissions) {
+    private static boolean hasPermissions(Context context, String... permissions) {
 
         if (context != null && permissions != null) {
             for (String permission : permissions) {
@@ -112,8 +114,9 @@ public class CRMfragment extends Fragment {
         return true;
     }
 
-    int PERMISSION_ALL = 1;
 
+
+    @SuppressLint("SetJavaScriptEnabled")
     private void websettings(WebView crmweb) {
 
         crmweb.clearHistory();
@@ -235,8 +238,15 @@ public class CRMfragment extends Fragment {
     private void getemailpass() {
         String uid = FirebaseAuth.getInstance().getUid();
         try {
-            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).addListenerForSingleValueEvent(valueEventListener);
-        } catch (Exception e) {
+            assert uid != null;
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("Users")
+                    .child(uid)
+                    .addListenerForSingleValueEvent(valueEventListener);
+
+        } catch (Exception ignored) {
 
         }
     }
@@ -314,7 +324,6 @@ public class CRMfragment extends Fragment {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
                 login();
-            } else {
             }
 //                Toast.makeText(getContext(), "details could not be fetched.", Toast.LENGTH_SHORT).show();
         }
@@ -409,10 +418,8 @@ public class CRMfragment extends Fragment {
 
     private void setFAB() {
         MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity.getcurrenttabposition() == 0) {
-//            mainActivity.fab.show();
-
-        }
+        assert mainActivity != null;
+        mainActivity.getcurrenttabposition();//            mainActivity.fab.show();
     }
 
     @Override
