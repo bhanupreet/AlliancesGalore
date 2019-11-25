@@ -61,8 +61,6 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private CompactCalendarView exFiveCalendar;
     private CheckedTextView mMonthSwitch;
     private List<Event> mEventsList = new ArrayList<>();
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
     private TextView mNoEvents;
     private TextView mYear;
     private ShimmerRecyclerView mShimmer;
@@ -82,9 +80,9 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         setmRecycler();
 
 
-        alarmMgr = (AlarmManager) mCtx.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmMgr = (AlarmManager) mCtx.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(mCtx, AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(mCtx, 0, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mCtx, 0, intent, 0);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());

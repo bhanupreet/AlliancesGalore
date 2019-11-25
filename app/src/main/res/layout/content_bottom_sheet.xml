@@ -5,10 +5,11 @@
     android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:maxHeight="500dp"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    app:behavior_peekHeight="80dp"
+    app:behavior_peekHeight="90dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
     <!--    <androidx.core.widget.NestedScrollView-->
     <!--        android:layout_width="match_parent"-->

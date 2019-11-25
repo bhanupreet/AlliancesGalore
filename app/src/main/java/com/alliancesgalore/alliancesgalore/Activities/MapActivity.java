@@ -213,6 +213,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                         mRecycler.setNestedScrollingEnabled(false);
                         mRecycler.setEnabled(false);
                         mRecycler.setClickable(false);
+                        adapter.notifyDataSetChanged();
                         mRecycler.setLayoutFrozen(true);
                         break;
                     case STATE_EXPANDED:
@@ -227,6 +228,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                     default:
                         throw new IllegalStateException("Unexpected value: " + newState);
                 }
+
             }
 
             @Override
