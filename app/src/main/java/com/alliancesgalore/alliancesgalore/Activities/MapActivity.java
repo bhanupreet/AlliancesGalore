@@ -41,7 +41,6 @@ import static com.google.android.material.bottomsheet.BottomSheetBehavior.Bottom
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
-import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.from;
@@ -91,11 +90,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         setAdapter();
         recyclerClick();
         setBottomSheetBehavior();
-//        mRecycler.setOnTouchListener((v, event) -> {
-//            v.getParent().requestDisallowInterceptTouchEvent(true);
-//            v.onTouchEvent(event);
-//            return true;
-//        });
+        mRecycler.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            v.onTouchEvent(event);
+            return true;
+        });
+
     }
 
     private void setMultiSelectMarkers() {
@@ -203,19 +203,23 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             public void onStateChanged(@NotNull View bottomSheet, int newState) {
 
                 switch (newState) {
-
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
                     case STATE_DRAGGING:
-                    case STATE_HALF_EXPANDED:
-                    case STATE_HIDDEN:
                     case STATE_SETTLING:
-                        break;
+                    case STATE_HIDDEN:
                     case STATE_COLLAPSED:
                         mRecycler.smoothScrollToPosition(0);
-                        mRecycler.setNestedScrollingEnabled(false);
+//                        mRecycler.setNestedScrollingEnabled(false);
                         mRecycler.setEnabled(false);
+                        mRecycler.setClickable(false);
+//                        mRecycler.setLayoutFrozen(true);
                         break;
                     case STATE_EXPANDED:
-                        mRecycler.setNestedScrollingEnabled(true);
+
+                        mRecycler.setClickable(true);
+//                        mRecycler.set
+//                        mRecycler.setNestedScrollingEnabled(true);
+//                        mRecycler.setLayoutFrozen(false);
                         mRecycler.setEnabled(true);
                         break;
                     default:
@@ -284,4 +288,5 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         adapter.notifyDataSetChanged();
         return true;
     }
+
 }
