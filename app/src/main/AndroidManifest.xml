@@ -57,6 +57,11 @@
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="false" />
+        <receiver android:name=".Services.RestartServiceReceiver">
+            <intent-filter>
+                <action android:name="YouWillNeverKillMe"></action>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".Activities.SettingsActivity"

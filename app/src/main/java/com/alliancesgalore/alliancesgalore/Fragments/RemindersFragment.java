@@ -1,7 +1,9 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +26,6 @@ import com.alliancesgalore.alliancesgalore.Adapters.SnappingLinearLayoutManager;
 import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -59,10 +60,11 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private CompactCalendarView exFiveCalendar;
     private CheckedTextView mMonthSwitch;
     private List<Event> mEventsList = new ArrayList<>();
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
     private TextView mNoEvents;
     private TextView mYear;
     private ShimmerRecyclerView mShimmer;
-    private SwipeToRefresh mRefresh;
 
 
     @Override
@@ -85,17 +87,12 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mRecycler.addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-
                 super.onScrolled(recyclerView, dx, dy);
                 int i = layoutManager.findFirstCompletelyVisibleItemPosition();
                 if (i != -1) {
                     Date date = new Date(mList.get(i).getDateTime());
                     exFiveCalendar.setCurrentDate(date);
                 }
-                if (i > 0)
-                    mRefresh.setEnabled(false);
-                else
-                    mRefresh.setEnabled(true);
             }
         });
     }
@@ -170,7 +167,6 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mMonthSwitch = view.findViewById(R.id.reminders_monthview_switch);
         mNoEvents = view.findViewById(R.id.noevents);
         mNoEvents.setVisibility(View.GONE);
-        mRefresh = view.findViewById(R.id.reminder_refresh);
         mYear = view.findViewById(R.id.reminders_year);
         mYear.setOnClickListener(view12 -> {
             Calendar calendar = Calendar.getInstance();
@@ -191,19 +187,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
-
-        mRefresh.setOnRefreshListener(() -> {
-            mRefresh.setRefreshing(true);
-            Date selecteddate1 = exFiveCalendar.getFirstDayOfCurrentMonth();
-            Calendar selecteddate = Calendar.getInstance();
-            selecteddate.setTimeInMillis(selecteddate1.getTime());
-            Calendar mStartOfMonth = setStartOfMonth(selecteddate);
-            Calendar mEndOfMonth = setEndOfMonth(selecteddate);
-
-            loadData(mStartOfMonth, mEndOfMonth);
-        });
     }
-
 
     private ValueEventListener q1ValueEventListener = new ValueEventListener() {
         @Override
@@ -221,6 +205,10 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                 Calendar mStartOfMonth = setStartOfMonth(currentTime);
                 Calendar mEndOfMonth = setEndOfMonth(currentTime);
                 loadData(mStartOfMonth, mEndOfMonth);
+            } else {
+                mShimmer.hideShimmerAdapter();
+                mRecycler.setVisibility(View.GONE);
+                mNoEvents.setVisibility(View.VISIBLE);
             }
         }
 
@@ -285,7 +273,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
     @Override
     public void onDayClick(Date dateClicked) {
-        DateFormat simple = new SimpleDateFormat("dd MMM YYYY");
+        @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("dd MMM YYYY");
         for (CustomEvent event : mList) {
             if (simple.format(event.getDateTime()).equals(simple.format(dateClicked))) {
                 int pos = mList.indexOf(event);
@@ -305,8 +293,8 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         Calendar mStartOfMonth = Calendar.getInstance();
         mStartOfMonth.setTimeInMillis(firstDayOfNewMonth.getTime());
         Calendar mEndOfMonth = setEndOfMonth(mStartOfMonth);
-        DateFormat simple = new SimpleDateFormat("MMMM");
-        DateFormat year = new SimpleDateFormat("yyyy");
+        @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("MMMM");
+        @SuppressLint("SimpleDateFormat") DateFormat year = new SimpleDateFormat("yyyy");
         mYear.setText(year.format(firstDayOfNewMonth));
         mMonthSwitch.setText(simple.format(firstDayOfNewMonth));
         exFiveCalendar.removeAllEvents();
@@ -348,7 +336,6 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
                         if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent)) {
-                            assert myCustomEvent != null;
                             myCustomEvent.setUid(key);
                             mRepeatList.add(myCustomEvent);
                         }
@@ -391,83 +378,77 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
 
                         }
                     }
-
-                    Query q2 = FirebaseDatabase
-                            .getInstance()
-                            .getReference()
-                            .child("CalendarEvents")
-                            .orderByChild("dateTime")
-                            .startAt(mStartOfMonth.getTimeInMillis())
-                            .endAt(mEndOfMonth.getTimeInMillis());
-
-                    q2.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            //finally adding non repeating events
-                            if (dataSnapshot.exists()) {
-
-                                mRecycler.setVisibility(View.VISIBLE);
-                                mShimmer.hideShimmerAdapter();
-                                mNoEvents.setVisibility(View.GONE);
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
-                                    String key = snapshot.getKey();
-                                    if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
-                                        assert myCustomEvent != null;
-                                        myCustomEvent.setUid(key);
-                                        mList.add(myCustomEvent);
-//                                    adapter.notifyItemInserted(mList.size()-1);
-                                    }
-                                }
-//                            adapter.notifyDataSetChanged();
-                            }
-
-                            //sorting the list and putting dots on to the calendar
-                            exFiveCalendar.removeAllEvents();
-                            addDots();
-                            exFiveCalendar.addEvents(mEventsList);
-                            adapter.notifyDataSetChanged();
-                            if (mList.isEmpty()) {
-                                mRecycler.setVisibility(View.GONE);
-                                mShimmer.hideShimmerAdapter();
-                                mNoEvents.setVisibility(View.VISIBLE);
-                            } else {
-                                mRecycler.setVisibility(View.VISIBLE);
-                                mShimmer.hideShimmerAdapter();
-                                mNoEvents.setVisibility(View.GONE);
-                            }
-                            Calendar calendar = Calendar.getInstance();
-                            DateFormat date = new SimpleDateFormat("dd MMM yyyy");
-                            int pos = 0;
-                            for (CustomEvent event : mList) {
-                                if (calendar.getTimeInMillis() >= event.getDateTime()) {
-                                    pos = mList.indexOf(event);
-                                }
-                            }
-                            if (pos != -1) {
-                                mRecycler.smoothScrollToPosition(pos);
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                } else {
-                    mShimmer.hideShimmerAdapter();
-                    mRecycler.setVisibility(View.GONE);
-                    mNoEvents.setVisibility(View.VISIBLE);
                 }
+                Query q2 = FirebaseDatabase
+                        .getInstance()
+                        .getReference()
+                        .child("CalendarEvents")
+                        .orderByChild("dateTime")
+                        .startAt(mStartOfMonth.getTimeInMillis())
+                        .endAt(mEndOfMonth.getTimeInMillis());
+
+                q2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //finally adding non repeating events
+                        if (dataSnapshot.exists()) {
+
+                            mRecycler.setVisibility(View.VISIBLE);
+                            mShimmer.hideShimmerAdapter();
+                            mNoEvents.setVisibility(View.GONE);
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
+                                String key = snapshot.getKey();
+                                if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
+                                    myCustomEvent.setUid(key);
+                                    mList.add(myCustomEvent);
+//                                    adapter.notifyItemInserted(mList.size()-1);
+                                }
+                            }
+//                            adapter.notifyDataSetChanged();
+                        }
+
+                        //sorting the list and putting dots on to the calendar
+                        exFiveCalendar.removeAllEvents();
+                        addDots();
+                        exFiveCalendar.addEvents(mEventsList);
+                        adapter.notifyDataSetChanged();
+                        if (mList.isEmpty()) {
+                            mRecycler.setVisibility(View.GONE);
+                            mShimmer.hideShimmerAdapter();
+                            mNoEvents.setVisibility(View.VISIBLE);
+                        } else {
+                            mRecycler.setVisibility(View.VISIBLE);
+                            mShimmer.hideShimmerAdapter();
+                            mNoEvents.setVisibility(View.GONE);
+                        }
+                        Calendar calendar = Calendar.getInstance();
+                        @SuppressLint("SimpleDateFormat") DateFormat date = new SimpleDateFormat("dd MMM yyyy");
+                        int pos = 0;
+                        for (CustomEvent event : mList) {
+                            if (calendar.getTimeInMillis() >= event.getDateTime()) {
+                                pos = mList.indexOf(event);
+                            }
+                        }
+                        if (pos != -1) {
+                            mRecycler.smoothScrollToPosition(pos);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        mRefresh.setRefreshing(false);
     }
 
     private void addDots() {

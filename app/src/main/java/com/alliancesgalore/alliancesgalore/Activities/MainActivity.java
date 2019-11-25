@@ -258,13 +258,16 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+
+
     @Override
     protected void onDestroy() {
 
         super.onDestroy();
+        startTrackerService();
     }
-
     private void startTrackerService() {
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             // only for newer versions
             Intent pushIntent = new Intent(this, LocationService.class);
@@ -274,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
             startService(pushIntent);
         }
     }
-
     private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();
 
     public ValueEventListener valueEventListener = new ValueEventListener() {
