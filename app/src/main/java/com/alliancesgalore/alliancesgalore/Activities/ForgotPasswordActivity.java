@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -60,12 +61,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             String emailAddress = Functions.TextOf(mEmail);
             if (!TextUtils.isEmpty(emailAddress)) {
-                mprogressBar.setVisibility(View.VISIBLE);
+               showProgressbar();
                 auth.sendPasswordResetEmail(emailAddress)
                         .addOnCompleteListener(resetClickOnComplete);
 
             } else {
-                mprogressBar.setVisibility(View.INVISIBLE);
+                hideProgressbar();
                 Functions.toast("Email cannot be left blank.", mCtx);
             }
         });
@@ -80,7 +81,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 Functions.toast("Email sent", mCtx);
             else
                 Functions.toast(task);
-            mprogressBar.setVisibility(View.INVISIBLE);
+           hideProgressbar();
         }
     };
+    private void hideProgressbar() {
+        mprogressBar.setVisibility(View.GONE);
+     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
+
+    private void showProgressbar() {
+        mprogressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
 }

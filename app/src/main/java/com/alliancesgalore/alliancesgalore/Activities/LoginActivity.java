@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(tokenOnComplete);
             } else {
-                mprogressBar.setVisibility(View.GONE);
+                hideProgressbar();
                 Functions.toast(task);
             }
 
@@ -141,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Functions.toast("Email or Password cannot be left blank", LoginActivity.this);
             } else {
-                mprogressBar.setVisibility(View.VISIBLE);
+                showProgressbar();
                 Credential credential = new Credential.Builder(email).setPassword(password).build();
                 mCredentialsClient.save(credential);
                 LogIn(email, password);
@@ -153,5 +154,18 @@ public class LoginActivity extends AppCompatActivity {
         Intent PasswordIntent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
         startActivity(PasswordIntent);
     };
+
+    private void hideProgressbar() {
+        mprogressBar.setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
+
+    private void showProgressbar() {
+        mprogressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
 
 }

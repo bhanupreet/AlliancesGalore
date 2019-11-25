@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -85,7 +86,7 @@ public class ProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            mProgress.setVisibility(View.VISIBLE);
+            showProgressbar();
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
@@ -93,11 +94,24 @@ public class ProfileFragment extends Fragment {
                 UploadTask uploadTask = uploadToDatabase(resultUri);
                 uploadTask.addOnCompleteListener(uploadOnComplete);
             } else
-                mProgress.setVisibility(View.INVISIBLE);
+                hideProgressbar();
 
         } else
             Toast.makeText(getContext(), "Error uploading File", Toast.LENGTH_SHORT).show();
 //        mProgress.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void hideProgressbar() {
+        mProgress.setVisibility(View.GONE);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
+
+    private void showProgressbar() {
+        mProgress.setVisibility(View.VISIBLE);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
 
@@ -211,7 +225,7 @@ public class ProfileFragment extends Fragment {
                     .setAspectRatio(1, 1)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(getContext(), ProfileFragment.this);
-            mProgress.setVisibility(View.INVISIBLE);
+           hideProgressbar();
 
         }
     };
@@ -260,7 +274,7 @@ public class ProfileFragment extends Fragment {
 
             } else
                 Functions.toast(task);
-            mProgress.setVisibility(View.INVISIBLE);
+           hideProgressbar();
         }
     };
 

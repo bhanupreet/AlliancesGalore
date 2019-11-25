@@ -6,6 +6,7 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -80,7 +81,7 @@ public class ChangePasswordFragment extends Fragment {
 
             else {
                 user.reauthenticate(credential).addOnCompleteListener(reauthenticateOnComplete);
-                mProgress.setVisibility(View.VISIBLE);
+                showProgressbar();
             }
         }
     };
@@ -90,7 +91,7 @@ public class ChangePasswordFragment extends Fragment {
         public void onComplete(@NonNull Task task) {
             if (!task.isSuccessful()) {
                 Functions.toast(task);
-                mProgress.setVisibility(View.INVISIBLE);
+                hideProgressbar();
             } else
                 user.updatePassword(Functions.TextOf(mPasswordnew2)).addOnCompleteListener(updateOnComplete);
         }
@@ -109,7 +110,7 @@ public class ChangePasswordFragment extends Fragment {
                         .addOnCompleteListener(updateDataBaseOnComplete);
             else {
                 Functions.toast(task);
-                mProgress.setVisibility(View.INVISIBLE);
+                hideProgressbar();
             }
         }
 
@@ -123,7 +124,20 @@ public class ChangePasswordFragment extends Fragment {
                 Functions.toast("Password updated successfully", getContext());
             } else
                 Functions.toast(task);
-            mProgress.setVisibility(View.INVISIBLE);
+            hideProgressbar();
         }
     };
+
+    private void hideProgressbar() {
+        mProgress.setVisibility(View.GONE);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
+
+    private void showProgressbar() {
+        mProgress.setVisibility(View.VISIBLE);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
 }

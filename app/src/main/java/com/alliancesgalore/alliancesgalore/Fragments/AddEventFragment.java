@@ -11,6 +11,7 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -303,7 +304,19 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mLocationLayout = view.findViewById(R.id.addEvent_Location_layout);
 
         mProgress = view.findViewById(R.id.addEvent_progress);
-        mProgress.setVisibility(View.INVISIBLE);
+      hideProgressbar();
+    }
+    private void hideProgressbar() {
+        mProgress.setVisibility(View.GONE);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+    }
+
+    private void showProgressbar() {
+        mProgress.setVisibility(View.VISIBLE);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
     }
 
     private void setDate() {
@@ -429,7 +442,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private void save() {
 
-        mProgress.setVisibility(View.VISIBLE);
+       showProgressbar();
 
         //setting the datetime
         if (!mAllDaySwitch.isChecked()) {
@@ -552,6 +565,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             }
 
         });
-        mProgress.setVisibility(View.INVISIBLE);
+       hideProgressbar();
     }
 }

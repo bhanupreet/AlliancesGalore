@@ -24,6 +24,7 @@ import com.alliancesgalore.alliancesgalore.Adapters.SnappingLinearLayoutManager;
 import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
+import com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -61,6 +62,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
     private TextView mNoEvents;
     private TextView mYear;
     private ShimmerRecyclerView mShimmer;
+    private SwipeToRefresh mRefresh;
 
 
     @Override
@@ -83,12 +85,17 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mRecycler.addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
                 super.onScrolled(recyclerView, dx, dy);
                 int i = layoutManager.findFirstCompletelyVisibleItemPosition();
                 if (i != -1) {
                     Date date = new Date(mList.get(i).getDateTime());
                     exFiveCalendar.setCurrentDate(date);
                 }
+                if (i > 0)
+                    mRefresh.setEnabled(false);
+                else
+                    mRefresh.setEnabled(true);
             }
         });
     }
@@ -163,6 +170,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         mMonthSwitch = view.findViewById(R.id.reminders_monthview_switch);
         mNoEvents = view.findViewById(R.id.noevents);
         mNoEvents.setVisibility(View.GONE);
+        mRefresh = view.findViewById(R.id.reminder_refresh);
         mYear = view.findViewById(R.id.reminders_year);
         mYear.setOnClickListener(view12 -> {
             Calendar calendar = Calendar.getInstance();
@@ -183,7 +191,19 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
+
+        mRefresh.setOnRefreshListener(() -> {
+            mRefresh.setRefreshing(true);
+            Date selecteddate1 = exFiveCalendar.getFirstDayOfCurrentMonth();
+            Calendar selecteddate = Calendar.getInstance();
+            selecteddate.setTimeInMillis(selecteddate1.getTime());
+            Calendar mStartOfMonth = setStartOfMonth(selecteddate);
+            Calendar mEndOfMonth = setEndOfMonth(selecteddate);
+
+            loadData(mStartOfMonth, mEndOfMonth);
+        });
     }
+
 
     private ValueEventListener q1ValueEventListener = new ValueEventListener() {
         @Override
@@ -447,6 +467,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+        mRefresh.setRefreshing(false);
     }
 
     private void addDots() {

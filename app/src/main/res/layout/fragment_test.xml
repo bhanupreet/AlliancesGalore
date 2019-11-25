@@ -1,105 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reminder_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatCheckedTextView
-        android:id="@+id/reminders_monthview_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="?actionBarSize"
-        android:layout_gravity="center_vertical"
-        android:background="@color/colorPrimary"
-        android:checkMark="@drawable/ic_arrow_drop_up"
-        android:gravity="center_vertical"
-        android:paddingStart="10dp"
-        android:stateListAnimator="@anim/rotate_clockwise"
-        android:text="month"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlSymmetry" />
-
-
-    <TextView
-        android:id="@+id/reminders_year"
-        android:layout_width="wrap_content"
-        android:layout_height="?actionBarSize"
-        android:layout_marginEnd="10dp"
-        android:gravity="center_vertical"
-        android:text="2019"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
-        <com.github.sundeepk.compactcalendarview.CompactCalendarView
-            android:id="@+id/compactcalendar_view"
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:compactCalendarBackgroundColor="#ffffff"
-            app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimaryDark"
-            app:compactCalendarCurrentDayTextColor="@color/white"
-            app:compactCalendarCurrentSelectedDayBackgroundColor="#A80000"
-            app:compactCalendarCurrentSelectedDayTextColor="@color/white"
-            app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
-            app:compactCalendarTargetHeight="250dp"
-            app:compactCalendarTextColor="#212121"
-            app:compactCalendarTextSize="12sp" />
+            android:layout_height="?actionBarSize"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatCheckedTextView
+            android:id="@+id/reminders_monthview_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="?actionBarSize"
+            android:layout_gravity="center_vertical"
+            android:background="@color/colorPrimary"
+            android:checkMark="@drawable/ic_arrow_drop_up"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:stateListAnimator="@anim/rotate_clockwise"
+            android:text="month"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/reminder_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#f0f0f0"
-                android:nestedScrollingEnabled="false" />
-
-            <com.cooltechworks.views.shimmer.ShimmerRecyclerView
-                android:id="@+id/reminder_recycler_shimmer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:shimmer_demo_angle="20"
-                app:shimmer_demo_child_count="10"
-                app:shimmer_demo_layout="@layout/custom_event_layout_shimmer"
-                app:shimmer_demo_shimmer_color="#fafafa"
-                app:shimmer_demo_view_holder_item_background="#ffffff" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/noevents"
+            android:id="@+id/reminders_year"
+            android:layout_width="wrap_content"
+            android:layout_height="?actionBarSize"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:text="2019"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="#f0f0f0"
-            android:gravity="center"
-            android:text="No Events!"
-            android:textAlignment="center"
-            android:textColor="#212121"
-            android:textSize="22sp" />
-    </LinearLayout>
+            android:layout_marginTop="?actionBarSize"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.github.sundeepk.compactcalendarview.CompactCalendarView
+                android:id="@+id/compactcalendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                app:compactCalendarBackgroundColor="#ffffff"
+                app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimaryDark"
+                app:compactCalendarCurrentDayTextColor="@color/white"
+                app:compactCalendarCurrentSelectedDayBackgroundColor="#A80000"
+                app:compactCalendarCurrentSelectedDayTextColor="@color/white"
+                app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
+                app:compactCalendarTargetHeight="250dp"
+                app:compactCalendarTextColor="#212121"
+                app:compactCalendarTextSize="12sp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/reminder_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#f0f0f0"
+                    android:nestedScrollingEnabled="false" />
+
+                <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                    android:id="@+id/reminder_recycler_shimmer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:shimmer_demo_angle="20"
+                    app:shimmer_demo_child_count="10"
+                    app:shimmer_demo_layout="@layout/custom_event_layout_shimmer"
+                    app:shimmer_demo_shimmer_color="#fafafa"
+                    app:shimmer_demo_view_holder_item_background="#ffffff" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/noevents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#f0f0f0"
+                android:gravity="center"
+                android:text="No Events!"
+                android:textAlignment="center"
+                android:textColor="#212121"
+                android:textSize="22sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.alliancesgalore.alliancesgalore.Utils.SwipeToRefresh>
