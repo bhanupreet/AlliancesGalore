@@ -161,7 +161,7 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = new Intent(EventActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
-        Functions.toast("Event delete", EventActivity.this);
+        Functions.toast("Event deleted", EventActivity.this);
 
     }
 

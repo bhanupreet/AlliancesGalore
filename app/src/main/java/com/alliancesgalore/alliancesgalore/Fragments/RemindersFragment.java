@@ -1,9 +1,7 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +23,6 @@ import com.alliancesgalore.alliancesgalore.Adapters.EventAdapter;
 import com.alliancesgalore.alliancesgalore.Adapters.SnappingLinearLayoutManager;
 import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Services.AlarmReceiver;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -78,18 +75,6 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         setQuery();
         setCalendar();
         setmRecycler();
-
-
-        AlarmManager alarmMgr = (AlarmManager) mCtx.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(mCtx, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mCtx, 0, intent, 0);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 25);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
 
         return view;
     }

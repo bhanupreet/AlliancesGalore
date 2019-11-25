@@ -64,24 +64,17 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         mList = new ArrayList<>();
         mList.clear();
 
-        FindIds(view);
-        setSavebtn();
+        mRecycler = view.findViewById(R.id.addpeople_recycler);
+        shimmerRecycler = view.findViewById(R.id.addPeople_recyclershimmer);
+        mSaveBtn = view.findViewById(R.id.addPeople_savebtn);
+        if (selectedlist.isEmpty()) {
+            mSaveBtn.setVisibility(View.INVISIBLE);
+        } else
+            mSaveBtn.setVisibility(View.VISIBLE);
+        mSaveBtn.setOnClickListener(this);
 //        shimmerRecycler.showShimmerAdapter();
         setAdapter();
-        query();
-
-        setClickListeners();
-
-        return view;
-    }
-
-    private void setSavebtn() {
-        Query query = FirebaseDatabase
-                .getInstance()
-                .getReference()
-                .child("Users")
-                .orderByChild("display_name");
-
+        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -111,47 +104,7 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
 
             }
         });
-    }
 
-    private void query() {
-        Query query = FirebaseDatabase
-                .getInstance()
-                .getReference()
-                .child("Users")
-                .orderByChild("display_name");
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        mList.add(snapshot.getValue(UserProfile.class));
-
-                    }
-
-                    Collections.sort(mList, (t1, t2) -> t1.getDisplay_name().toLowerCase().compareTo(t2.getDisplay_name().toLowerCase()));
-                    Collections.sort(mList, (t2, t1) -> t1.getSelected().compareTo(t2.getSelected()));
-
-                    for (UserProfile profile : selectedlist) {
-                        int i = mList.indexOf(profile);
-                        mList.get(i).setSelected(true);
-
-                    }
-                    mList.remove(myProfile);
-                    adapter.notifyDataSetChanged();
-                    shimmerRecycler.hideShimmerAdapter();
-                    mAllList.addAll(mList);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void setClickListeners() {
         adapter.addItemClickListener(i -> {
             mList.get(i).setSelected(!mList.get(i).getSelected());
 //            adapter.notifyItemChanged(i);
@@ -167,12 +120,8 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
             else
                 mSaveBtn.setVisibility(View.VISIBLE);
         });
-    }
 
-    private void FindIds(View view) {
-        mRecycler = view.findViewById(R.id.addpeople_recycler);
-        shimmerRecycler = view.findViewById(R.id.addPeople_recyclershimmer);
-        mSaveBtn = view.findViewById(R.id.addPeople_savebtn);
+        return view;
     }
 
     private void setAdapter() {
@@ -188,11 +137,15 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == android.R.id.home) {//                selectedlist.clear();
-            Functions.toast("backbutton press", getContext());
-            return true;
+        switch (item.getItemId()) {
+
+            case android.R.id.home:
+//                selectedlist.clear();
+                Functions.toast("backbutton press", getContext());
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     @Override

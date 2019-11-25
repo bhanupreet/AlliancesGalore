@@ -98,13 +98,14 @@ public class AddEventActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         } else {
-            return false;
+            return super.onOptionsItemSelected(item);
         }
+
     }
 
 
