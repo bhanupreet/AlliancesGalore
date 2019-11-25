@@ -135,17 +135,23 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         mMapView.getMapAsync(mMap -> {
             googleMap = mMap;
 
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+            googleMap.getUiSettings().setAllGesturesEnabled(true);
+            googleMap.getUiSettings().setCompassEnabled(true);
+            googleMap.getUiSettings().setTiltGesturesEnabled(false);
             if (isMultiSelect && initial) {
                 bounds = builder.build();
 //                mMap.setLatLngBoundsForCameraTarget(bounds);
-                mMap.setPadding(150, 150, 150, 150);
+                mMap.setPadding(150, 150, 10, 200);
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
                 mMap.animateCamera(cu);
 //                mMap.animateCamera(CameraUpdateFactory.zoomBy(-2));
 
             } else if (!isMultiSelect) {
                 googleMap.clear();
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(18).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
             mMap.setInfoWindowAdapter(new MapInfoAdapter(MapActivity.this));
@@ -202,7 +208,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetCallback() {
             @Override
             public void onStateChanged(@NotNull View bottomSheet, int newState) {
-        //DONT TOUCH IT, TOUCHING IT BREAKS THE SCROLL ON BOTTOM SHEET
+                //DONT TOUCH IT, TOUCHING IT BREAKS THE SCROLL ON BOTTOM SHEET
                 switch (newState) {
                     case STATE_HALF_EXPANDED:
 
