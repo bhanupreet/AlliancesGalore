@@ -10,9 +10,9 @@
     android:paddingEnd="10dp"
     app:behavior_peekHeight="80dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
-<!--    <androidx.core.widget.NestedScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+    <!--    <androidx.core.widget.NestedScrollView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent">-->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="500dp"
@@ -23,16 +23,15 @@
         card_view:cardUseCompatPadding="true">
 
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/maplist_recyler"
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_gravity="bottom"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="ifContentScrolls" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/maplist_recyler"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_gravity="bottom"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="ifContentScrolls" />
 
 
     </androidx.cardview.widget.CardView>
-<!--    </androidx.core.widget.NestedScrollView>-->
+    <!--    </androidx.core.widget.NestedScrollView>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

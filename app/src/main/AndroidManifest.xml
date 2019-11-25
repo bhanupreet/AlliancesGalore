@@ -33,6 +33,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:windowSoftInputMode="adjustResize"
         tools:replace="android:allowBackup">
         <activity android:name=".Activities.EventActivity"></activity>
 
@@ -44,7 +45,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".Activities.AddEventActivity"></activity>
+        <activity android:name=".Activities.AddEventActivity"
+            android:windowSoftInputMode="adjustResize"
+            ></activity>
         <activity
             android:name=".Activities.MapActivity"
             android:parentActivityName=".Activities.MainActivity" />
