@@ -221,13 +221,15 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
                         mRecycler.setClickable(false);
                         adapter.notifyDataSetChanged();
                         mRecycler.setLayoutFrozen(true);
+
                         break;
                     case STATE_EXPANDED:
                         mRecycler.setClickable(true);
 //                        mRecycler.set
                         mRecycler.setNestedScrollingEnabled(true);
-                        mRecycler.setLayoutFrozen(false);
                         mRecycler.setEnabled(true);
+                        adapter.notifyDataSetChanged();
+                        mRecycler.setLayoutFrozen(false);
                         break;
                     case STATE_DRAGGING:
                         break;
