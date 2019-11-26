@@ -21,6 +21,8 @@ import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,7 +56,7 @@ public class SettingsFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -71,8 +73,9 @@ public class SettingsFragment extends Fragment {
         mChangePassword = view.findViewById(R.id.settings_changepaswrdtn);
         mToggle = view.findViewById(R.id.locationToggle);
         mToggleBtn = view.findViewById(R.id.locationTogglebtn);
-        SharedPreferences settings = getActivity().getSharedPreferences("location", 0);
+        SharedPreferences settings = Objects.requireNonNull(getActivity()).getSharedPreferences("location", 0);
         String silent = settings.getString("locationservice", "on");
+        assert silent != null;
         if (silent.equals("off"))
             mToggleBtn.setChecked(false);
         else
@@ -111,11 +114,12 @@ public class SettingsFragment extends Fragment {
 
     private void setAnimClick() {
         ProfileFragment profileFragment = new ProfileFragment();
-        getActivity().getSupportFragmentManager()
+        Objects.requireNonNull(getActivity())
+                .getSupportFragmentManager()
                 .beginTransaction()
-                .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))
-                .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
-                .addSharedElement(mDesignation, ViewCompat.getTransitionName(mDesignation))
+                .addSharedElement(mProfileImage, Objects.requireNonNull(ViewCompat.getTransitionName(mProfileImage)))
+                .addSharedElement(mDisplayName, Objects.requireNonNull(ViewCompat.getTransitionName(mDisplayName)))
+                .addSharedElement(mDesignation, Objects.requireNonNull(ViewCompat.getTransitionName(mDesignation)))
                 .addToBackStack("settings")
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
 //                .replace(R.id.settings_container_pref, new EmptyFragment())
@@ -144,7 +148,8 @@ public class SettingsFragment extends Fragment {
 
             ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
 
-            getFragmentManager()
+            Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager()
                     .beginTransaction()
                     .addSharedElement(mChangePassword, Objects.requireNonNull(ViewCompat.getTransitionName(mChangePassword)))
                     .addToBackStack("settings")
@@ -158,14 +163,14 @@ public class SettingsFragment extends Fragment {
     private void StopTrackerService() {
 
         Functions.toast("location service stopped", getContext());
-        getActivity().stopService((new Intent(getContext(), LocationService.class)));
+        Objects.requireNonNull(getActivity()).stopService((new Intent(getContext(), LocationService.class)));
 
     }
 
     private void StartTrackerService() {
 
         Functions.toast("location service started", getContext());
-        getActivity().startService((new Intent(getContext(), LocationService.class)));
+        Objects.requireNonNull(getActivity()).startService((new Intent(getContext(), LocationService.class)));
 
     }
 }

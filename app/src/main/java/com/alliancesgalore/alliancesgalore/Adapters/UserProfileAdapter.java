@@ -44,9 +44,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileViewHold
     @Override
     public UserProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.users_single_layout, parent, false);
-        UserProfileViewHolder holder = new UserProfileViewHolder(view);
 
-        return holder;
+        return new UserProfileViewHolder(view);
     }
 
     @Override

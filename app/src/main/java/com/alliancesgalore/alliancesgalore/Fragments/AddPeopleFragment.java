@@ -74,7 +74,12 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         mSaveBtn.setOnClickListener(this);
 //        shimmerRecycler.showShimmerAdapter();
         setAdapter();
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("display_name");
+        Query query = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("Users")
+                .orderByChild("display_name");
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

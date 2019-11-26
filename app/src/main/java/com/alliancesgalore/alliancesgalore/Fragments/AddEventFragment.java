@@ -468,7 +468,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
             List<UserProfile> removelist = new ArrayList<>();
             List<String> removekeys = new ArrayList<>();
-            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").child(AddEventActivity.key);
+            calEvents = FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("CalendarEvents")
+                    .child(AddEventActivity.key);
+
             key = AddEventActivity.key;
             for (UserProfile profile : AddEventActivity.mOldList)
                 if (!selectedlist.contains(profile)) {
@@ -496,7 +501,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             }
 
         } else {
-            calEvents = FirebaseDatabase.getInstance().getReference().child("CalendarEvents").push();
+            calEvents = FirebaseDatabase
+                    .getInstance()
+                    .getReference()
+                    .child("CalendarEvents")
+                    .push();
+
             key = calEvents.getKey();
         }
 

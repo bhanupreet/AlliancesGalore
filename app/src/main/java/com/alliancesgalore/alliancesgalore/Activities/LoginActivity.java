@@ -124,7 +124,9 @@ public class LoginActivity extends AppCompatActivity {
             String token = Objects.requireNonNull(task.getResult()).getToken();
             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
             assert current_user != null;
-            FirebaseDatabase.getInstance().getReference()
+            FirebaseDatabase
+                    .getInstance()
+                    .getReference()
                     .child("Users")
                     .child(current_user.getUid())
                     .child("TokenID")

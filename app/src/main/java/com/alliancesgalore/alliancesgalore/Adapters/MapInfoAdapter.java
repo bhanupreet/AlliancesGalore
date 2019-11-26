@@ -35,6 +35,7 @@ public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
         mTitle.setText(marker.getTitle());
         mSnippet.setText(marker.getSnippet());
         UserProfile profile = (UserProfile) marker.getTag();
+        assert profile != null;
         Picasso.get().load(profile.getImage()).placeholder(R.drawable.defaultprofile).into(profileimage);
         return myContentsView;
     }

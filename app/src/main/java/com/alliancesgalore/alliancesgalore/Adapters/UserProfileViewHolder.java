@@ -14,7 +14,7 @@ import mva2.adapter.ItemViewHolder;
 class UserProfileViewHolder extends ItemViewHolder<UserProfile> {
     TextView mDesignation, mDisplayName;
     CircleImageView mProfileImage, mTick;
-    View layout;
+    private View layout;
 
     UserProfileViewHolder(@NonNull View itemView) {
 

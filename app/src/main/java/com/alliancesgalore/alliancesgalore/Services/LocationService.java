@@ -1,7 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Services;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,7 +13,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -163,27 +161,27 @@ public class LocationService extends Service {
         //your code
         buildnotif();
         requestLocationUpdates();
-        return START_STICKY;
+        return START_STICKY_COMPATIBILITY;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        sendBroadcast(new Intent("YouWillNeverKillMe"));
-        buildnotif();
-        requestLocationUpdates();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        sendBroadcast(new Intent("YouWillNeverKillMe"));
+//        buildnotif();
+//        requestLocationUpdates();
+//    }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        //create an intent that you want to start again.
-        buildnotif();
-        requestLocationUpdates();
-        Intent intent = new Intent(getApplicationContext(), LocationService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
-        super.onTaskRemoved(rootIntent);
-    }
+//    @Override
+//    public void onTaskRemoved(Intent rootIntent) {
+//        //create an intent that you want to start again.
+//        buildnotif();
+//        requestLocationUpdates();
+//        Intent intent = new Intent(getApplicationContext(), LocationService.class);
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+//        super.onTaskRemoved(rootIntent);
+//    }
 
 }

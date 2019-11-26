@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -46,18 +47,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         return new EventViewHolder(view);
     }
 
+    @SuppressLint({"Assert", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        DateFormat simple = new SimpleDateFormat("dd MMM");
-        DateFormat dayformat = new SimpleDateFormat("EEE");
-        DateFormat time = new SimpleDateFormat("hh:mm:ss a");
+        @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("dd MMM");
+        @SuppressLint("SimpleDateFormat") DateFormat dayformat = new SimpleDateFormat("EEE");
+        @SuppressLint("SimpleDateFormat") DateFormat time = new SimpleDateFormat("hh:mm:ss a");
         final CustomEvent customEvent = mCustomEventList.get(position);
         holder.mEvent_title.setText(customEvent.getTitle());
         holder.mEvent_date.setText(simple.format(customEvent.getDateTime()));
         holder.mEvent_day.setText(dayformat.format(customEvent.getDateTime()));
         holder.mEventDescription.setText(customEvent.getDescription());
-        if (holder.mEventColor == null)
+        if (holder.mEventColor == null) {
+            assert false;
             holder.mEventColor.setBackgroundColor(Color.GREEN);
+        }
         else
             holder.mEventColor.setBackgroundColor(customEvent.getColor());
 
