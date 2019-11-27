@@ -39,6 +39,8 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -54,9 +56,9 @@ import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
 public class ProfileFragment extends Fragment {
 
-    private ImageView mChangeNamebtn;
-    private ImageButton mChangePhotobtn;
-    private TextView mEmail, mDeesignation, mDisplayName;
+    private ImageView mChangeNameBtn;
+    private ImageButton mChangePhotoBtn;
+    private TextView mEmail, mDesignation, mDisplayName;
     private CircleImageView mProfileImage;
     private StorageReference mImageStorage;
     private ProgressBar mProgress;
@@ -104,13 +106,13 @@ public class ProfileFragment extends Fragment {
 
     private void hideProgressbar() {
         mProgress.setVisibility(View.GONE);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
 
     private void showProgressbar() {
         mProgress.setVisibility(View.VISIBLE);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
@@ -121,21 +123,25 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (getFragmentManager().getBackStackEntryCount() != 0) {
-                    getFragmentManager().popBackStack();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            if (Objects
+                    .requireNonNull(getActivity())
+                    .getSupportFragmentManager()
+                    .getBackStackEntryCount() != 0) {
+
+                getActivity()
+                        .getSupportFragmentManager()
+                        .popBackStack();
+            }
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -156,22 +162,22 @@ public class ProfileFragment extends Fragment {
         LoadImage();
         mDisplayName.setText(myProfile.getDisplay_name());
         mEmail.setText(myProfile.getEmail());
-        mDeesignation.setText(myProfile.getRole());
+        mDesignation.setText(myProfile.getRole());
     }
 
     private void FindIds(View view) {
         mProfileImage = view.findViewById(R.id.profile_displayImage);
         mDisplayName = view.findViewById(R.id.profile_displayName);
-        mDeesignation = view.findViewById(R.id.profile_display_Designation);
-        mChangeNamebtn = view.findViewById(R.id.profile_editnamebtn);
+        mDesignation = view.findViewById(R.id.profile_display_Designation);
+        mChangeNameBtn = view.findViewById(R.id.profile_editnamebtn);
         mEmail = view.findViewById(R.id.profile_display_Email);
-        mChangePhotobtn = view.findViewById(R.id.profile_changePhoto);
+        mChangePhotoBtn = view.findViewById(R.id.profile_changePhoto);
         mImageStorage = FirebaseStorage.getInstance().getReference();
         mProgress = view.findViewById(R.id.profile_progress);
     }
 
     private void editNameBtn() {
-        mChangeNamebtn.setOnClickListener(editnameOnClick);
+        mChangeNameBtn.setOnClickListener(editnameOnClick);
 
     }
 
@@ -180,7 +186,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void changePhotoClick() {
-        mChangePhotobtn.setOnClickListener(changePhotoOnClick);
+        mChangePhotoBtn.setOnClickListener(changePhotoOnClick);
     }
 
     private UploadTask uploadToDatabase(Uri resultUri) {
@@ -196,21 +202,22 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        assert thumb_bitmap != null;
         thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
         byte[] thumb_byte = baos.toByteArray();
 
         StorageReference filepath = mImageStorage.child("Profile_Images").child(FirebaseAuth.getInstance().getUid() + ".jpg");
-        UploadTask uploadTask = filepath.putBytes(thumb_byte);
-        return uploadTask;
+        return filepath.putBytes(thumb_byte);
     }
 
     private View.OnClickListener editnameOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             ChangeNameFragment changeNameFragment = new ChangeNameFragment();
-            getFragmentManager()
+            Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager()
                     .beginTransaction()
-                    .addSharedElement(mDisplayName, ViewCompat.getTransitionName(mDisplayName))
+                    .addSharedElement(mDisplayName, Objects.requireNonNull(ViewCompat.getTransitionName(mDisplayName)))
                     .addToBackStack("profile")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.settings_container, changeNameFragment)
@@ -218,16 +225,13 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    private View.OnClickListener changePhotoOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            CropImage.activity()
-                    .setAspectRatio(1, 1)
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .start(getContext(), ProfileFragment.this);
-           hideProgressbar();
+    private View.OnClickListener changePhotoOnClick = view -> {
+        CropImage.activity()
+                .setAspectRatio(1, 1)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(Objects.requireNonNull(getContext()), ProfileFragment.this);
+       hideProgressbar();
 
-        }
     };
 
     private OnCompleteListener<UploadTask.TaskSnapshot> uploadOnComplete = new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -265,27 +269,24 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    private OnCompleteListener updateDatabaseOnComplete = new OnCompleteListener() {
-        @Override
-        public void onComplete(@NonNull Task task) {
-            if (task.isSuccessful()) {
+    private OnCompleteListener updateDatabaseOnComplete = task -> {
+        if (task.isSuccessful()) {
 
-                Toast.makeText(getContext(), "image uploaded successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "image uploaded successfully", Toast.LENGTH_SHORT).show();
 
-            } else
-                Functions.toast(task);
-           hideProgressbar();
-        }
+        } else
+            Functions.toast(task);
+       hideProgressbar();
     };
 
     private View.OnClickListener mProfileImageOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             FullscreenImageFragment fullscreenImageFragment = new FullscreenImageFragment();
-            assert getFragmentManager() != null;
-            getFragmentManager()
+            Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager()
                     .beginTransaction()
-                    .addSharedElement(mProfileImage, ViewCompat.getTransitionName(mProfileImage))
+                    .addSharedElement(mProfileImage, Objects.requireNonNull(ViewCompat.getTransitionName(mProfileImage)))
                     .addToBackStack("fullscreenimage")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.settings_container, fullscreenImageFragment)

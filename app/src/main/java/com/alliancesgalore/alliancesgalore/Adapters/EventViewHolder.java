@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alliancesgalore.alliancesgalore.R;
 
-public class EventViewHolder extends RecyclerView.ViewHolder {
+class EventViewHolder extends RecyclerView.ViewHolder {
 
     View mEventDatelayout;
     TextView mEvent_date;

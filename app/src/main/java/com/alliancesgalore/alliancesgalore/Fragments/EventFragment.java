@@ -30,6 +30,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.alliancesgalore.alliancesgalore.Activities.EventActivity.getEvent;
 import static com.alliancesgalore.alliancesgalore.Activities.EventActivity.mSelectedList;
@@ -202,7 +203,9 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             bundle.putParcelableArrayList("objectlist", (ArrayList<? extends Parcelable>) selectedlist);
             bundle.putString("title", getEvent().getTitle());
             fragment.setArguments(bundle);
-            getFragmentManager().beginTransaction()
+            Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager()
+                    .beginTransaction()
                     .replace(R.id.event_container, fragment)
                     .addToBackStack("eventfragment")
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)

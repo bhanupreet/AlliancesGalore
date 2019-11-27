@@ -53,8 +53,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         findIds();
         setToolbar();
-        CreatcreatebtnBtn();
-        SetSpinner();
+        createBtn();
+        setSpinner();
     }
 
     private void findIds() {
@@ -73,25 +73,25 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void CreatcreatebtnBtn() {
+    private void createBtn() {
         mCreateBtn.setOnClickListener(CreateBtnClickListener);
     }
 
-    private void SetSpinner() {
+    private void setSpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.position, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
     }
 
-    private void registeruser(final String email, final String password) {
+    private void registerUser(final String email, final String password) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, RegUserOnComplete);
     }
 
-    private void updatedatabase(HashMap<String, Object> userMap) {
+    private void updateDatabase(HashMap<String, Object> userMap) {
         mDatabase.setValue(userMap).addOnCompleteListener(UpdateDatabaseOnCompleteListener);
     }
 
-    private void getrole() {
+    private void getRole() {
         role = mSpinner.getSelectedItem().toString();
         switch (role.toLowerCase()) {
             case "manager":
@@ -142,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Functions.toast("Field  cannot be left blank", RegisterActivity.this);
             } else {
                 regProgress();
-                registeruser(Email, password);
+                registerUser(Email, password);
             }
         }
     };
@@ -160,7 +160,7 @@ public class RegisterActivity extends AppCompatActivity {
                             .child("Users")
                             .child(uid);
 
-                    getrole();
+                    getRole();
                     FirebaseInstanceId
                             .getInstance()
                             .getInstanceId()
@@ -178,11 +178,11 @@ public class RegisterActivity extends AppCompatActivity {
         public void onComplete(@NonNull Task<InstanceIdResult> task) {
             if (!task.isSuccessful())
                 Functions.toast(task);
-            String token = task.getResult().getToken();
+            String token = Objects.requireNonNull(task.getResult()).getToken();
             String encrypted = Functions.encrypt(password);
             HashMap<String, Object> userMap = new HashMap<>();
             updateMap(userMap, token, encrypted);
-            updatedatabase(userMap);
+            updateDatabase(userMap);
         }
     };
 

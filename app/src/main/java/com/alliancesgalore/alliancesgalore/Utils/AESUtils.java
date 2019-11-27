@@ -1,10 +1,12 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
+import android.annotation.SuppressLint;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AESUtils {
+class AESUtils {
 
     //this class is used for encryption and decryption of passwords
 
@@ -12,14 +14,14 @@ public class AESUtils {
             new byte[]{'a', 'l', 'l', 'i', 'a', 'n', 'c', 'e', 's', ' ', 'g', 'a', 'l', 'o', 'r', 'e'};
 
 
-    public static String encrypt(String cleartext)
+    static String encrypt(String cleartext)
             throws Exception {
         byte[] rawKey = getRawKey();
         byte[] result = encrypt(rawKey, cleartext.getBytes());
         return toHex(result);
     }
 
-    public static String decrypt(String encrypted)
+    static String decrypt(String encrypted)
             throws Exception {
 
         byte[] enc = toByte(encrypted);
@@ -27,30 +29,27 @@ public class AESUtils {
         return new String(result);
     }
 
-    private static byte[] getRawKey() throws Exception {
+    private static byte[] getRawKey() {
         SecretKey key = new SecretKeySpec(keyValue, "AES");
-        byte[] raw = key.getEncoded();
-        return raw;
+        return key.getEncoded();
     }
 
     private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
         SecretKey skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+        @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(clear);
-        return encrypted;
+        return cipher.doFinal(clear);
     }
 
     private static byte[] decrypt(byte[] encrypted)
             throws Exception {
         SecretKey skeySpec = new SecretKeySpec(keyValue, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+        @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-        byte[] decrypted = cipher.doFinal(encrypted);
-        return decrypted;
+        return cipher.doFinal(encrypted);
     }
 
-    public static byte[] toByte(String hexString) {
+    private static byte[] toByte(String hexString) {
         int len = hexString.length() / 2;
         byte[] result = new byte[len];
         for (int i = 0; i < len; i++)
@@ -59,12 +58,12 @@ public class AESUtils {
         return result;
     }
 
-    public static String toHex(byte[] buf) {
+    private static String toHex(byte[] buf) {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+        for (byte b : buf) {
+            appendHex(result, b);
         }
         return result.toString();
     }

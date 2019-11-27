@@ -51,7 +51,7 @@ public final class Functions {
     }
 
     public static String TextOf(TextInputLayout textInputLayout) {
-        return textInputLayout.getEditText().getText().toString();
+        return Objects.requireNonNull(textInputLayout.getEditText()).getText().toString();
     }
 
     public static void toast(String text, Context mCtx) {

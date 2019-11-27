@@ -36,7 +36,7 @@ public class AddEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
-        SetmToolBar();
+        setmToolBar();
 
         selectedlist.clear();
 
@@ -67,23 +67,21 @@ public class AddEventActivity extends AppCompatActivity {
 //            setmNotify(event.getNotify());
             setmRepeat(event.getRepetition());
         }
-        SetFragment();
+        setFragment();
 //        if (isEdit) {
 
 //
 //        }
     }
 
-    private void SetFragment() {
-
+    private void setFragment() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.AddEvent_container, new AddEventFragment());
         ft.commit();
     }
 
-
-    private void SetmToolBar() {
+    private void setmToolBar() {
         Toolbar mToolBar = findViewById(R.id.addEvent_toolbar);
         setSupportActionBar(mToolBar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -111,10 +109,6 @@ public class AddEventActivity extends AppCompatActivity {
 
     public static List<UserProfile> getList() {
         return selectedlist;
-    }
-
-    public static void setSelectedlist(List<UserProfile> selectedlist1) {
-        selectedlist = selectedlist1;
     }
 
     public static String getDescription() {

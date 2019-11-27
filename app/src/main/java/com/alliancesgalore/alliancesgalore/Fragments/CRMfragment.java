@@ -46,10 +46,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -146,7 +149,7 @@ public class CRMfragment extends Fragment {
 
                 String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 if (!hasPermissions(getContext(), permissions)) {
-                    ActivityCompat.requestPermissions(getActivity(), permissions, PERMISSION_ALL);
+                    ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), permissions, PERMISSION_ALL);
                 } else {
                     if (mUMA != null)
                         mUMA.onReceiveValue(null);
@@ -196,11 +199,11 @@ public class CRMfragment extends Fragment {
                                 Manifest.permission.READ_CONTACTS,
                                 Manifest.permission.ACCESS_FINE_LOCATION},
                         101);
-                int grant = ContextCompat.checkSelfPermission(getContext(), permission);
+                int grant = ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), permission);
                 if (grant != PackageManager.PERMISSION_GRANTED) {
                     String[] permission_list = new String[1];
                     permission_list[0] = permission;
-                    ActivityCompat.requestPermissions(getActivity(), permission_list, 1);
+                    ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), permission_list, 1);
                 }
             }
 
@@ -367,7 +370,7 @@ public class CRMfragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         crmweb.saveState(outState);
     }
@@ -382,7 +385,7 @@ public class CRMfragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         count = 0;
 
@@ -419,7 +422,7 @@ public class CRMfragment extends Fragment {
     private void setFAB() {
         MainActivity mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
-        mainActivity.getcurrenttabposition();//            mainActivity.fab.show();
+        mainActivity.getCurrentTabPosition();//            mainActivity.fab.show();
     }
 
     @Override

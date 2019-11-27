@@ -8,14 +8,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -34,21 +32,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        FindIds();
+        findIds();
         setToolbar();
         resetclick();
     }
 
     private void setToolbar() {
-
         setSupportActionBar(mToolBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Forgot password");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
-    private void FindIds() {
-
+    private void findIds() {
         mprogressBar = findViewById(R.id.forgotpasswordprogress);
         mEmail = findViewById(R.id.forgotpswrdemail);
         mToolBar = findViewById(R.id.forgotpasswordappbar);
@@ -73,16 +69,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     }
 
-    private OnCompleteListener resetClickOnComplete = new OnCompleteListener<Void>() {
-        @Override
-        public void onComplete(@NonNull Task<Void> task) {
+    private OnCompleteListener resetClickOnComplete = (OnCompleteListener<Void>) task -> {
 
-            if (task.isSuccessful())
-                Functions.toast("Email sent", mCtx);
-            else
-                Functions.toast(task);
-           hideProgressbar();
-        }
+        if (task.isSuccessful())
+            Functions.toast("Email sent", mCtx);
+        else
+            Functions.toast(task);
+       hideProgressbar();
     };
     private void hideProgressbar() {
         mprogressBar.setVisibility(View.GONE);

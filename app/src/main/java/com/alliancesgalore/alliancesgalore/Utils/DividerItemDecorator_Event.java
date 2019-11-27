@@ -20,7 +20,7 @@ public class DividerItemDecorator_Event extends RecyclerView.ItemDecoration {
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         int left = 0;
-        int right = parent.getWidth() - 0;
+        int right = parent.getWidth();
         View child = parent.getChildAt(parent.getChildCount()-1);
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
         int top = child.getBottom() + params.bottomMargin;

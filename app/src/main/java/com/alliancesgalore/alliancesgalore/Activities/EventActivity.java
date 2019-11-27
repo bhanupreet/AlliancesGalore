@@ -35,10 +35,6 @@ public class EventActivity extends AppCompatActivity {
         return event;
     }
 
-    public static void setEvent(CustomEvent event) {
-        EventActivity.event = event;
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

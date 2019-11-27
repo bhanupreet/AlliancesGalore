@@ -46,6 +46,7 @@ public class EventPeopleFragment extends Fragment {
         mList.clear();
 
         Bundle bundle = getArguments();
+        assert bundle != null;
         mList = bundle.getParcelableArrayList("objectlist");
         String title = bundle.getString("title");
         FragFunctions.setToolBarTitle(title, view);

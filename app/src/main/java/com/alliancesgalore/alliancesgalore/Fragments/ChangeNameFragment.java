@@ -15,7 +15,6 @@ import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
 import com.alliancesgalore.alliancesgalore.Utils.FragFunctions;
 import com.alliancesgalore.alliancesgalore.Utils.Functions;
-import com.alliancesgalore.alliancesgalore.Utils.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,7 +43,7 @@ public class ChangeNameFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_change_name, container, false);
         findIds(view);
-        changebtnclick();
+        changeBtnClick();
         FragFunctions.setToolBarTitle("Change Name", view);
         return view;
     }
@@ -52,14 +51,14 @@ public class ChangeNameFragment extends Fragment {
     private void findIds(View view) {
         mChangeBtn = view.findViewById(R.id.changeame_changenamebtn);
         mchangeNameText = view.findViewById(R.id.changename_name);
-        mchangeNameText.getEditText().setText(Global.myProfile.getDisplay_name());
+        Objects.requireNonNull(mchangeNameText.getEditText()).setText(myProfile.getDisplay_name());
     }
 
-    private void changebtnclick() {
-        mChangeBtn.setOnClickListener(changebtnlistener);
+    private void changeBtnClick() {
+        mChangeBtn.setOnClickListener(changeBtnListener);
     }
 
-    private View.OnClickListener changebtnlistener = new View.OnClickListener() {
+    private View.OnClickListener changeBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             String uid = FirebaseAuth.getInstance().getUid();
@@ -71,7 +70,7 @@ public class ChangeNameFragment extends Fragment {
                     .child(uid)
                     .child("display_name")
                     .setValue(Functions.TextOf(mchangeNameText))
-                    .addOnCompleteListener(changenameOnComplete);
+                    .addOnCompleteListener(changeNameOnComplete);
         }
     };
     private ValueEventListener valueEventListener = new ValueEventListener() {
@@ -80,12 +79,13 @@ public class ChangeNameFragment extends Fragment {
             if (dataSnapshot.exists())
                 myProfile = dataSnapshot.getValue(UserProfile.class);
         }
+
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
         }
     };
 
-    private OnCompleteListener changenameOnComplete = task -> {
+    private OnCompleteListener changeNameOnComplete = task -> {
         if (task.isSuccessful()) {
             Toast.makeText(getContext(), "Name changed Successfully", Toast.LENGTH_SHORT).show();
             String uid = FirebaseAuth
@@ -99,10 +99,11 @@ public class ChangeNameFragment extends Fragment {
                     .child("Users")
                     .child(uid)
                     .addValueEventListener(valueEventListener);
-            Objects.requireNonNull(getFragmentManager()).popBackStack();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         } else
             Functions.toast(task);
 
     };
+
 
 }

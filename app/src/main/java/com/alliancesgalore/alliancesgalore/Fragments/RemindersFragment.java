@@ -172,14 +172,14 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(exFiveCalendar.getFirstDayOfCurrentMonth().getTime());
             DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
-                DateFormat yearformat = new SimpleDateFormat("yyyy");
-                DateFormat monthformat = new SimpleDateFormat("MMMM");
+                @SuppressLint("SimpleDateFormat") DateFormat yearFormat = new SimpleDateFormat("yyyy");
+                @SuppressLint("SimpleDateFormat") DateFormat monthFormat = new SimpleDateFormat("MMMM");
 
                 Calendar selecteddate = Calendar.getInstance();
                 selecteddate.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                 exFiveCalendar.setCurrentDate(selecteddate.getTime());
-                mMonthSwitch.setText(monthformat.format(selecteddate.getTimeInMillis()));
-                mYear.setText(yearformat.format(selecteddate.getTimeInMillis()));
+                mMonthSwitch.setText(monthFormat.format(selecteddate.getTimeInMillis()));
+                mYear.setText(yearFormat.format(selecteddate.getTimeInMillis()));
                 Calendar mStartOfMonth = setStartOfMonth(selecteddate);
                 Calendar mEndOfMonth = setEndOfMonth(selecteddate);
                 loadData(mStartOfMonth, mEndOfMonth);
@@ -336,6 +336,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                         CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                         String key = snapshot.getKey();
                         if (myEvents.contains(key) && !mRepeatList.contains(myCustomEvent)) {
+                            assert myCustomEvent != null;
                             myCustomEvent.setUid(key);
                             mRepeatList.add(myCustomEvent);
                         }
@@ -401,6 +402,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                                 CustomEvent myCustomEvent = snapshot.getValue(CustomEvent.class);
                                 String key = snapshot.getKey();
                                 if (myEvents.contains(key) && !mList.contains(myCustomEvent)) {
+                                    assert myCustomEvent != null;
                                     myCustomEvent.setUid(key);
                                     mList.add(myCustomEvent);
 //                                    adapter.notifyItemInserted(mList.size()-1);

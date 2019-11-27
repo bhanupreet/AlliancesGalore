@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -116,6 +117,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void SetViews() {
 
         if (TextUtils.isEmpty(getLocation())) {
@@ -131,19 +133,19 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
 
         if (getDate() == 0) {
-            mDate.setText("Date");
+            mDate.setText(R.string.date);
         } else {
             long date = getDate();
-            String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            @SuppressLint("SimpleDateFormat") String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
             mDate.setText(full);
         }
 
 
         if (getTime() == 0) {
-            mTime.setText("Time");
+            mTime.setText(R.string.time);
         } else {
             long time = getTime();
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
         }
 
@@ -158,6 +160,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mColorView.setBackgroundColor(AddEventActivity.getColor());
     }
 
+    @SuppressLint("SetTextI18n")
     private void setAddPeopleview() {
 
         if (!selectedlist.isEmpty()) {
@@ -270,9 +273,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         AddDescriptionLocatonFragment dv = new AddDescriptionLocatonFragment();
         dv.setArguments(bundl);
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.addSharedElement(layout, ViewCompat.getTransitionName(layout))
+        ft.addSharedElement(layout, Objects.requireNonNull(ViewCompat.getTransitionName(layout)))
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.AddEvent_container, dv);
         ft.addToBackStack("add_desc_loc");
@@ -308,13 +311,13 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     }
     private void hideProgressbar() {
         mProgress.setVisibility(View.GONE);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
 
     private void showProgressbar() {
         mProgress.setVisibility(View.VISIBLE);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
@@ -326,12 +329,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
+        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(mCtx, (view1, year, monthOfYear, dayOfMonth) -> {
             mDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
             calendar.set(year, monthOfYear, dayOfMonth);
             date = calendar.getTime();
             AddEventActivity.setDate(date.getTime());
-            String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            @SuppressLint("SimpleDateFormat") String full = new SimpleDateFormat("dd-MM-yyyy").format(date);
 //            toast(full, mCtx);
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -348,7 +351,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             newTime.set(Calendar.SECOND, 0);
             time = newTime.getTime();
             temptime = time;
-            DateFormat simple = new SimpleDateFormat("hh:mm a");
+            @SuppressLint("SimpleDateFormat") DateFormat simple = new SimpleDateFormat("hh:mm a");
             mTime.setText(simple.format(time));
             timeText = simple.format(time);
             AddEventActivity.setTime(time.getTime());
@@ -383,9 +386,12 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
     private void setAddPeople() {
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentManager fm = Objects
+                .requireNonNull(getActivity())
+                .getSupportFragmentManager();
+
         FragmentTransaction ft = fm.beginTransaction();
-        ft.addSharedElement(mAddPeople, ViewCompat.getTransitionName(mAddPeople))
+        ft.addSharedElement(mAddPeople, Objects.requireNonNull(ViewCompat.getTransitionName(mAddPeople)))
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.AddEvent_container, new AddPeopleFragment())
                 .addToBackStack("addPeople")
@@ -437,7 +443,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        setmTitle(mTitle.getText().toString());
+        setmTitle(Objects.requireNonNull(mTitle.getText()).toString());
     }
 
     private void save() {
@@ -455,9 +461,9 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
             time = newTime.getTime();
         }
 
-        Date staticstate = new Date(AddEventActivity.getDate());
-        Date statictime = new Date(AddEventActivity.getTime());
-        Date datetime = combineDateTime(staticstate, statictime);
+        Date staticDate = new Date(AddEventActivity.getDate());
+        Date staticTime = new Date(AddEventActivity.getTime());
+        Date datetime = combineDateTime(staticDate, staticTime);
         mDateTime = datetime.getTime();
 
         String key;
@@ -514,7 +520,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
         HashMap<String, Object> map = new HashMap<>();
 //        toast(key, mCtx);
-        map.put("title", mTitle.getText().toString());
+        map.put("title", Objects.requireNonNull(mTitle.getText()).toString());
         map.put("allDay", mAllDaySwitch.isChecked());
         map.put("dateTime", mDateTime);
         map.put("repetition", getmRepeat());
@@ -540,6 +546,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
         }
 
         //updating the map in database
+        assert key != null;
         DatabaseReference eventParticipantsref = FirebaseDatabase
                 .getInstance()
                 .getReference()

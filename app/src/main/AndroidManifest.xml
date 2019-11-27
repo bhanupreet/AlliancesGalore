@@ -32,17 +32,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".Activities.EventActivity"></activity>
+        <activity android:name=".Activities.EventActivity" />
 
 
         <activity
             android:name=".Activities.AddEventActivity"
-            android:windowSoftInputMode="adjustResize"
-
-            ></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.MapActivity"
             android:parentActivityName=".Activities.MainActivity" />

@@ -25,7 +25,7 @@ import java.util.Objects;
 public class AddDescriptionLocatonFragment extends Fragment {
 
     private TextInputLayout mDescLoc;
-    private Button mSavebtn;
+    private Button mSaveBtn;
     private String myStrings;
 
 
@@ -62,7 +62,7 @@ public class AddDescriptionLocatonFragment extends Fragment {
     }
 
     private void setSaveBtn() {
-        mSavebtn.setOnClickListener(v -> {
+        mSaveBtn.setOnClickListener(v -> {
             if (TextUtils.isEmpty(Functions.TextOf(mDescLoc))) {
                 Functions.toast("Feild cannot be left blank", getContext());
             } else {
@@ -73,7 +73,7 @@ public class AddDescriptionLocatonFragment extends Fragment {
                     AddEventActivity.setLocation(Functions.TextOf(mDescLoc));
                 }
 
-                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 fm.popBackStack();
             }
         });
@@ -82,22 +82,22 @@ public class AddDescriptionLocatonFragment extends Fragment {
     private void setHint() {
         if (myStrings.equals("desc")) {
             mDescLoc.setHint("Description");
-            mDescLoc.getEditText().setText(AddEventActivity.getDescription());
+            Objects.requireNonNull(mDescLoc.getEditText()).setText(AddEventActivity.getDescription());
         } else {
             mDescLoc.setHint("Location");
-            mDescLoc.getEditText().setText(AddEventActivity.getLocation());
+            Objects.requireNonNull(mDescLoc.getEditText()).setText(AddEventActivity.getLocation());
         }
 
     }
 
     private void getIntent() {
         Bundle bundle = getArguments();
-
+        assert bundle != null;
         myStrings = bundle.getString("desc_loc");
     }
 
     private void findIds(View view) {
-        mSavebtn = view.findViewById(R.id.addEvent_desc_loc_savebtn);
+        mSaveBtn = view.findViewById(R.id.addEvent_desc_loc_savebtn);
         mDescLoc = view.findViewById(R.id.addEvent_desc_loc_input);
     }
 }

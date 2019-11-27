@@ -32,9 +32,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.alliancesgalore.alliancesgalore.Activities.AddEventActivity.selectedlist;
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
@@ -142,26 +145,22 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
-
-            case android.R.id.home:
-//                selectedlist.clear();
-                Functions.toast("backbutton press", getContext());
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == android.R.id.home) {//                selectedlist.clear();
+            Functions.toast("backbutton press", getContext());
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
 
         // Inflate the options menu from XML
         inflater.inflate(R.menu.search_actions, menu);
         super.onCreateOptionsMenu(menu, inflater);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) Objects.requireNonNull(getActivity()).getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
@@ -219,8 +218,9 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view == mSaveBtn) {
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-
+            FragmentManager fm = Objects
+                    .requireNonNull(getActivity())
+                    .getSupportFragmentManager();
             fm.popBackStack();
         }
     }

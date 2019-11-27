@@ -36,10 +36,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         mItemClickListener = listener;
     }
 
-    public void addItemLongClickListener(ItemLongClickListner listener) {
-        mItemLongClickListener = listener;
-    }
-
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

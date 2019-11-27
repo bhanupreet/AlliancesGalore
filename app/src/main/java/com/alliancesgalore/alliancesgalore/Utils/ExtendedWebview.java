@@ -1,5 +1,6 @@
 package com.alliancesgalore.alliancesgalore.Utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ public class ExtendedWebview extends NestedScrollWebView {
         return true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent p_event) {
         if (p_event.getAction() == MotionEvent.ACTION_MOVE && getParent() != null) {

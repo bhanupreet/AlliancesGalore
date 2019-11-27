@@ -46,15 +46,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        FindIds();
-        SetmToolbar();
+        findIds();
+        setmToolbar();
         credentialsclient();
-        LoginClick();
-        ForgotPasswordClick();
+        loginClick();
+        forgotPasswordClick();
     }
 
-    private void FindIds() {
-
+    private void findIds() {
         mForgotPasswordbtn = findViewById(R.id.forgotpasswordbtn);
         mLoginToolbar = findViewById(R.id.login_toolbar);
         mLoginBtn = findViewById(R.id.login_login_btn);
@@ -63,8 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginPassword = findViewById(R.id.login_password);
     }
 
-    private void SetmToolbar() {
-
+    private void setmToolbar() {
         setSupportActionBar(mLoginToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Login");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,15 +72,15 @@ public class LoginActivity extends AppCompatActivity {
         mCredentialsClient = Credentials.getClient(this);
     }
 
-    private void LoginClick() {
+    private void loginClick() {
         mLoginBtn.setOnClickListener(loginclicklistener);
     }
 
-    private void ForgotPasswordClick() {
+    private void forgotPasswordClick() {
         mForgotPasswordbtn.setOnClickListener(ForgotOnClickListener);
     }
 
-    private void LogIn(final String email, final String password) {
+    private void logIn(final String email, final String password) {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -147,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                 showProgressbar();
                 Credential credential = new Credential.Builder(email).setPassword(password).build();
                 mCredentialsClient.save(credential);
-                LogIn(email, password);
+                logIn(email, password);
             }
         }
     };

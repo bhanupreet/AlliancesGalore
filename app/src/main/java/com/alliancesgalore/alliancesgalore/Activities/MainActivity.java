@@ -40,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -70,33 +72,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_new);
 
-        FindIds();
-        SetToolBar();
-        LocationService();
-        Tabadapter();
+        findIds();
+        setToolBar();
+        locationService();
+        tabAdapter();
     }
 
-    private void LocationService() {
-
+    private void locationService() {
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
             finish();
-        }
+
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (permission == PackageManager.PERMISSION_GRANTED) {
+        if (permission == PackageManager.PERMISSION_GRANTED)
             startTrackerService();
 
-        } else {
+        else
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST);
-        }
+
     }
 
-    private void FindIds() {
-
+    private void findIds() {
         mViewPager = findViewById(R.id.main_viewpager);
         mTabLayout = findViewById(R.id.main_tablayout);
         mToolbar = findViewById(R.id.main_app_bar);
@@ -104,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
         CRMfragment.count = 0;
     }
 
-    private void SetToolBar() {
+    private void setToolBar() {
         setmToolbar(mToolbar, " Alliances Galore", R.mipmap.ic_launcher);
     }
 
-    private void Tabadapter() {
+    private void tabAdapter() {
 
         MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
         crmFragment = new CRMfragment();
@@ -142,38 +142,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setmToolbar(Toolbar mToolbar, String title, int Resid) {
-
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
         getSupportActionBar().setLogo(Resid);
     }
 
     private void sendToStart() {
-
-
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();
     }
 
     private void logout() {
-
         AuthUI.getInstance().signOut(this).addOnCompleteListener(SignOutonComplete);
     }
 
     private void settings() {
-
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         settingsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(settingsIntent);
     }
 
     public void fabanim() {
-
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int state = 0;
             private boolean isFloatButtonHidden = false;
-            private int position = 0;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -193,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 //reset floating
-                this.position = position;
                 setTab(position);
 
                 if (state == 2) {
@@ -231,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 fab.setOnClickListener(v -> {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
                     try {
+                        assert launchIntent != null;
                         launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
                         startActivity(launchIntent);
                     } catch (Exception e) {
@@ -259,13 +252,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onDestroy() {
 
         super.onDestroy();
         startTrackerService();
     }
+
     private void startTrackerService() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -277,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             startService(pushIntent);
         }
     }
+
     private OnCompleteListener SignOutonComplete = (OnCompleteListener<Void>) task -> sendToStart();
 
     public ValueEventListener valueEventListener = new ValueEventListener() {
@@ -284,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 myProfile = dataSnapshot.getValue(UserProfile.class);
+                assert myProfile != null;
                 if (TextUtils.isEmpty(myProfile.getReportingTo())) {
                     sendToReport();
                 }
@@ -318,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -368,12 +363,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocationService();
+        locationService();
         fabanim();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startTrackerService();
@@ -382,14 +377,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void StopTrackerService() {
-        Functions.toast("location service stopped", MainActivity.this);
-        stopService((new Intent(this, LocationService.class)));
-
-    }
-
-
-    public int getcurrenttabposition() {
+    public void getCurrentTabPosition() {
         if (mTabLayout != null) {
             mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
@@ -408,9 +396,6 @@ public class MainActivity extends AppCompatActivity {
                     position = tab.getPosition();
                 }
             });
-            return position;
-        } else
-            return 0;
+        }
     }
-
 }

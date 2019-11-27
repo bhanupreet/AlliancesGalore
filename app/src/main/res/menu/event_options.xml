@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="edit"
+        android:title="@string/edit"
         android:id="@+id/event_edit"
         android:icon="@drawable/ic_edit_black_24dp"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:icon="@drawable/ic_delete_"
-        android:title="delete"
+        android:title="@string/delete"
         android:id="@+id/event_delete"
         app:showAsAction="always" />
 </menu>

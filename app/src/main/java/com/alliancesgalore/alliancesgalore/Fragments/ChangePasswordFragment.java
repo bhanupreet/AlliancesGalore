@@ -30,8 +30,8 @@ import java.util.Objects;
 
 
 public class ChangePasswordFragment extends Fragment {
-    private TextInputLayout mPasswordOld, mPasswordnew1, mPasswordnew2;
-    private Button mChangePasswordbtn;
+    private TextInputLayout mPasswordOld, mPasswordNew1, mPasswordNew2;
+    private Button mChangePasswordBtn;
     private ProgressBar mProgress;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -52,14 +52,14 @@ public class ChangePasswordFragment extends Fragment {
     }
 
     private void changePasswordClick() {
-        mChangePasswordbtn.setOnClickListener(ChangePasswordOnClick);
+        mChangePasswordBtn.setOnClickListener(ChangePasswordOnClick);
     }
 
     private void findIds(View view) {
         mPasswordOld = view.findViewById(R.id.changepasswrd_passwordold);
-        mPasswordnew1 = view.findViewById(R.id.changepasswrd_new1);
-        mPasswordnew2 = view.findViewById(R.id.changepasswrd_new2);
-        mChangePasswordbtn = view.findViewById(R.id.changepasswrd_changepasswordbtn);
+        mPasswordNew1 = view.findViewById(R.id.changepasswrd_new1);
+        mPasswordNew2 = view.findViewById(R.id.changepasswrd_new2);
+        mChangePasswordBtn = view.findViewById(R.id.changepasswrd_changepasswordbtn);
         mProgress = view.findViewById(R.id.changepassword_prog);
     }
 
@@ -69,14 +69,14 @@ public class ChangePasswordFragment extends Fragment {
             String paswrd = Functions.TextOf(mPasswordOld);
             final AuthCredential credential = EmailAuthProvider.getCredential(Global.myProfile.getEmail(), paswrd);
             if (TextUtils.isEmpty(Functions.TextOf(mPasswordOld))
-                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew1))
-                    || TextUtils.isEmpty(Functions.TextOf(mPasswordnew2)))
+                    || TextUtils.isEmpty(Functions.TextOf(mPasswordNew1))
+                    || TextUtils.isEmpty(Functions.TextOf(mPasswordNew2)))
                 Functions.toast("Field cannot be left blank", getContext());
 
-            else if (!Functions.TextOf(mPasswordnew2).equals(Functions.TextOf(mPasswordnew1)))
+            else if (!Functions.TextOf(mPasswordNew2).equals(Functions.TextOf(mPasswordNew1)))
                 Functions.toast("Both new passwords must be same", getContext());
 
-            else if (Functions.TextOf(mPasswordOld).equals(Functions.TextOf(mPasswordnew1)))
+            else if (Functions.TextOf(mPasswordOld).equals(Functions.TextOf(mPasswordNew1)))
                 Functions.toast("New password cannot be same as old password", getContext());
 
             else {
@@ -93,7 +93,7 @@ public class ChangePasswordFragment extends Fragment {
                 Functions.toast(task);
                 hideProgressbar();
             } else
-                user.updatePassword(Functions.TextOf(mPasswordnew2)).addOnCompleteListener(updateOnComplete);
+                user.updatePassword(Functions.TextOf(mPasswordNew2)).addOnCompleteListener(updateOnComplete);
         }
     };
 
@@ -106,7 +106,7 @@ public class ChangePasswordFragment extends Fragment {
                         .getReference()
                         .child("Users")
                         .child(user.getUid()).child("password")
-                        .setValue(Functions.encrypt(Functions.TextOf(mPasswordnew2)))
+                        .setValue(Functions.encrypt(Functions.TextOf(mPasswordNew2)))
                         .addOnCompleteListener(updateDataBaseOnComplete);
             else {
                 Functions.toast(task);
@@ -116,27 +116,24 @@ public class ChangePasswordFragment extends Fragment {
 
     };
 
-    private OnCompleteListener updateDataBaseOnComplete = new OnCompleteListener() {
-        @Override
-        public void onComplete(@NonNull Task task) {
-            if (task.isSuccessful()) {
-                Objects.requireNonNull(getFragmentManager()).popBackStack();
-                Functions.toast("Password updated successfully", getContext());
-            } else
-                Functions.toast(task);
-            hideProgressbar();
-        }
+    private OnCompleteListener updateDataBaseOnComplete = task -> {
+        if (task.isSuccessful()) {
+            Objects.requireNonNull(Objects.requireNonNull(getActivity()).getSupportFragmentManager()).popBackStack();
+            Functions.toast("Password updated successfully", getContext());
+        } else
+            Functions.toast(task);
+        hideProgressbar();
     };
 
     private void hideProgressbar() {
         mProgress.setVisibility(View.GONE);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
 
     private void showProgressbar() {
         mProgress.setVisibility(View.VISIBLE);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }

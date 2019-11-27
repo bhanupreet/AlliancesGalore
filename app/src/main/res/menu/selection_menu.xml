@@ -5,7 +5,7 @@
         android:id="@+id/action_cancel"
         android:icon="@drawable/ic_close_white_24dp"
         android:title="view"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_select"
         android:icon="@drawable/ic_check_black_24dp"

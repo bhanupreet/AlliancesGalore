@@ -33,7 +33,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -53,7 +53,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -66,7 +66,7 @@
         android:backgroundTint="@color/colorAccent"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="login"
+        android:text="@string/login"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="50dp"
-        android:text="Login to your account"
+        android:text="@string/login_to_your_account"
         android:textColor="#212121"
         android:textSize="24sp"
         android:typeface="normal"
@@ -93,7 +93,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:background="#00ffffff"
-        android:text="forgot password?"
+        android:text="@string/forgot_password"
         android:textColor="@color/colorAccent"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"

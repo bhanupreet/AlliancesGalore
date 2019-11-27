@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true"
     tools:context=".Activities.StartActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <ImageView
@@ -20,6 +20,7 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_margin="75dp"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/ag_logo"
             android:src="@drawable/web_hi_res_512"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,12 +32,12 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="#FAFAFA"
-            android:text="sign up"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
             android:layout_marginStart="30dp"
             android:layout_marginBottom="30dp"
+            android:backgroundTint="#FAFAFA"
+            android:text="@string/sign_up"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -45,10 +46,10 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/colorAccent"
-            android:text="sign in"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="30dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="@string/sign_in"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -119,7 +119,7 @@ public class LocationListFragment extends Fragment {
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
         inflater.inflate(R.menu.selection_menu, menu);
 
 
@@ -290,9 +290,9 @@ public class LocationListFragment extends Fragment {
     private void startActionMode(MainActivity mainActivity) {
         mainActivity.mToolbar.startActionMode(actionMode);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(DpFromPx(getContext(), 10), 0, 0, 0);
+        lp.setMargins(DpFromPx(Objects.requireNonNull(getContext()), 10), 0, 0, 0);
 
-        ((AppCompatImageView) getActivity().findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
+        ((AppCompatImageView) Objects.requireNonNull(getActivity()).findViewById(R.id.action_mode_close_button)).setImageDrawable(getContext().getResources().getDrawable(R.drawable.uncheck));
         getActivity().findViewById(R.id.action_mode_close_button).setLayoutParams(lp);
         getActivity().findViewById(R.id.action_mode_close_button).setPadding(DpFromPx(getContext(), 10), 0, DpFromPx(getContext(), 5), 0);
 
@@ -385,7 +385,7 @@ public class LocationListFragment extends Fragment {
         multiselect_list.clear();
         ArrayList<UserProfile> temp = new ArrayList<>();
         subordinatesList = new CopyOnWriteArrayList<>();
-        mail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        mail = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         mFilterbtn = view.findViewById(R.id.locationlist_filter);
         mSortBtn = view.findViewById(R.id.locationlist_sort);
         mSwipeResfresh = view.findViewById(R.id.locationlist_refresh);
