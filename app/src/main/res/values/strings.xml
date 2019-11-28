@@ -35,4 +35,6 @@
     <string name="sign_in">sign in</string>
     <string name="delete">delete</string>
     <string name="edit">Edit</string>
+    <string name="sort">Sort</string>
+    <string name="filter">Filter</string>
 </resources>
