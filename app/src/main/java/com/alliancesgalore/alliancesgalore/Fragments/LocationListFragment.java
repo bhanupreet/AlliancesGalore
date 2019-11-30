@@ -490,7 +490,7 @@ public class LocationListFragment extends Fragment {
                 if (multiselect_list.isEmpty()) {
                     resetActionMode();
                 }
-                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
+//                Functions.toast(selectedprofile.getDisplay_name() + " added", getContext());
                 adapter.notifyItemChanged(pos);
             } else sendToMap(selectedprofile, filterlist);
         });

@@ -572,7 +572,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
                 myEventsref1.updateChildren(myEvents).addOnSuccessListener(aVoid1 -> {
 
-//                    toast("Data updated successfully", mCtx);
+                    toast("Event added successfully", mCtx);
                     Intent mainIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(mainIntent);
                     mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -580,7 +580,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener {
 
                 });
             }
-
         });
        hideProgressbar();
     }

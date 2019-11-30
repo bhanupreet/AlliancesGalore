@@ -14,7 +14,6 @@ import com.alliancesgalore.alliancesgalore.Fragments.AddEventFragment;
 import com.alliancesgalore.alliancesgalore.Models.CustomEvent;
 import com.alliancesgalore.alliancesgalore.Models.UserProfile;
 import com.alliancesgalore.alliancesgalore.R;
-import com.alliancesgalore.alliancesgalore.Utils.Functions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,13 +40,15 @@ public class AddEventActivity extends AppCompatActivity {
         selectedlist.clear();
 
         isEdit = getIntent().getStringExtra("isedit");
-        Functions.toast(isEdit, AddEventActivity.this);
+//        Functions.toast(isEdit, AddEventActivity.this);
         if (!TextUtils.isEmpty(isEdit) && isEdit.equalsIgnoreCase("true")) {
             selectedlist = getIntent().getParcelableArrayListExtra("objectlist");
+            assert selectedlist != null;
             mOldList = new ArrayList<>(selectedlist);
 //            mOldList = getIntent().getParcelableExtra("objectlist");
             CustomEvent event = getIntent().getParcelableExtra("object");
 
+            assert event != null;
             mDescription = event.getDescription();
             mLocation = event.getLocation();
             mTitle = event.getTitle();

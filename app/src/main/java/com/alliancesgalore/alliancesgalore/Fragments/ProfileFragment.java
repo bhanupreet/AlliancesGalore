@@ -271,9 +271,7 @@ public class ProfileFragment extends Fragment {
 
     private OnCompleteListener updateDatabaseOnComplete = task -> {
         if (task.isSuccessful()) {
-
             Toast.makeText(getContext(), "image uploaded successfully", Toast.LENGTH_SHORT).show();
-
         } else
             Functions.toast(task);
        hideProgressbar();

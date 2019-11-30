@@ -154,7 +154,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
         adapter.addItemClickListener(position -> {
             Intent EventIntent = new Intent(getContext(), EventActivity.class);
             EventIntent.putExtra("object", mList.get(position));
-            Functions.toast(String.valueOf(getmList().size()), mCtx);
+//            Functions.toast(String.valueOf(getmList().size()), mCtx);
             EventIntent.putParcelableArrayListExtra("objectlist", (ArrayList<? extends Parcelable>) getmList());
             startActivity(EventIntent);
         });
@@ -279,7 +279,7 @@ public class RemindersFragment extends Fragment implements CompactCalendarView.C
                 int pos = mList.indexOf(event);
                 if (pos != -1) {
                     mRecycler.smoothScrollToPosition(pos);
-                    Functions.toast(String.valueOf(getmList().size()), mCtx);
+//                    Functions.toast(String.valueOf(getmList().size()), mCtx);
                 }
                 return;
             }

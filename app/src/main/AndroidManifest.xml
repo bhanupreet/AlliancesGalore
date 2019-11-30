@@ -32,8 +32,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustResize"
         android:usesCleartextTraffic="true"
+        android:windowSoftInputMode="adjustResize"
         tools:replace="android:allowBackup">
         <activity android:name=".Activities.EventActivity" />
 
@@ -43,7 +43,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.MapActivity"
-            android:parentActivityName=".Activities.MainActivity" />
+            android:parentActivityName=".Activities.MainActivity">
+
+        </activity>
         <activity android:name=".Activities.ReportingToActivity" />
 
         <uses-library
@@ -55,11 +57,11 @@
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="false" />
-<!--        <receiver android:name=".Services.RestartServiceReceiver">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="YouWillNeverKillMe"></action>-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        <!--        <receiver android:name=".Services.RestartServiceReceiver">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="YouWillNeverKillMe"></action>-->
+        <!--            </intent-filter>-->
+        <!--        </receiver>-->
 
         <activity
             android:name=".Activities.SettingsActivity"
@@ -67,7 +69,8 @@
         <activity
             android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:persistent="true">
+            android:persistent="true"
+            >
 
         </activity>
         <activity

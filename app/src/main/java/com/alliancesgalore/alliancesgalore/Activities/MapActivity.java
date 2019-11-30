@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -174,7 +173,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMarker
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             UserProfile obj = mMapSelectionList.get(pos);
             LatLng Location = setLatLong(obj);
-            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MapActivity.this, mMapSelectionList.get(pos).getDisplay_name(), Toast.LENGTH_SHORT).show();
             setLocation(Location);
 
             if (!isMultiSelect)

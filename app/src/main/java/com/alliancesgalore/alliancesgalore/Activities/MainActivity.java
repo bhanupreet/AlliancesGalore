@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -45,16 +48,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.alliancesgalore.alliancesgalore.Utils.Global.myProfile;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
     private static final int PERMISSIONS_REQUEST = 100;
+    private static final int YOUR_ENABLE_LOCATION_REQUEST_CODE = 100;
     private WebViewPager mViewPager;
     private TabLayout mTabLayout;
     public Toolbar mToolbar;
     int position;
     public CRMfragment crmFragment;
     public FloatingActionButton fab;
+    AlertDialog alert;
+
 
     public static List<UserProfile> getmList() {
         return mList;
@@ -66,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static List<UserProfile> mList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,26 +80,53 @@ public class MainActivity extends AppCompatActivity {
 
         findIds();
         setToolBar();
-        locationService();
+
         tabAdapter();
     }
 
     private void locationService() {
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            finish();
+        assert lm != null;
 
-        int permission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        alert = new AlertDialog.Builder(MainActivity.this).setMessage("GPS not enabled")
+                .setPositiveButton("Open Location Settings", (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent intent = new Intent(ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(intent, YOUR_ENABLE_LOCATION_REQUEST_CODE);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create();
 
-        if (permission == PackageManager.PERMISSION_GRANTED)
-            startTrackerService();
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ignored) {
+        }
 
-        else
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST);
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ignored) {
+        }
 
+
+        if (!gps_enabled && !network_enabled) {
+            // notify user
+            alert.show();
+
+        } else {
+            alert.dismiss();
+            int permission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+
+            if (permission == PackageManager.PERMISSION_GRANTED)
+                startTrackerService();
+
+            else
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST);
+        }
     }
 
     private void findIds() {
@@ -109,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void tabAdapter() {
-
         MainActivityAdapter adapter = new MainActivityAdapter(getSupportFragmentManager());
         crmFragment = new CRMfragment();
 
@@ -224,7 +256,8 @@ public class MainActivity extends AppCompatActivity {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
                     try {
                         assert launchIntent != null;
-                        launchIntent.setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
+                        launchIntent
+                                .setComponent(new ComponentName("org.thoughtcrime.securesms", "org.thoughtcrime.securesms.ConversationListActivity"));
                         startActivity(launchIntent);
                     } catch (Exception e) {
                         Functions.toast("AG-Chat Not Available", MainActivity.this);
@@ -294,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        locationService();
         fabanim();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -377,6 +411,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        super.onActivityResult(requestCode, resultCode, data);
+        alert.cancel();
+        locationService();
+        if (requestCode == YOUR_ENABLE_LOCATION_REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user came back from the Enable Location Activity
+                // Dismiss the Dialog
+                alert.cancel();
+                alert.dismiss();
+            }
+        }
+    }
+
     public void getCurrentTabPosition() {
         if (mTabLayout != null) {
             mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -397,5 +448,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        alert.dismiss();
+        alert.cancel();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
     }
 }

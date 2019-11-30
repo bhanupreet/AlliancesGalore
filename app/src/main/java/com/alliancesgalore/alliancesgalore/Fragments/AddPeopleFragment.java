@@ -70,10 +70,10 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
         mRecycler = view.findViewById(R.id.addpeople_recycler);
         shimmerRecycler = view.findViewById(R.id.addPeople_recyclershimmer);
         mSaveBtn = view.findViewById(R.id.addPeople_savebtn);
-        if (selectedlist.isEmpty()) {
-            mSaveBtn.setVisibility(View.INVISIBLE);
-        } else
-            mSaveBtn.setVisibility(View.VISIBLE);
+//        if (selectedlist.isEmpty()) {
+//            mSaveBtn.setVisibility(View.INVISIBLE);
+//        } else
+//            mSaveBtn.setVisibility(View.VISIBLE);
         mSaveBtn.setOnClickListener(this);
 //        shimmerRecycler.showShimmerAdapter();
         setAdapter();
@@ -123,10 +123,10 @@ public class AddPeopleFragment extends Fragment implements View.OnClickListener 
             else
                 selectedlist.add(profile);
             adapter.notifyItemChanged(i);
-            if (selectedlist.isEmpty())
-                mSaveBtn.setVisibility(View.GONE);
-            else
-                mSaveBtn.setVisibility(View.VISIBLE);
+//            if (selectedlist.isEmpty())
+//                mSaveBtn.setVisibility(View.GONE);
+//            else
+//                mSaveBtn.setVisibility(View.VISIBLE);
         });
 
         return view;
